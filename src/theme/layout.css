@@ -1,0 +1,29 @@
+.layout-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  width: 100%;
+}
+
+.layout-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  font-family: "Helvetica Neue", Arial, sans-serif;
+  padding-left: 2em;
+  padding-right: 2em;
+  padding-top: 1em;
+  padding-bottom: 1em;
+}
+
+.layout-title {
+  font-size: 20px;
+}
+
+.layout-links {
+  display: flex;
+  justify-content: space-between;
+  width: 20%;
+}

@@ -1,23 +1,25 @@
 import { BrowserProvider } from "ethers";
 import { WebKwil, Utils, KwilSigner } from "@kwilteam/kwil-js";
 import { formattedNow } from "../utils/DateTimeUtils";
+import { GenericResponse } from "@kwilteam/kwil-js/dist/core/resreq";
+import { TxReceipt } from "@kwilteam/kwil-js/dist/core/tx";
+
 const provider = new BrowserProvider(window.ethereum);
 const signer = await provider.getSigner();
-const identifier = await signer.getAddress();
+const address = await signer.getAddress();
 
-const dbid = Utils.generateDBID(identifier, "freeauthor");
+const dbid = Utils.generateDBID(address, "freeauthor");
 const kwilProvider = "https://testnet.kwil.com";
 const chainId = "kwil-chain-testnet-0.6";
 const ADD_WORK = "add_work";
 const GET_AUTHOR_WORKS = "get_author_works";
 const ADD_PROFILE = "add_profile";
-const GET_PROFILE = "get_profile";
 
 const kwil = new WebKwil({
   kwilProvider,
   chainId,
 });
-const kwilSigner = new KwilSigner(signer, identifier);
+const kwilSigner = new KwilSigner(signer, address);
 
 export async function addWork(
   title: string,
@@ -26,25 +28,22 @@ export async function addWork(
 ) {
   let workId = await getLastId("get_last_work_id");
 
+  console.log("Send addWork authorId:", authorId);
   const actionBody = {
     dbid: dbid,
     action: ADD_WORK,
     inputs: [
       {
         $work_id: workId,
-        $timestamp: Date.now() / 1000,
+        $updated_at: formattedNow(),
         $title: title,
         $content: content,
         $author_id: authorId,
       },
     ],
   };
-  const result = await kwil.execute(actionBody, kwilSigner);
-  console.log("addWorks result:", result);
-  if (result.status == 200) {
-    return result.data?.tx_hash;
-  }
-  return null;
+
+  return getResultHash(await kwil.execute(actionBody, kwilSigner));
 }
 
 export async function getAuthorWorks(
@@ -79,7 +78,8 @@ export async function addProfile(
 ) {
   const profileId = await getLastId("get_last_profile_id");
 
-  console.log("Sending addProfile with updated_at:", formattedNow());
+  console.log("Send addProfile updated_at:", formattedNow());
+  console.log("Send addProfile owner_address:", address);
   const actionBody = {
     dbid: dbid,
     action: ADD_PROFILE,
@@ -90,21 +90,46 @@ export async function addProfile(
         $username: userName,
         $fullname: fullName,
         $description: description,
+        $owner_address: address,
         $social_link_primary: socialLinkPrimary,
         $social_link_second: socialLinkSecond,
       },
     ],
   };
-  const result = await kwil.execute(actionBody, kwilSigner);
-  console.log("addProfile result:", result);
-  if (result.status == 200) {
-    return result.data?.tx_hash;
-  }
-  return null;
+
+  return getResultHash(await kwil.execute(actionBody, kwilSigner));
 }
 
 export async function txInfo(tx: string) {
   return await kwil.txInfo(tx);
+}
+
+export async function getTxEntityId(tx: string) {
+  const result = await kwil.txInfo(tx);
+  if (result.status === 200) {
+    if (result.data) {
+      if (
+        result.data.tx.body.payload &&
+        result.data.tx.body.payload.length === 3
+      ) {
+        const inputsArray = result.data.tx.body.payload[2];
+        if (Array.isArray(inputsArray)) {
+          if (Array.isArray(inputsArray[0])) {
+            return inputsArray[0][0];
+          }
+        }
+      }
+    }
+  }
+  return 0;
+}
+
+async function getResultHash(result: GenericResponse<TxReceipt>) {
+  console.log("getResultHash result:", result);
+  if (result.status === 200) {
+    return result.data?.tx_hash;
+  }
+  return null;
 }
 
 async function getLastId(action: string) {
@@ -116,7 +141,7 @@ async function getLastId(action: string) {
   });
 
   console.log("getLastId id_result:", id_result);
-  if (id_result.status == 200) {
+  if (id_result.status === 200) {
     if (id_result.data && id_result.data.result) {
       if (
         Array.isArray(id_result.data.result) &&
