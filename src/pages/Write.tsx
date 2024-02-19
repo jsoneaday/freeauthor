@@ -7,73 +7,114 @@ import {
   toolbarPlugin,
 } from "@mdxeditor/editor";
 import "@mdxeditor/editor/style.css";
-import { MouseEvent, Suspense, useCallback, useRef, useState } from "react";
 import {
-  addProfile,
-  addWork,
-  getTxEntityId,
-  txInfo,
-} from "../common/api/KwilApi";
+  MouseEvent,
+  Suspense,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { Layout } from "../common/components/Layout";
+import { useProfile } from "../common/redux/profile/ProfileHooks";
+import { kwilApi } from "../common/api/KwilApi";
+import { NotificationType } from "../common/components/modals/Notification";
+import Notification from "../common/components/modals/Notification";
+import useNotificationState from "../common/redux/notification/NotificationStateHooks";
+import { ProfileForm } from "../common/components/ProfileForm";
+
+const SMALL_NOTIFICATION_HEIGHT = "170px";
+const LARGE_NOTIFICATION_HEIGHT = "580px";
 
 export function Write() {
   const mdRef = useRef<MDXEditorMethods>(null);
   const [txOutputMsg, setTxOutputMsg] = useState("");
-  const [currentProfileId, setCurrentProfileId] = useState(0);
+  const [profile, setProfile] = useProfile();
+  const [showProfileForm, setShowProfileForm] = useState(false);
   const [title, _setTitle] = useState("Hello world");
-  const setEditorValue = (markdownStr: string) => {
+  const [notificationState, setNotificationState] = useNotificationState();
+  const [notificationHeight, setNotificationHeight] = useState(
+    SMALL_NOTIFICATION_HEIGHT
+  );
+  const [connectValidationMsg, setConnectValidationMsg] = useState("");
+  const setEditorValue = useCallback((markdownStr: string) => {
     console.log("editor updated value", markdownStr);
-  };
+  }, []);
   const submitValue = async (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
 
-    if (currentProfileId === 0)
+    if (!profile || profile?.id === 0)
       throw new Error("First register a profile and connect");
 
-    const tx = await addWork(
+    const tx = await kwilApi.addWork(
       title,
       mdRef.current?.getMarkdown() || "",
-      currentProfileId
+      profile.id
     );
-    await waitAndGetId(tx);
+    await kwilApi.waitAndGetId(tx);
+  };
+  const toggleProfileNotification = () => {
+    const newNotificationState = {
+      ...notificationState,
+      isOpen: !notificationState.isOpen,
+    };
+
+    setNotificationState(newNotificationState);
   };
 
-  const createProfile = async (e: MouseEvent<HTMLButtonElement>) => {
+  const onClickConnectWallet = async (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
 
-    const tx = await addProfile(
-      "dave",
-      "Dave Choi",
-      "I am a programmer",
-
-      "",
-      ""
-    );
-
-    const id = await waitAndGetId(tx);
-    setCurrentProfileId(id);
+    if (!profile) {
+      await kwilApi.connect();
+      const ownersProfile = await kwilApi.getOwnersProfile();
+      if (Array.isArray(ownersProfile) && ownersProfile.length === 0) {
+        setShowProfileForm(true);
+        setNotificationHeight(LARGE_NOTIFICATION_HEIGHT);
+        setConnectValidationMsg(
+          "You must create a profile before you can create content"
+        );
+      } else {
+        setShowProfileForm(false);
+        setNotificationHeight(SMALL_NOTIFICATION_HEIGHT);
+        setConnectValidationMsg("");
+      }
+    }
   };
 
-  const waitAndGetId = useCallback(async (tx: string | null | undefined) => {
-    console.log("tx info:", await txInfo(tx || ""));
-    let id = 0;
-    let iterations = 0;
-    while (id === 0) {
-      if (iterations > 5)
-        throw new Error("Transaction failed to process within time alotted");
-
-      id = await getTxEntityId(tx || "");
-
-      await new Promise((r) => setTimeout(r, 3000));
-      iterations += 1;
+  useEffect(() => {
+    if (!profile) {
+      toggleProfileNotification();
     }
-
-    setTxOutputMsg(`New Profile created, id: ${id}`);
-    return id;
-  }, []);
+  }, [profile]);
 
   return (
     <Layout>
+      <Notification
+        title="Notification"
+        notiType={NotificationType.Warning}
+        isOpen={notificationState.isOpen}
+        toggleIsOpen={toggleProfileNotification}
+        width="25%"
+        height={notificationHeight}
+      >
+        <span className="write-connect-header">Please connect your wallet</span>
+        <span className="write-connect-btn-span">
+          <div style={{ marginTop: "1.25em" }}>{connectValidationMsg}</div>
+          <button
+            className="primary-btn"
+            style={{ marginTop: "1em" }}
+            onClick={onClickConnectWallet}
+          >
+            Connect
+          </button>
+        </span>
+        {showProfileForm ? (
+          <div className="profile-form-parent">
+            <ProfileForm />
+          </div>
+        ) : null}
+      </Notification>
       <div className="home">
         <MDXEditor
           className="mdx-container"
@@ -102,13 +143,6 @@ export function Write() {
             width: "100%",
           }}
         >
-          <button
-            onClick={createProfile}
-            className="primary-btn"
-            style={{ width: "120px" }}
-          >
-            Create Profile
-          </button>
           <button
             onClick={submitValue}
             className="primary-btn"

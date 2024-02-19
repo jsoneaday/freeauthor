@@ -59,3 +59,19 @@
     margin-top: 1.5em;
   }
 }
+
+.write-connect-header {
+  border-bottom-color: var(--header-border-cl);
+  border-bottom-width: 1px;
+  border-bottom-style: solid;
+  padding-bottom: 0.5em;
+  margin-top: 0.5em;
+}
+
+.write-connect-btn-span {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 1em;
+}
