@@ -4,6 +4,7 @@ import "./theme/components.css";
 import "./theme/pages.css";
 import "./theme/mdxeditor.css";
 import "./theme/layout.css";
+import "./theme/animations.css";
 import { Explorer } from "./pages/Explorer";
 import { Home } from "./pages/Home";
 import { Write } from "./pages/Write";

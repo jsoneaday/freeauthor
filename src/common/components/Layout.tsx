@@ -2,6 +2,7 @@ import { ReactNode } from "react";
 import { useProfile } from "../redux/profile/ProfileHooks";
 import profileIcon from "../../theme/assets/businessman.png"; // todo: replace with user avatar when ready
 import { kwilApi } from "../api/KwilApi";
+import { NavAnchor } from "./NavAnchor";
 
 export interface LayoutProps {
   children: ReactNode;
@@ -18,9 +19,9 @@ export function Layout({ children }: LayoutProps) {
           FREE-AUTHOR
         </a>
         <span className="layout-links">
-          <a href="/write">WRITE</a>
-          <a href="/read">READ</a>
-          <a href="/explore">EXPLORE</a>
+          <NavAnchor path="/write" label="WRITE" />
+          <NavAnchor path="/read" label="READ" />
+          <NavAnchor path="/explore" label="EXPLORE" />
         </span>
         <span style={{ display: "flex", alignItems: "center" }}>
           <button
