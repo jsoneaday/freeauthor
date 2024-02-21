@@ -7,14 +7,7 @@ import {
   toolbarPlugin,
 } from "@mdxeditor/editor";
 import "@mdxeditor/editor/style.css";
-import {
-  MouseEvent,
-  Suspense,
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import { MouseEvent, useCallback, useEffect, useRef, useState } from "react";
 import { Layout } from "../common/components/Layout";
 import { useProfile } from "../common/redux/profile/ProfileHooks";
 import { kwilApi } from "../common/api/KwilApi";
@@ -22,6 +15,7 @@ import { NotificationType } from "../common/components/modals/Notification";
 import Notification from "../common/components/modals/Notification";
 import useNotificationState from "../common/redux/notification/NotificationStateHooks";
 import { ProfileForm } from "../common/components/ProfileForm";
+import { PrimaryButton } from "../common/components/Buttons";
 
 const SMALL_NOTIFICATION_HEIGHT = "170px";
 const LARGE_NOTIFICATION_HEIGHT = "580px";
@@ -112,16 +106,18 @@ export function Write() {
         width="25%"
         height={notificationHeight}
       >
-        <span className="write-connect-header">Please connect your wallet</span>
-        <span className="write-connect-btn-span">
-          <div style={{ marginTop: "1.25em" }}>{connectValidationMsg}</div>
-          <button
-            className="primary-btn"
+        <span className="write-connect-header">
+          Please connect your wallet {/* todo: need supported wallets button */}
+        </span>
+        <span className="btn-span-align" style={{ marginTop: "1em" }}>
+          <div style={{ marginTop: "1.25em", color: "var(--error-cl)" }}>
+            {connectValidationMsg}
+          </div>
+          <PrimaryButton
+            label="Connect"
             style={{ marginTop: "1em" }}
             onClick={onClickConnectWallet}
-          >
-            Connect
-          </button>
+          />
         </span>
         {showProfileForm ? (
           <div className="profile-form-parent">
@@ -148,27 +144,13 @@ export function Write() {
             }),
           ]}
         />
-        <div
-          style={{
-            marginTop: "1em",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-around",
-            width: "100%",
-          }}
-        >
-          <button
+        <div className="btn-span-align" style={{ marginTop: "1em" }}>
+          <span style={{ marginRight: "2em" }}>{txOutputMsg}</span>
+          <PrimaryButton
+            label="Submit"
             onClick={submitValue}
-            className="primary-btn"
             style={{ width: "80px" }}
-          >
-            Submit
-          </button>
-          <Suspense
-            fallback={<div>Please wait. Your request is processing ...</div>}
-          >
-            {txOutputMsg}
-          </Suspense>
+          />
         </div>
       </div>
     </Layout>

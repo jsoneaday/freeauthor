@@ -5,10 +5,10 @@
 }
 
 :root {
-  --error-cl: salmon;
+  --error-cl: rgb(128, 0, 32);
   --primary-cl: black;
   --secondary-cl: navy;
-  --tertiary-cl: rgb(214, 216, 218);
+  --tertiary-cl: gray;
 
   --primary-btn-cl: var(--secondary-cl);
   --secondary-btn-cl: var(--panel-bg-cl);

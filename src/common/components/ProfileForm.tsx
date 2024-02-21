@@ -1,6 +1,18 @@
 import { ChangeEvent, useState, MouseEvent } from "react";
 import { kwilApi } from "../api/KwilApi";
 import { useProfile } from "../redux/profile/ProfileHooks";
+import { PrimaryButton } from "./Buttons";
+
+enum InputValidationState {
+  UsernameTooLong = "Username cannot be greater than 50 characters",
+  UsernameHasNoValue = "Username must have a value",
+  FullnameTooLong = "Fullname cannot be greater than 100 characters",
+  FullnameHasNoValue = "Fullname must have a value",
+  DescriptionTooLong = "Description cannot be greater than 250 characters",
+  PrimarySocialTooLong = "Primary social link cannot be greater than 250 characters",
+  SecondarySocialTooLong = "Primary social link cannot be greater than 250 characters",
+  FieldIsValid = "",
+}
 
 export interface ProfileFormProps {
   profileCreatedCallback: () => void;
@@ -14,57 +26,147 @@ export function ProfileForm({ profileCreatedCallback }: ProfileFormProps) {
   const [socialPrimary, setSocialPrimary] = useState("");
   const [socialSecondary, setSocialSecondary] = useState("");
   const [_profile, setProfile] = useProfile();
+  const [createProfileBtnDisabled, setCreateProfileBtnDisabled] =
+    useState(true);
 
   const onChangeUsername = (e: ChangeEvent<HTMLInputElement>) => {
-    if (e.target.value.length > 50) {
-      setValidationMsg("Username cannot be greater than 50 characters");
-    } else if (!e.target.value) {
-      setValidationMsg("Username must have a value");
-    } else {
-      setUsername(e.target.value.replace(/^@/, ""));
-    }
+    const validation = validateUsername(e.target.value);
+
+    setCreateProfileBtnDisabled(
+      validation === InputValidationState.FieldIsValid ? false : true
+    );
+
+    setUsername(e.target.value);
+    setValidationMsg(validation);
   };
   const onChangeFullname = (e: ChangeEvent<HTMLInputElement>) => {
-    if (e.target.value.length > 100) {
-      setValidationMsg("Fullname cannot be greater than 100 characters");
-    } else if (!e.target.value) {
-      setValidationMsg("Fullname must have a value");
-    } else {
-      setFullname(e.target.value);
-    }
+    const validation = validateFullname(e.target.value);
+
+    setCreateProfileBtnDisabled(
+      validation === InputValidationState.FieldIsValid ? false : true
+    );
+
+    setFullname(e.target.value);
+    setValidationMsg(validation);
   };
   const onChangeDescription = (e: ChangeEvent<HTMLInputElement>) => {
-    if (e.target.value.length > 250) {
-      setValidationMsg("Description cannot be greater than 250 characters");
-    } else if (!e.target.value) {
-      setValidationMsg("Description must have a value");
-    } else {
-      setDescription(e.target.value);
-    }
+    const validation = validateDescription(e.target.value);
+
+    setCreateProfileBtnDisabled(
+      validation === InputValidationState.FieldIsValid ? false : true
+    );
+
+    setDescription(e.target.value);
+    setValidationMsg(validation);
   };
   const onChangeSocialPrimary = (e: ChangeEvent<HTMLInputElement>) => {
+    setCreateProfileBtnDisabled(true);
     if (e.target.value.length > 250) {
       setValidationMsg(
         "Primary social link cannot be greater than 250 characters"
       );
     } else {
-      setSocialPrimary(e.target.value);
+      setSocialPrimary(e.target.value.trim());
+      setCreateProfileBtnDisabled(false);
     }
   };
   const onChangeSocialSecondary = (e: ChangeEvent<HTMLInputElement>) => {
+    setCreateProfileBtnDisabled(true);
     if (e.target.value.length > 250) {
       setValidationMsg(
         "Secondary social link cannot be greater than 250 characters"
       );
     } else {
-      setSocialSecondary(e.target.value);
+      setSocialSecondary(e.target.value.trim());
+      setCreateProfileBtnDisabled(false);
+    }
+  };
+
+  const validateUsername = (strInput: string): InputValidationState => {
+    if (strInput.length > 50) {
+      return InputValidationState.UsernameTooLong;
+    } else if (!strInput) {
+      return InputValidationState.UsernameHasNoValue;
+    } else {
+      return InputValidationState.FieldIsValid;
+    }
+  };
+  const validateFullname = (strInput: string): InputValidationState => {
+    if (strInput.length > 100) {
+      return InputValidationState.FullnameTooLong;
+    } else if (!strInput) {
+      return InputValidationState.FullnameHasNoValue;
+    } else {
+      return InputValidationState.FieldIsValid;
+    }
+  };
+  const validateDescription = (strInput: string): InputValidationState => {
+    if (strInput.length > 100) {
+      return InputValidationState.DescriptionTooLong;
+    } else {
+      return InputValidationState.FieldIsValid;
+    }
+  };
+  const validatePrimarySocial = (strInput: string): InputValidationState => {
+    if (strInput.length > 100) {
+      return InputValidationState.PrimarySocialTooLong;
+    } else {
+      return InputValidationState.FieldIsValid;
+    }
+  };
+  const validateSecondarySocial = (strInput: string): InputValidationState => {
+    if (strInput.length > 100) {
+      return InputValidationState.SecondarySocialTooLong;
+    } else {
+      return InputValidationState.FieldIsValid;
+    }
+  };
+
+  const validateAllFields = (): boolean => {
+    const usernameValidation = validateUsername(username);
+    const fullnameValidation = validateFullname(fullname);
+    const descValidation = validateDescription(description);
+    const socialPrimaryValidation = validatePrimarySocial(socialPrimary);
+    const socialSecondaryValidation = validateSecondarySocial(socialSecondary);
+    console.log(
+      "validations:",
+      usernameValidation,
+      fullnameValidation,
+      descValidation,
+      socialPrimaryValidation,
+      socialSecondaryValidation
+    );
+    if (usernameValidation !== InputValidationState.FieldIsValid) {
+      setValidationMsg(usernameValidation);
+      return false;
+    } else if (fullnameValidation !== InputValidationState.FieldIsValid) {
+      setValidationMsg(fullnameValidation);
+      return false;
+    } else if (descValidation !== InputValidationState.FieldIsValid) {
+      setValidationMsg(descValidation);
+      return false;
+    } else if (socialPrimaryValidation !== InputValidationState.FieldIsValid) {
+      setValidationMsg(socialPrimaryValidation);
+      return false;
+    } else if (
+      socialSecondaryValidation !== InputValidationState.FieldIsValid
+    ) {
+      setValidationMsg(socialSecondaryValidation);
+      return false;
+    } else {
+      setValidationMsg("");
+      return true;
     }
   };
 
   const createProfile = async (e: MouseEvent<HTMLButtonElement>) => {
+    console.log("enter createProfile");
     e.preventDefault();
 
-    const tx = await kwilApi.addProfile(
+    if (!validateAllFields()) return;
+
+    setValidationMsg("Please wait while your profile is created");
+    await kwilApi.addProfile(
       username,
       fullname,
       description,
@@ -72,7 +174,6 @@ export function ProfileForm({ profileCreatedCallback }: ProfileFormProps) {
       socialSecondary
     );
 
-    await kwilApi.waitAndGetId(tx);
     const profile = await kwilApi.getOwnersProfile();
     if (!profile) throw new Error("Profile has not been created!");
 
@@ -87,10 +188,11 @@ export function ProfileForm({ profileCreatedCallback }: ProfileFormProps) {
       socialLinkSecond: profile.social_link_second,
     });
     profileCreatedCallback();
+    setValidationMsg("");
   };
 
   return (
-    <div className="profile-form-container">
+    <form className="profile-form-container">
       <section className="profile-form-section">
         <label htmlFor="username">Username</label>
         <input
@@ -146,16 +248,22 @@ export function ProfileForm({ profileCreatedCallback }: ProfileFormProps) {
           onChange={onChangeSocialSecondary}
         ></input>
       </section>
-      <section className="profile-form-btn">
-        <span>{validationMsg}</span>
-        <button
-          className="primary-btn"
-          style={{ marginTop: "1em" }}
+      <section className="btn-span-align" style={{ marginBottom: "0.75em" }}>
+        <span style={{ marginTop: "0.75em", color: "var(--error-cl)" }}>
+          {validationMsg}
+        </span>
+        <PrimaryButton
+          label="Create"
+          isDisabled={createProfileBtnDisabled}
+          style={{
+            marginTop: "1em",
+            color: createProfileBtnDisabled
+              ? "var(--tertiary-cl)"
+              : "var(--primary-cl)",
+          }}
           onClick={createProfile}
-        >
-          Create
-        </button>
+        />
       </section>
-    </div>
+    </form>
   );
 }

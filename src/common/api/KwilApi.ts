@@ -62,6 +62,18 @@ export class KwilApi {
     );
   }
 
+  async cleanDb() {
+    const actionBody = {
+      dbid: this.dbid,
+      action: "clean_db",
+      inputs: [],
+    };
+
+    return this.getResultHash(
+      await this.kwil!.execute(actionBody, this.kwilSigner!, true)
+    );
+  }
+
   async getAuthorWorks(authorId: number, lastKeyset: number, pageSize: number) {
     const actionBody = {
       dbid: this.dbid,
@@ -152,7 +164,7 @@ export class KwilApi {
     };
 
     return this.getResultHash(
-      await this.kwil!.execute(actionBody, this.kwilSigner!)
+      await this.kwil!.execute(actionBody, this.kwilSigner!, true)
     );
   }
 

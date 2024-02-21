@@ -11,6 +11,13 @@
   padding-bottom: 6px;
 }
 
+.btn-span-align {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
 .search-header {
   display: flex;
   flex-direction: row;
@@ -311,16 +318,16 @@ select {
   margin-bottom: 0.75em;
 }
 
-.profile-form-btn {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 100%;
-  margin-bottom: 0.75em;
-}
-
 .profile-form-item {
   outline: none;
   width: 100%;
   height: 2em;
+}
+
+.profile-avatar {
+  width: 3em;
+  height: 3em;
+  border-radius: 50%;
+  padding: 0.25em;
+  border: solid 2px var(--primary-cl);
 }
