@@ -28,7 +28,7 @@ const LARGE_NOTIFICATION_HEIGHT = "580px";
 
 export function Write() {
   const mdRef = useRef<MDXEditorMethods>(null);
-  const [txOutputMsg, setTxOutputMsg] = useState("");
+  const [txOutputMsg, _setTxOutputMsg] = useState("");
   const [profile, setProfile] = useProfile();
   const [showProfileForm, setShowProfileForm] = useState(false);
   const [title, _setTitle] = useState("Hello world");
@@ -40,6 +40,7 @@ export function Write() {
   const setEditorValue = useCallback((markdownStr: string) => {
     console.log("editor updated value", markdownStr);
   }, []);
+
   const submitValue = async (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
 
@@ -53,6 +54,7 @@ export function Write() {
     );
     await kwilApi.waitAndGetId(tx);
   };
+
   const toggleProfileNotification = () => {
     const newNotificationState = {
       ...notificationState,
@@ -68,13 +70,25 @@ export function Write() {
     if (!profile) {
       await kwilApi.connect();
       const ownersProfile = await kwilApi.getOwnersProfile();
-      if (Array.isArray(ownersProfile) && ownersProfile.length === 0) {
+      if (!ownersProfile) {
         setShowProfileForm(true);
         setNotificationHeight(LARGE_NOTIFICATION_HEIGHT);
         setConnectValidationMsg(
           "You must create a profile before you can create content"
         );
       } else {
+        // if profile already exits just allow writing
+        toggleProfileNotification();
+        setProfile({
+          id: ownersProfile?.id,
+          updatedAt: ownersProfile.updated_at,
+          username: ownersProfile.username,
+          fullname: ownersProfile.fullname,
+          description: ownersProfile.description,
+          ownerAddress: ownersProfile.owner_address,
+          socialLinkPrimary: ownersProfile.social_link_primary,
+          socialLinkSecond: ownersProfile.social_link_second,
+        });
         setShowProfileForm(false);
         setNotificationHeight(SMALL_NOTIFICATION_HEIGHT);
         setConnectValidationMsg("");
@@ -111,7 +125,7 @@ export function Write() {
         </span>
         {showProfileForm ? (
           <div className="profile-form-parent">
-            <ProfileForm />
+            <ProfileForm profileCreatedCallback={toggleProfileNotification} />
           </div>
         ) : null}
       </Notification>

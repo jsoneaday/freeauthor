@@ -6,20 +6,6 @@ export interface LayoutProps {
 }
 
 export function Layout({ children }: LayoutProps) {
-  //   const createProfile = async (e: MouseEvent<HTMLButtonElement>) => {
-  //     e.preventDefault();
-
-  //     const tx = await addProfile(
-  //       "dave",
-  //       "Dave Choi",
-  //       "I am a programmer",
-  //       "",
-  //       ""
-  //     );
-
-  //     const id = await waitAndGetId(tx);
-  //   };
-
   return (
     <div className="layout-container">
       <nav className="layout-nav">

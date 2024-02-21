@@ -4,6 +4,7 @@ import { formattedNow } from "../utils/DateTimeUtils";
 import { GenericResponse } from "@kwilteam/kwil-js/dist/core/resreq";
 import { TxReceipt } from "@kwilteam/kwil-js/dist/core/tx";
 import { JsonRpcSigner } from "ethers";
+import { Profile } from "./ApiModels";
 
 const ADD_WORK: string = "add_work";
 const GET_AUTHOR_WORKS: string = "get_author_works";
@@ -75,20 +76,48 @@ export class KwilApi {
     };
     const res = await this.kwil!.call(actionBody);
     if (res.status == 200) {
+      // todo: update with actual type
       return res.data?.result;
     }
     return null;
   }
 
-  async getOwnersProfile() {
+  async getOwnersProfile(): Promise<Profile | null> {
     const actionBody = {
       dbid: this.dbid,
       action: "get_owners_profile",
       inputs: [],
     };
-    const res = await this.kwil!.call(actionBody);
+    const res = await this.kwil!.call(actionBody, this.kwilSigner);
     if (res.status == 200) {
       console.log("getOwnersProfile res.data?.result", res.data?.result);
+      if (Array.isArray(res.data?.result) && res.data.result.length > 0) {
+        const ownerProfile = res.data.result[0];
+        return {
+          id: ownerProfile.id,
+          updated_at: ownerProfile.updated_at,
+          username: ownerProfile.username,
+          fullname: ownerProfile.fullname,
+          description: ownerProfile.description,
+          owner_address: ownerProfile.owner_address,
+          social_link_primary: ownerProfile.social_link_primary,
+          social_link_second: ownerProfile.social_link_second,
+        };
+      }
+    }
+    return null;
+  }
+
+  async getAllProfiles() {
+    const actionBody = {
+      dbid: this.dbid,
+      action: "get_all_profiles",
+      inputs: [],
+    };
+    const res = await this.kwil!.call(actionBody);
+    if (res.status == 200) {
+      console.log("getAllProfiles res.data?.result", res.data?.result);
+      // todo: update with actual type
       return res.data?.result;
     }
     return null;
@@ -131,18 +160,22 @@ export class KwilApi {
     return await this.kwil!.txInfo(tx);
   }
 
-  async getTxEntityId(tx: string) {
+  async confirmTxCompleteAndGetEntityId(tx: string) {
     const result = await this.kwil!.txInfo(tx);
+    console.log("tx info:", result);
     if (result.status === 200) {
       if (result.data) {
-        if (
-          result.data.tx.body.payload &&
-          result.data.tx.body.payload.length === 3
-        ) {
-          const inputsArray = result.data.tx.body.payload[2];
-          if (Array.isArray(inputsArray)) {
-            if (Array.isArray(inputsArray[0])) {
-              return inputsArray[0][0];
+        console.log("tx_result info:", result.data.tx_result);
+        if (result.data.tx_result && result.data.tx_result.code > 0) {
+          if (
+            result.data.tx.body.payload &&
+            result.data.tx.body.payload.length === 3
+          ) {
+            const inputsArray = result.data.tx.body.payload[2];
+            if (Array.isArray(inputsArray)) {
+              if (Array.isArray(inputsArray[0])) {
+                return inputsArray[0][0];
+              }
             }
           }
         }
@@ -151,15 +184,15 @@ export class KwilApi {
     return 0;
   }
 
+  /// Waits for tx to finish and gets id
   async waitAndGetId(tx: string | null | undefined) {
-    console.log("tx info:", await this.txInfo(tx || ""));
     let id = 0;
     let iterations = 0;
     while (id === 0) {
       if (iterations > 5)
         throw new Error("Transaction failed to process within time alotted");
 
-      id = await this.getTxEntityId(tx || "");
+      id = await this.confirmTxCompleteAndGetEntityId(tx || "");
 
       await new Promise((r) => setTimeout(r, 3000));
       iterations += 1;
