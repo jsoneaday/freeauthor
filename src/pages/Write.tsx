@@ -1,13 +1,4 @@
-import {
-  MDXEditor,
-  MDXEditorMethods,
-  UndoRedo,
-  BoldItalicUnderlineToggles,
-  BlockTypeSelect,
-  toolbarPlugin,
-} from "@mdxeditor/editor";
-import "@mdxeditor/editor/style.css";
-import { MouseEvent, useCallback, useEffect, useRef, useState } from "react";
+import { MouseEvent, useEffect, useRef, useState } from "react";
 import { Layout } from "../common/components/Layout";
 import { useProfile } from "../common/redux/profile/ProfileHooks";
 import { kwilApi } from "../common/api/KwilApi";
@@ -16,6 +7,8 @@ import Notification from "../common/components/modals/Notification";
 import useNotificationState from "../common/redux/notification/NotificationStateHooks";
 import { ProfileForm } from "../common/components/ProfileForm";
 import { PrimaryButton } from "../common/components/Buttons";
+import { MDXEditorMethods } from "@mdxeditor/editor";
+import { MarkdownEditor } from "../common/components/MarkdownEditor";
 
 const SMALL_NOTIFICATION_HEIGHT = "170px";
 const LARGE_NOTIFICATION_HEIGHT = "580px";
@@ -31,9 +24,6 @@ export function Write() {
     SMALL_NOTIFICATION_HEIGHT
   );
   const [connectValidationMsg, setConnectValidationMsg] = useState("");
-  const setEditorValue = useCallback((markdownStr: string) => {
-    console.log("editor updated value", markdownStr);
-  }, []);
 
   const submitValue = async (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
@@ -126,24 +116,7 @@ export function Write() {
         ) : null}
       </Notification>
       <div className="home">
-        <MDXEditor
-          className="mdx-container"
-          ref={mdRef}
-          markdown="Type your article"
-          onChange={setEditorValue}
-          plugins={[
-            toolbarPlugin({
-              toolbarContents: () => (
-                <>
-                  {" "}
-                  <BlockTypeSelect />
-                  <UndoRedo />
-                  <BoldItalicUnderlineToggles />
-                </>
-              ),
-            }),
-          ]}
-        />
+        <MarkdownEditor mdRef={mdRef} />
         <div className="btn-span-align" style={{ marginTop: "1em" }}>
           <span style={{ marginRight: "2em" }}>{txOutputMsg}</span>
           <PrimaryButton
