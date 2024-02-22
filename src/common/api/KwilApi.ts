@@ -48,7 +48,7 @@ export class KwilApi {
       action: ADD_WORK,
       inputs: [
         {
-          $work_id: workId,
+          $work_id: workId + 1,
           $updated_at: formattedNow(),
           $title: title,
           $content: content,
@@ -177,11 +177,10 @@ export class KwilApi {
     console.log("tx info:", result);
     if (result.status === 200) {
       if (result.data) {
-        console.log("tx_result info:", result.data.tx_result);
-        if (result.data.tx_result && result.data.tx_result.code > 0) {
+        if (result.data.tx_result && result.data.tx_result.log === "success") {
           if (
             result.data.tx.body.payload &&
-            result.data.tx.body.payload.length === 3
+            result.data.tx.body.payload.length >= 3
           ) {
             const inputsArray = result.data.tx.body.payload[2];
             if (Array.isArray(inputsArray)) {

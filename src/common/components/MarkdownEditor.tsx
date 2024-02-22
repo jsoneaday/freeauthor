@@ -7,6 +7,8 @@ import {
   toolbarPlugin,
   codeMirrorPlugin,
   codeBlockPlugin,
+  listsPlugin,
+  ListsToggle,
   ConditionalContents,
   InsertCodeBlock,
   ChangeCodeMirrorLanguage,
@@ -55,6 +57,7 @@ export function MarkdownEditor({ mdRef }: MarkdownEditorProps) {
             ts: "Typescript",
           },
         }),
+        listsPlugin(),
         toolbarPlugin({
           toolbarContents: () => (
             <>
@@ -62,6 +65,7 @@ export function MarkdownEditor({ mdRef }: MarkdownEditorProps) {
               <BlockTypeSelect />
               <UndoRedo />
               <BoldItalicUnderlineToggles />
+              <ListsToggle />
               <ConditionalContents
                 options={[
                   {
