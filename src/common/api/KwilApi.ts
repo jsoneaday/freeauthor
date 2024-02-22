@@ -29,6 +29,7 @@ export class KwilApi {
     this.provider = new BrowserProvider(window.ethereum);
     this.signer = await this.provider.getSigner();
     this.address = await this.signer.getAddress();
+    console.log("Eth address:", this.address);
 
     this.dbid = Utils.generateDBID(this.address, "freeauthor");
 

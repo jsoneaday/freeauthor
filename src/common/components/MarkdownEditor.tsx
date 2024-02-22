@@ -8,6 +8,7 @@ import {
   codeMirrorPlugin,
   codeBlockPlugin,
   listsPlugin,
+  headingsPlugin,
   ListsToggle,
   ConditionalContents,
   InsertCodeBlock,
@@ -58,6 +59,7 @@ export function MarkdownEditor({ mdRef }: MarkdownEditorProps) {
           },
         }),
         listsPlugin(),
+        headingsPlugin(),
         toolbarPlugin({
           toolbarContents: () => (
             <>
