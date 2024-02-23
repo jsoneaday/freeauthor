@@ -23,7 +23,9 @@ export function ManageStories() {
 
   return (
     <Layout>
-      <ul className="stories-list"></ul>
+      <div className="home-single">
+        <ul className="stories-list"></ul>
+      </div>
     </Layout>
   );
 }

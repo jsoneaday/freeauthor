@@ -71,7 +71,7 @@ export function ConnectCreateProfile({
         Please connect your wallet {/* todo: need supported wallets button */}
       </span>
       <span className="btn-span-align" style={{ marginTop: "1em" }}>
-        <div style={{ marginTop: "1.25em", color: "var(--error-cl)" }}>
+        <div style={{ marginTop: "1.25em", color: "var(--warning-cl)" }}>
           {connectValidationMsg}
         </div>
         <PrimaryButton

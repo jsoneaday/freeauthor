@@ -5,7 +5,8 @@
 }
 
 :root {
-  --error-cl: rgb(128, 0, 32);
+  --error-cl: salmon;
+  --warning-cl: rgb(128, 0, 32);
   --primary-cl: black;
   --secondary-cl: navy;
   --tertiary-cl: gray;

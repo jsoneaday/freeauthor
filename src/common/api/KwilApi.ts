@@ -5,47 +5,48 @@ import { GenericResponse } from "@kwilteam/kwil-js/dist/core/resreq";
 import { TxReceipt } from "@kwilteam/kwil-js/dist/core/tx";
 import { JsonRpcSigner } from "ethers";
 import { Profile } from "./ApiModels";
+import { MsgReceipt } from "@kwilteam/kwil-js/dist/core/message";
 
 const ADD_WORK: string = "add_work";
 const GET_AUTHOR_WORKS: string = "get_author_works";
 const ADD_PROFILE: string = "add_profile";
 
 export class KwilApi {
-  private provider: BrowserProvider | undefined;
-  private signer: JsonRpcSigner | undefined;
-  private address: string | undefined;
+  #provider: BrowserProvider | undefined;
+  #signer: JsonRpcSigner | undefined;
+  #address: string | undefined;
   Address() {
-    return this.address;
+    return this.#address;
   }
 
-  private kwil: WebKwil | undefined;
-  private kwilSigner: KwilSigner | undefined;
+  #kwil: WebKwil | undefined;
+  #kwilSigner: KwilSigner | undefined;
 
-  private dbid: string = "";
-  private kwilProvider: string = "https://testnet.kwil.com";
-  private chainId: string = "kwil-chain-testnet-0.6";
+  #dbid: string = "";
+  #kwilProvider: string = "https://testnet.kwil.com";
+  #chainId: string = "kwil-chain-testnet-0.6";
 
   async connect() {
-    this.provider = new BrowserProvider(window.ethereum);
-    this.signer = await this.provider.getSigner();
-    this.address = await this.signer.getAddress();
-    console.log("Eth address:", this.address);
+    this.#provider = new BrowserProvider(window.ethereum);
+    this.#signer = await this.#provider.getSigner();
+    this.#address = await this.#signer.getAddress();
+    console.log("Eth address:", this.#address);
 
-    this.dbid = Utils.generateDBID(this.address, "freeauthor");
+    this.#dbid = Utils.generateDBID(this.#address, "freeauthor");
 
-    this.kwil = new WebKwil({
-      kwilProvider: this.kwilProvider,
-      chainId: this.chainId,
+    this.#kwil = new WebKwil({
+      kwilProvider: this.#kwilProvider,
+      chainId: this.#chainId,
     });
-    this.kwilSigner = new KwilSigner(this.signer, this.address);
+    this.#kwilSigner = new KwilSigner(this.#signer, this.#address);
   }
 
   async addWork(title: string, content: string, authorId: number) {
-    let workId = await this.getLastId("get_last_work_id");
+    let workId = await this.#getLastId("get_last_work_id");
 
     console.log("Send addWork authorId:", authorId);
     const actionBody = {
-      dbid: this.dbid,
+      dbid: this.#dbid,
       action: ADD_WORK,
       inputs: [
         {
@@ -58,46 +59,46 @@ export class KwilApi {
       ],
     };
 
-    return this.getResultHash(
-      await this.kwil!.execute(actionBody, this.kwilSigner!)
+    return this.#getResultHash(
+      await this.#kwil!.execute(actionBody, this.#kwilSigner!)
     );
   }
 
   async cleanDb() {
-    if (!this.kwil) {
+    if (!this.#kwil) {
       await this.connect();
     }
 
     const actionBody = {
-      dbid: this.dbid,
+      dbid: this.#dbid,
       action: "clean_db",
       inputs: [],
     };
 
-    return this.getResultHash(
-      await this.kwil!.execute(actionBody, this.kwilSigner!, true)
+    return this.#getResultHash(
+      await this.#kwil!.execute(actionBody, this.#kwilSigner!, true)
     );
   }
 
   async setTestData() {
-    if (!this.kwil) {
+    if (!this.#kwil) {
       await this.connect();
     }
 
     const actionBody = {
-      dbid: this.dbid,
+      dbid: this.#dbid,
       action: "set_test_data",
       inputs: [],
     };
 
-    return this.getResultHash(
-      await this.kwil!.execute(actionBody, this.kwilSigner!, true)
+    return this.#getResultHash(
+      await this.#kwil!.execute(actionBody, this.#kwilSigner!, true)
     );
   }
 
   async getAuthorWorks(authorId: number, lastKeyset: number, pageSize: number) {
     const actionBody = {
-      dbid: this.dbid,
+      dbid: this.#dbid,
       action: GET_AUTHOR_WORKS,
       inputs: [
         {
@@ -107,7 +108,7 @@ export class KwilApi {
         },
       ],
     };
-    const res = await this.kwil!.call(actionBody);
+    const res = await this.#kwil!.call(actionBody);
     if (res.status == 200) {
       // todo: update with actual type
       return res.data?.result;
@@ -115,39 +116,69 @@ export class KwilApi {
     return null;
   }
 
-  async getOwnersProfile(): Promise<Profile | null> {
+  async getOwnersProfile() {
     const actionBody = {
-      dbid: this.dbid,
+      dbid: this.#dbid,
       action: "get_owners_profile",
       inputs: [],
     };
-    const res = await this.kwil!.call(actionBody, this.kwilSigner);
+    const profiles = this.#getProfiles(
+      await this.#kwil!.call(actionBody, this.#kwilSigner)
+    );
+    console.log("getOwnerProfile", profiles);
+    return this.#getFirstItem(profiles);
+  }
+
+  async getFollwedProfiles(profileId: number) {
+    const actionBody = {
+      dbid: this.#dbid,
+      action: "get_followed_profiles",
+      inputs: [
+        {
+          $follower_id: profileId,
+        },
+      ],
+    };
+
+    return this.#getProfiles(
+      await this.#kwil!.call(actionBody, this.#kwilSigner)
+    );
+  }
+
+  #getProfiles(res: GenericResponse<MsgReceipt>) {
     if (res.status == 200) {
-      console.log("getOwnersProfile res.data?.result", res.data?.result);
-      if (Array.isArray(res.data?.result) && res.data.result.length > 0) {
-        const ownerProfile = res.data.result[0];
-        return {
-          id: ownerProfile.id,
-          updated_at: ownerProfile.updated_at,
-          username: ownerProfile.username,
-          fullname: ownerProfile.fullname,
-          description: ownerProfile.description,
-          owner_address: ownerProfile.owner_address,
-          social_link_primary: ownerProfile.social_link_primary,
-          social_link_second: ownerProfile.social_link_second,
-        };
+      if (Array.isArray(res.data?.result)) {
+        return res.data.result.map((profile: Profile) => {
+          return {
+            id: profile.id,
+            updated_at: profile.updated_at,
+            username: profile.username,
+            fullname: profile.fullname,
+            description: profile.description,
+            owner_address: profile.owner_address,
+            social_link_primary: profile.social_link_primary,
+            social_link_second: profile.social_link_second,
+          };
+        });
       }
+    }
+    return null;
+  }
+
+  #getFirstItem<T>(items: T[] | null) {
+    if (Array.isArray(items)) {
+      return items.length > 0 ? items[0] : null;
     }
     return null;
   }
 
   async getAllProfiles() {
     const actionBody = {
-      dbid: this.dbid,
+      dbid: this.#dbid,
       action: "get_all_profiles",
       inputs: [],
     };
-    const res = await this.kwil!.call(actionBody);
+    const res = await this.#kwil!.call(actionBody);
     if (res.status == 200) {
       console.log("getAllProfiles res.data?.result", res.data?.result);
       // todo: update with actual type
@@ -163,12 +194,12 @@ export class KwilApi {
     socialLinkPrimary: string,
     socialLinkSecond: string
   ) {
-    const profileId = await this.getLastId("get_last_profile_id");
+    const profileId = await this.#getLastId("get_last_profile_id");
 
     console.log("Send addProfile updated_at:", formattedNow());
-    console.log("Send addProfile owner_address:", this.address);
+    console.log("Send addProfile owner_address:", this.#address);
     const actionBody = {
-      dbid: this.dbid,
+      dbid: this.#dbid,
       action: ADD_PROFILE,
       inputs: [
         {
@@ -177,24 +208,24 @@ export class KwilApi {
           $username: userName,
           $fullname: fullName,
           $description: description,
-          $owner_address: this.address!,
+          $owner_address: this.#address!,
           $social_link_primary: socialLinkPrimary,
           $social_link_second: socialLinkSecond,
         },
       ],
     };
 
-    return this.getResultHash(
-      await this.kwil!.execute(actionBody, this.kwilSigner!, true)
+    return this.#getResultHash(
+      await this.#kwil!.execute(actionBody, this.#kwilSigner!, true)
     );
   }
 
   async txInfo(tx: string) {
-    return await this.kwil!.txInfo(tx);
+    return await this.#kwil!.txInfo(tx);
   }
 
   async confirmTxCompleteAndGetEntityId(tx: string) {
-    const result = await this.kwil!.txInfo(tx);
+    const result = await this.#kwil!.txInfo(tx);
     console.log("tx info:", result);
     if (result.status === 200) {
       if (result.data) {
@@ -233,7 +264,7 @@ export class KwilApi {
     return id;
   }
 
-  private async getResultHash(result: GenericResponse<TxReceipt>) {
+  async #getResultHash(result: GenericResponse<TxReceipt>) {
     console.log("getResultHash result:", result);
     if (result.status === 200) {
       return result.data?.tx_hash;
@@ -241,10 +272,10 @@ export class KwilApi {
     return null;
   }
 
-  private async getLastId(action: string) {
+  async #getLastId(action: string) {
     let id = 0;
-    const id_result = await this.kwil!.call({
-      dbid: this.dbid,
+    const id_result = await this.#kwil!.call({
+      dbid: this.#dbid,
       action,
       inputs: [],
     });

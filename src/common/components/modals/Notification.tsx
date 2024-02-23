@@ -31,6 +31,8 @@ export default function Notification({
   useEffect(() => {
     if (notiType === NotificationType.Error) {
       setTitleColor("var(--error-cl)");
+    } else if (notiType === NotificationType.Warning) {
+      setTitleColor("var(--warning-cl)");
     } else {
       setTitleColor("var(--primary-cl)");
     }

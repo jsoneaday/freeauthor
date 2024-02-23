@@ -257,7 +257,9 @@ export function ProfileForm({ profileCreatedCallback }: ProfileFormProps) {
         >
           {validationMsg ? (
             <>
-              <span style={{ color: "var(--error-cl)" }}>{validationMsg}</span>
+              <span style={{ color: "var(--warning-cl)" }}>
+                {validationMsg}
+              </span>
               {validationMsg === CREATE_PROFILE_STARTED_MSG ? (
                 <Spinner size={18} style={{ marginLeft: "1em" }} />
               ) : null}
