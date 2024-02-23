@@ -325,9 +325,17 @@ select {
 }
 
 .profile-avatar {
-  width: 3em;
-  height: 3em;
+  width: 2.5em;
+  height: 2.5em;
   border-radius: 50%;
-  padding: 0.25em;
+  padding: 0.2em;
   border: solid 2px var(--primary-cl);
+}
+
+.standard-header {
+  border-bottom-color: var(--header-border-cl);
+  border-bottom-width: 1px;
+  border-bottom-style: solid;
+  padding-bottom: 0.5em;
+  margin-top: 0.5em;
 }

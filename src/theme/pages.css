@@ -1,10 +1,16 @@
-.home {
+.home-single {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
   height: 100vh;
   width: 900px;
+}
+
+.home-double {
+  display: grid;
+  width: 1200px;
+  grid-template-columns: 25% 75%;
 }
 
 .home-menu {
@@ -58,12 +64,4 @@
     width: 100%;
     margin-top: 1.5em;
   }
-}
-
-.write-connect-header {
-  border-bottom-color: var(--header-border-cl);
-  border-bottom-width: 1px;
-  border-bottom-style: solid;
-  padding-bottom: 0.5em;
-  margin-top: 0.5em;
 }

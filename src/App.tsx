@@ -9,6 +9,7 @@ import { Explorer } from "./pages/Explorer";
 import { Home } from "./pages/Home";
 import { Write } from "./pages/Write";
 import { Read } from "./pages/Read";
+import { ManageStories } from "./pages/ManageStories";
 
 const router = createBrowserRouter([
   {
@@ -18,6 +19,14 @@ const router = createBrowserRouter([
   {
     path: "/write",
     element: <Write />,
+  },
+  {
+    path: "/write/:post_id",
+    element: <Write />,
+  },
+  {
+    path: "/write/manage",
+    element: <ManageStories />,
   },
   {
     path: "/read",

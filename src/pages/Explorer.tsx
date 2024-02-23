@@ -7,7 +7,7 @@ import { Layout } from "../common/components/Layout";
 export function Explorer() {
   return (
     <Layout>
-      <div className="home"></div>
+      <div className="home-single"></div>
     </Layout>
   );
 }

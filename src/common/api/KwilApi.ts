@@ -64,9 +64,29 @@ export class KwilApi {
   }
 
   async cleanDb() {
+    if (!this.kwil) {
+      await this.connect();
+    }
+
     const actionBody = {
       dbid: this.dbid,
       action: "clean_db",
+      inputs: [],
+    };
+
+    return this.getResultHash(
+      await this.kwil!.execute(actionBody, this.kwilSigner!, true)
+    );
+  }
+
+  async setTestData() {
+    if (!this.kwil) {
+      await this.connect();
+    }
+
+    const actionBody = {
+      dbid: this.dbid,
+      action: "set_test_data",
       inputs: [],
     };
 
