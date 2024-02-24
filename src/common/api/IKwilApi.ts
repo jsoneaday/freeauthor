@@ -36,7 +36,5 @@ export interface IKwilApi {
     pageSize: number
   ): Promise<Work[] | null>;
 
-  txInfo(tx: string): Promise<GenericResponse<TxInfoReceipt>>;
-
   waitAndGetId(tx: string | null | undefined): Promise<number>;
 }

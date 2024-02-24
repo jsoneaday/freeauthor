@@ -146,11 +146,20 @@ class FakeKwilApi implements IKwilApi {
     authorId: number,
     lastKeyset: number,
     pageSize: number
-  ): Promise<Work[] | null>;
+  ): Promise<Work[] | null> {
+    return works
+      .filter((work) => work.author_id === authorId)
+      .sort((a, b) => {
+        if (a.id > b.id) return 1;
+        if (a.id < b.id) return -1;
+        return 0;
+      })
+      .slice(lastKeyset, lastKeyset + pageSize);
+  }
 
-  async txInfo(tx: string): Promise<GenericResponse<TxInfoReceipt>>;
-
-  async waitAndGetId(tx: string | null | undefined): Promise<number>;
+  async waitAndGetId(tx: string | null | undefined): Promise<number> {
+    throw new Error("Not implemented!");
+  }
 }
 
 function getLastEntityId<T extends Entity>(entities: T[] | null | undefined) {

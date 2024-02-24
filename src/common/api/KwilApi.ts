@@ -282,7 +282,7 @@ export class KwilApi implements IKwilApi {
     return null;
   }
 
-  async txInfo(tx: string) {
+  async #txInfo(tx: string) {
     return await this.#kwil!.txInfo(tx);
   }
 
