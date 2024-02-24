@@ -239,6 +239,46 @@ export class KwilApi implements IKwilApi {
     return this.#convertToWorks(await this.#kwil!.call(actionBody));
   }
 
+  async getWorksByAllFollowed(
+    followerId: number,
+    lastKeyset: number,
+    pageSize: number
+  ): Promise<Work[] | null> {
+    const actionBody = {
+      dbid: this.#dbid,
+      action: "get_works_by_all_followed",
+      inputs: [
+        {
+          $follower_id: followerId,
+          $last_keyset: lastKeyset,
+          $page_size: pageSize,
+        },
+      ],
+    };
+    return this.#convertToWorks(await this.#kwil!.call(actionBody));
+  }
+
+  async getWorksByOneFollowed(
+    followerId: number,
+    followedId: number,
+    lastKeyset: number,
+    pageSize: number
+  ): Promise<Work[] | null> {
+    const actionBody = {
+      dbid: this.#dbid,
+      action: "get_works_by_all_followed",
+      inputs: [
+        {
+          $follower_id: followerId,
+          $followed_id: followedId,
+          $last_keyset: lastKeyset,
+          $page_size: pageSize,
+        },
+      ],
+    };
+    return this.#convertToWorks(await this.#kwil!.call(actionBody));
+  }
+
   async getOwnersProfile() {
     const actionBody = {
       dbid: this.#dbid,

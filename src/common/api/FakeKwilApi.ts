@@ -13,7 +13,7 @@ import { faker } from "@faker-js/faker";
 import { formattedNow } from "../utils/DateTimeUtils";
 
 const profiles: Profile[] = [];
-const worksLength = 30;
+const worksLength = 40;
 const works: Work[] = [];
 const follows: Follow[] = [];
 const topics: Topic[] = [];
@@ -152,6 +152,48 @@ export class FakeKwilApi implements IKwilApi {
   ): Promise<Work[] | null> {
     return works
       .filter((work) => work.author_id === authorId)
+      .sort((a, b) => {
+        if (a.id > b.id) return 1;
+        if (a.id < b.id) return -1;
+        return 0;
+      })
+      .slice(lastKeyset, lastKeyset + pageSize);
+  }
+
+  async getWorksByAllFollowed(
+    followerId: number,
+    lastKeyset: number,
+    pageSize: number
+  ): Promise<Work[] | null> {
+    const followedIds = follows
+      .filter((follow) => follow.follower_id === followerId)
+      .map((follow) => follow.followed_id);
+
+    return works
+      .filter((work) => followedIds.includes(work.author_id))
+      .sort((a, b) => {
+        if (a.id > b.id) return 1;
+        if (a.id < b.id) return -1;
+        return 0;
+      })
+      .slice(lastKeyset, lastKeyset + pageSize);
+  }
+
+  async getWorksByOneFollowed(
+    followerId: number,
+    followedId: number,
+    lastKeyset: number,
+    pageSize: number
+  ): Promise<Work[] | null> {
+    const followedIds = follows
+      .filter(
+        (follow) =>
+          follow.follower_id === followerId && follow.followed_id === followedId
+      )
+      .map((follow) => follow.followed_id);
+
+    return works
+      .filter((work) => followedIds.includes(work.author_id))
       .sort((a, b) => {
         if (a.id > b.id) return 1;
         if (a.id < b.id) return -1;

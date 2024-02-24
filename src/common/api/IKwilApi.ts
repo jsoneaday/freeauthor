@@ -34,6 +34,17 @@ export interface IKwilApi {
     lastKeyset: number,
     pageSize: number
   ): Promise<Work[] | null>;
+  getWorksByAllFollowed(
+    followerId: number,
+    lastKeyset: number,
+    pageSize: number
+  ): Promise<Work[] | null>;
+  getWorksByOneFollowed(
+    followerId: number,
+    followedId: number,
+    lastKeyset: number,
+    pageSize: number
+  ): Promise<Work[] | null>;
 
   waitAndGetId(tx: string | null | undefined): Promise<number>;
 }
