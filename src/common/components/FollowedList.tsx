@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { MouseEvent, useEffect, useState } from "react";
 import { kwilApi } from "../api/KwilApiInstance";
 import longhair from "../../theme/assets/profiles/longhair.jpg";
 import mrglasses from "../../theme/assets/profiles/mrglasses.jpg";
@@ -9,11 +9,23 @@ import { useProfile } from "../redux/profile/ProfileHooks";
 import { v4 as uuidv4 } from "uuid";
 import { faker } from "@faker-js/faker";
 
-export function FollowedList() {
+interface FollowedListProps {
+  getCurrentSelectedFollowedId: (id: number) => void;
+}
+
+export function FollowedList({
+  getCurrentSelectedFollowedId,
+}: FollowedListProps) {
   const [followedProfiles, setFollowedProfiles] = useState<
     JSX.Element[] | string
   >([]);
   const [profile, _setProfile] = useProfile();
+
+  const onClickSelectProfile = (e: MouseEvent<HTMLDivElement>) => {
+    getCurrentSelectedFollowedId(
+      Number(e.currentTarget.dataset.profileId || 0)
+    );
+  };
 
   useEffect(() => {
     if (profile) {
@@ -28,12 +40,14 @@ export function FollowedList() {
             // todo: use images from chain when ready
             const followed = profiles?.map((profile) => (
               <div
+                data-profile-id={profile.id}
                 key={`followed-${profile.username}`}
                 className="followed-list-item"
+                onClick={onClickSelectProfile}
               >
                 <RandomImg />
                 <div className="followed-list-font-items">
-                  <b>{profile.fullname}</b>
+                  <b>{`${profile.id} ${profile.fullname}`}</b>
                   <div>
                     {profile.username.includes("@")
                       ? profile.username
