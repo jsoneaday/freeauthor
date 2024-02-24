@@ -173,6 +173,7 @@ export function ProfileForm({ profileCreatedCallback }: ProfileFormProps) {
       username,
       fullname,
       description,
+      kwilApi.Address,
       socialPrimary,
       socialSecondary
     );

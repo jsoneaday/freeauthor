@@ -1,6 +1,4 @@
-import { GenericResponse } from "@kwilteam/kwil-js/dist/core/resreq";
-import { IKwilApi, TxHashPromise } from "./IKwilApi";
-import { TxInfoReceipt } from "@kwilteam/kwil-js/dist/core/txQuery";
+import { IKwilApi } from "./IKwilApi";
 import {
   Entity,
   Follow,

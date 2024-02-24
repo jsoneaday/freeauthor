@@ -1,10 +1,9 @@
-import { TxInfoReceipt } from "@kwilteam/kwil-js/dist/core/txQuery";
 import { Profile, Work } from "./ApiModels";
-import { GenericResponse } from "@kwilteam/kwil-js/dist/core/resreq";
 
 export type TxHashPromise = Promise<string | null | undefined>;
 
 export interface IKwilApi {
+  get Address(): string;
   connect(): Promise<void>;
 
   addWork(title: string, content: string, authorId: number): TxHashPromise;

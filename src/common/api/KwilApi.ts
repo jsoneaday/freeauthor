@@ -16,7 +16,9 @@ export class KwilApi implements IKwilApi {
   #provider: BrowserProvider | undefined;
   #signer: JsonRpcSigner | undefined;
   #address: string | undefined;
-  Address() {
+  public get Address() {
+    if (!this.#address) throw new Error("#address is not set yet!");
+
     return this.#address;
   }
 
