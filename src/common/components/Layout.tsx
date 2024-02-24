@@ -47,10 +47,7 @@ export function Layout({ children }: LayoutProps) {
           >
             (Clean DB)
           </button>
-          <button
-            style={{ marginRight: "1.5em" }}
-            onClick={async () => await kwilApi.setTestData()}
-          >
+          <button style={{ marginRight: "1.5em" }} onClick={async () => {}}>
             (Add Test Data)
           </button>
           {profile ? (

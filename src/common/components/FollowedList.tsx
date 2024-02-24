@@ -18,7 +18,19 @@ export function FollowedList() {
         .then((profiles) => {
           // todo: update this matching image when ready
           setFollowedProfiles(
-            profiles?.map((_profile) => <img key={uuidv4()} src={longhair} />)
+            profiles?.map((profile) => (
+              <div>
+                <img key={uuidv4()} src={longhair} className="profile-avatar" />
+                <div className="followed-list-font-items">
+                  <b>{profile.fullname}</b>
+                  <div>
+                    {profile.username.includes("@")
+                      ? profile.username
+                      : `@${profile.username}`}
+                  </div>
+                </div>
+              </div>
+            ))
           );
         })
         .catch((e) => console.log(e));
@@ -26,8 +38,8 @@ export function FollowedList() {
   }, [profile]);
 
   return (
-    <div>
-      <ul>{followedProfiles}</ul>
+    <div className="followed-list followed-list-scrollable">
+      {followedProfiles}
     </div>
   );
 }

@@ -339,3 +339,23 @@ select {
   padding-bottom: 0.5em;
   margin-top: 0.5em;
 }
+
+.followed-list {
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+  width: 100%;
+  border-bottom-color: var(--header-border-cl);
+  border-bottom-width: 1px;
+  border-bottom-style: solid;
+}
+
+.followed-list-font-items {
+  width: 6em;
+  margin-right: 0.5em;
+  font-size: 12px;
+}
+
+.followed-list-scrollable {
+  overflow-x: scroll;
+}

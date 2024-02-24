@@ -4,8 +4,10 @@ import { Layout } from "../common/components/Layout";
 export function Read() {
   return (
     <Layout>
-      <FollowedList />
-      <div className="home-single">Read</div>
+      <div className="home-single">
+        <FollowedList />
+        <div style={{ marginTop: "1.5em" }}>Read body</div>
+      </div>
     </Layout>
   );
 }
