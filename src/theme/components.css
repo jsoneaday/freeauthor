@@ -325,8 +325,8 @@ select {
 }
 
 .profile-avatar {
-  width: 2.5em;
-  height: 2.5em;
+  width: 3em;
+  height: .em;
   border-radius: 50%;
   padding: 0.2em;
   border: solid 2px var(--primary-cl);
@@ -348,12 +348,26 @@ select {
   border-bottom-color: var(--header-border-cl);
   border-bottom-width: 1px;
   border-bottom-style: solid;
+  cursor: pointer;
+}
+
+.followed-list-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  margin-left: 1.5em;
+  margin-right: 1.5em;
 }
 
 .followed-list-font-items {
-  width: 6em;
-  margin-right: 0.5em;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  width: 8em;
   font-size: 12px;
+  margin-top: 1em;
 }
 
 .followed-list-scrollable {

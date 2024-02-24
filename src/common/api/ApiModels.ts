@@ -5,37 +5,25 @@ export interface Entity {
 
 export class Work implements Entity {
   constructor(
-    id: number,
-    updated_at: string,
+    public id: number,
+    public updated_at: string,
     public title: string,
     public content: string,
     public author_id: number
-  ) {
-    this.id = id;
-    this.updated_at = updated_at;
-  }
-
-  id: number;
-  updated_at: string;
+  ) {}
 }
 
 export class Profile implements Entity {
   constructor(
-    id: number,
-    updated_at: string,
+    public id: number,
+    public updated_at: string,
     public username: string,
     public fullname: string,
     public description: string,
     public owner_address: string,
     public social_link_primary: string,
     public social_link_second: string
-  ) {
-    this.id = id;
-    this.updated_at = updated_at;
-  }
-
-  id: number;
-  updated_at: string;
+  ) {}
 }
 
 export class Follow implements Entity {

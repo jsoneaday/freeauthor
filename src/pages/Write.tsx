@@ -1,7 +1,7 @@
 import { MouseEvent, useEffect, useRef, useState } from "react";
 import { Layout } from "../common/components/Layout";
 import { useProfile } from "../common/redux/profile/ProfileHooks";
-import { kwilApi } from "../common/api/KwilApi";
+import { kwilApi } from "../common/api/KwilApiInstance";
 import { PrimaryButton } from "../common/components/Buttons";
 import { MDXEditorMethods } from "@mdxeditor/editor";
 import { MarkdownEditor } from "../common/components/MarkdownEditor";
@@ -58,7 +58,7 @@ export function Write() {
           </span>
         </nav>
         <div className="home-content">
-          <MarkdownEditor mdRef={mdRef} />
+          <MarkdownEditor mdRef={mdRef} readOnly={false} />
           <div className="btn-span-align" style={{ marginTop: "1em" }}>
             <span style={{ marginRight: "2em" }}>{txOutputMsg}</span>
             <PrimaryButton

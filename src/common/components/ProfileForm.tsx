@@ -1,5 +1,5 @@
 import { ChangeEvent, useState, MouseEvent } from "react";
-import { kwilApi } from "../api/KwilApi";
+import { kwilApi } from "../api/KwilApiInstance";
 import { useProfile } from "../redux/profile/ProfileHooks";
 import { PrimaryButton } from "./Buttons";
 import { Spinner } from "./Spinner";

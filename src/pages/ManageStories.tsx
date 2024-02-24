@@ -1,6 +1,6 @@
 import { ReactNode, useEffect, useState } from "react";
 import { Layout } from "../common/components/Layout";
-import { kwilApi } from "../common/api/KwilApi";
+import { kwilApi } from "../common/api/KwilApiInstance";
 import { useProfile } from "../common/redux/profile/ProfileHooks";
 
 export function ManageStories() {

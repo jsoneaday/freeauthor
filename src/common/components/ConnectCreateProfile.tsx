@@ -3,7 +3,7 @@ import { NotificationType } from "./modals/Notification";
 import { PrimaryButton } from "./Buttons";
 import { ProfileForm } from "./ProfileForm";
 import Notification from "./modals/Notification";
-import { kwilApi } from "../api/KwilApi";
+import { kwilApi } from "../api/KwilApiInstance";
 import { useProfile } from "../redux/profile/ProfileHooks";
 import { NotificationState } from "../redux/notification/NotificationStateSlice";
 

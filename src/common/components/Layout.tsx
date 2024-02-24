@@ -1,7 +1,7 @@
 import { MouseEvent, ReactNode } from "react";
 import { useProfile } from "../redux/profile/ProfileHooks";
 import profileIcon from "../../theme/assets/profiles/mrglasses.jpg"; // todo: replace with user avatar when ready
-import { kwilApi } from "../api/KwilApi";
+import { kwilApi } from "../api/KwilApiInstance";
 import { NavAnchor } from "./NavAnchor";
 import { ConnectCreateProfile } from "./ConnectCreateProfile";
 import useNotificationState from "../redux/notification/NotificationStateHooks";

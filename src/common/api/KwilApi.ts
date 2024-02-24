@@ -406,5 +406,3 @@ export class KwilApi implements IKwilApi {
     return id;
   }
 }
-
-export const kwilApi: IKwilApi = new KwilApi();
