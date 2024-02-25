@@ -13,7 +13,7 @@ import { faker } from "@faker-js/faker";
 import { formattedNow } from "../utils/DateTimeUtils";
 
 const profiles: Profile[] = [];
-const worksLength = 50;
+const worksLength = 60;
 const works: Work[] = [];
 const follows: Follow[] = [];
 const topics: Topic[] = [];
@@ -236,8 +236,8 @@ export class FakeKwilApi implements IKwilApi {
       works.push({
         id: i + 1,
         updated_at: formattedNow(),
-        title: faker.lorem.text(),
-        content: faker.lorem.paragraphs({ min: 4, max: 6 }),
+        title: faker.lorem.sentence(),
+        content: md1,
         author_id: getRandomEntityId(profiles, "profiles"),
       });
     }
@@ -338,3 +338,43 @@ function getLastestEntityId<T extends Entity>(
     })
     .map((entity) => entity.id)[0];
 }
+
+const md1: string = `# Random Markdown Sample
+
+## Introduction
+
+Welcome to this random Markdown sample! In this document, we'll explore different Markdown elements, including headers, paragraphs, bold text, italic text, lists, and code blocks.
+
+### Longer Paragraphs
+Let's expand on the idea of longer paragraphs. Markdown allows you to express ideas more elaborately. Whether you're documenting code, writing technical documentation, or creating a simple blog post, Markdown's simplicity shines.
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nec odio. Praesent libero. Sed cursus ante dapibus diam. Sed nisi. Nulla quis sem at nibh elementum imperdiet. Duis sagittis ipsum. Praesent mauris. Fusce nec tellus sed augue semper porta. Mauris massa.
+
+Curabitur sodales ligula in libero. Sed dignissim lacinia nunc. Curabitur tortor. Pellentesque nibh. Aenean quam. In scelerisque sem at dolor. Maecenas mattis. Sed convallis tristique sem. Proin ut ligula vel nunc egestas porttitor. Morbi lectus risus, iaculis vel, suscipit quis, luctus non, massa. Fusce ac turpis quis ligula lacinia aliquet.
+
+### Unordered List
+
+- Item 1
+- Item 2
+  - Subitem A
+  - Subitem B
+- Item 3
+
+### Ordered List
+
+1. First item
+2. Second item
+3. Third item
+
+## Code Blocks
+
+Code blocks are created using three backticks. You can also specify the programming language for syntax highlighting.
+
+\`python
+def greet(name):
+    print(f"Hello, {name}!")
+\`
+
+### Conclusion
+This concludes our exploration of extended Markdown elements. Remember, the beauty of Markdown lies in its simplicity and readability. Feel free to experiment and tailor it to your needs, creating documents that are both informative and visually appealing.
+`;

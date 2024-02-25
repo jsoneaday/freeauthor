@@ -63,8 +63,7 @@ function setWorkElements(works: Work[] | null) {
   const workElements: JSX.Element[] = [];
   for (let i = 0; i < works.length; i++) {
     workElements.push(
-      <div key={`work-${works[i].id}`}>
-        <h3>{works[i].title}</h3>
+      <div key={`work-${works[i].id}`} style={{ marginBottom: "2em" }}>
         <MarkdownEditor readOnly={true} markdown={works[i].content} />
       </div>
     );
