@@ -13,7 +13,6 @@ import {
   ConditionalContents,
   InsertCodeBlock,
   ChangeCodeMirrorLanguage,
-  markdown$,
 } from "@mdxeditor/editor";
 import "@mdxeditor/editor/style.css";
 import { useCallback } from "react";
@@ -30,7 +29,7 @@ export function MarkdownEditor({
   readOnly,
 }: MarkdownEditorProps) {
   const setEditorValue = useCallback((markdownStr: string) => {
-    console.log("editor updated value", markdownStr);
+    console.log("MDXEditor updated value:", markdownStr);
   }, []);
 
   if (readOnly) {
@@ -48,14 +47,14 @@ interface EditorProps {
   mdRef?: React.RefObject<MDXEditorMethods>;
 }
 
-function ReadonlyEditor({ markdown, setEditorValue }: EditorProps) {
+function ReadonlyEditor({ markdown }: EditorProps) {
   console.log("markdown:", markdown);
   return (
     <MDXEditor
       className="mdx-container"
       markdown={markdown || ""}
-      onChange={setEditorValue}
       readOnly={true}
+      plugins={ReadonlyPlugin}
     />
   );
 }
@@ -68,12 +67,42 @@ function WritableEditor({ mdRef, setEditorValue }: EditorProps) {
       ref={mdRef}
       markdown="Type your article"
       onChange={setEditorValue}
-      plugins={Plugins}
+      plugins={WritePlugins}
     />
   );
 }
 
-const Plugins = [
+const ReadonlyPlugin = [
+  codeBlockPlugin({ defaultCodeBlockLanguage: "js" }),
+  codeMirrorPlugin({
+    codeBlockLanguages: {
+      c: "C",
+      cplusplus: "C++",
+      csharp: "C#",
+      css: "CSS",
+      erlang: "Erlang",
+      go: "Go",
+      groovy: "Groovy",
+      haskell: "Haskell",
+      html: "HTML",
+      java: "Java",
+      js: "Javascript",
+      lua: "Lua",
+      python: "Python",
+      r: "R",
+      ruby: "Ruby",
+      sass: "SASS",
+      scala: "Scala",
+      smalltalk: "Smalltalk",
+      sql: "SQL",
+      ts: "Typescript",
+    },
+  }),
+  listsPlugin(),
+  headingsPlugin(),
+];
+
+const WritePlugins = [
   codeBlockPlugin({ defaultCodeBlockLanguage: "js" }),
   codeMirrorPlugin({
     codeBlockLanguages: {

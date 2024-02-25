@@ -18,7 +18,6 @@ export function Read() {
   };
 
   useEffect(() => {
-    console.log("currentFollowedId", currentFollowedId);
     if (currentFollowedId === 0) {
       kwilApi
         .getWorksByAllFollowed(profile?.id || 0, priorKeyset, 20)
@@ -56,7 +55,6 @@ export function Read() {
 }
 
 function setWorkElements(works: Work[] | null) {
-  console.log("works", works);
   if (!works) {
     return undefined;
   }
@@ -64,6 +62,7 @@ function setWorkElements(works: Work[] | null) {
   for (let i = 0; i < works.length; i++) {
     workElements.push(
       <div key={`work-${works[i].id}`} style={{ marginBottom: "2em" }}>
+        <h1>{works[i].title}</h1>
         <MarkdownEditor readOnly={true} markdown={works[i].content} />
       </div>
     );

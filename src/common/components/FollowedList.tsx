@@ -38,7 +38,6 @@ export function FollowedList({
             );
           } else {
             // todo: use images from chain when ready
-            console.log("Got followed profiles", profiles);
             const followed = profiles?.map((profile) => (
               <div
                 data-profile-id={profile.id}
@@ -74,7 +73,6 @@ export function FollowedList({
                 </div>
               </div>
             );
-            console.log("followed elements", followed);
             setFollowedProfiles(followed);
           }
         })

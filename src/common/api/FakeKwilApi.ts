@@ -13,7 +13,7 @@ import { faker } from "@faker-js/faker";
 import { formattedNow } from "../utils/DateTimeUtils";
 
 const profiles: Profile[] = [];
-const worksLength = 60;
+const worksLength = 1;
 const works: Work[] = [];
 const follows: Follow[] = [];
 const topics: Topic[] = [];
@@ -202,7 +202,7 @@ export class FakeKwilApi implements IKwilApi {
       .slice(lastKeyset, lastKeyset + pageSize);
   }
 
-  async waitAndGetId(tx: string | null | undefined): Promise<number> {
+  async waitAndGetId(_tx: string | null | undefined): Promise<number> {
     throw new Error("Not implemented!");
   }
 
@@ -339,6 +339,20 @@ function getLastestEntityId<T extends Entity>(
     .map((entity) => entity.id)[0];
 }
 
+const header = "# Random Markdown Sample";
+const olist = `1. First item
+2. Second item
+3. Third item`;
+const ulist = `* Item 1
+* Item 2
+  * Subitem A
+  * Subitem B
+* Item 3`;
+const code = `
+function go() {
+    // some code
+}
+`;
 const md1: string = `# Random Markdown Sample
 
 ## Introduction
