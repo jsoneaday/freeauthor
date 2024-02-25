@@ -285,6 +285,23 @@ export class KwilApi implements IKwilApi {
     return this.#convertToWorks(await this.#kwil!.call(actionBody));
   }
 
+  async getProfile(profileId: number) {
+    const actionBody = {
+      dbid: this.#dbid,
+      action: "get_profile",
+      inputs: [
+        {
+          $profile_id: profileId,
+        },
+      ],
+    };
+
+    const profiles = this.#convertToProfiles(
+      await this.#kwil!.call(actionBody, this.#kwilSigner)
+    );
+    return this.#getFirstItem(profiles);
+  }
+
   async getOwnersProfile() {
     const actionBody = {
       dbid: this.#dbid,
@@ -314,25 +331,9 @@ export class KwilApi implements IKwilApi {
     );
   }
 
-  /// todo: remove this function
-  async getAllProfiles() {
-    const actionBody = {
-      dbid: this.#dbid,
-      action: "get_all_profiles",
-      inputs: [],
-    };
-    const res = await this.#kwil!.call(actionBody);
-    if (res.status == 200) {
-      console.log("getAllProfiles res.data?.result", res.data?.result);
-      // todo: update with actual type
-      return res.data?.result;
-    }
-    return null;
-  }
-
-  async #txInfo(tx: string) {
-    return await this.#kwil!.txInfo(tx);
-  }
+  // async #txInfo(tx: string) {
+  //   return await this.#kwil!.txInfo(tx);
+  // }
 
   /// Waits for tx to finish and gets id
   async waitAndGetId(tx: string | null | undefined) {

@@ -32,6 +32,7 @@ export interface IKwilApi {
 
   cleanDb(): TxHashPromise;
 
+  getProfile(profileId: number): Promise<Profile | null>;
   getOwnersProfile(): Promise<Profile | null>;
   getFollwedProfiles(profileId: number): Promise<Profile[] | null>;
   getAuthorWorks(

@@ -3,14 +3,18 @@ import { Layout } from "../common/components/Layout";
 import { useEffect, useState } from "react";
 import { kwilApi } from "../common/api/KwilApiInstance";
 import { useProfile } from "../common/redux/profile/ProfileHooks";
-import { Work } from "../common/api/ApiModels";
 import { WorkElements } from "../common/components/WorkElements";
+import { PAGE_SIZE } from "../common/utils/StandardValues";
+import {
+  WorkWithAuthor,
+  getWorkWithAuthor,
+} from "../common/components/models/UIModels";
 
 export function Read() {
   // 0 means all
   const [currentFollowedId, setCurrentFollowedId] = useState(0);
   const [priorKeyset, _setPriorKeyset] = useState(0); // todo: need to build this out
-  const [works, setWorks] = useState<Work[] | null>(null);
+  const [works, setWorks] = useState<WorkWithAuthor[] | null>(null);
   const [profile, _setProfile] = useProfile();
 
   const getCurrentSelectedFollowedId = (id: number) => {
@@ -21,9 +25,15 @@ export function Read() {
     // todo: need to test these calls each
     if (currentFollowedId === 0) {
       kwilApi
-        .getWorksByAllFollowed(profile?.id || 0, priorKeyset, 20)
+        .getWorksByAllFollowed(profile?.id || 0, priorKeyset, PAGE_SIZE)
         .then((works) => {
-          setWorks(works);
+          if (!works) {
+            setWorks(null);
+            return;
+          }
+          getWorkWithAuthor(works)
+            .then((works) => setWorks(works))
+            .catch((e) => console.log(e));
         })
         .catch((e) => console.log(e));
     } else {
@@ -32,10 +42,16 @@ export function Read() {
           profile?.id || 0,
           currentFollowedId,
           priorKeyset,
-          20
+          PAGE_SIZE
         )
         .then((works) => {
-          setWorks(works);
+          if (!works) {
+            setWorks(null);
+            return;
+          }
+          getWorkWithAuthor(works)
+            .then((works) => setWorks(works))
+            .catch((e) => console.log(e));
         })
         .catch((e) => console.log(e));
     }

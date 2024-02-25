@@ -137,6 +137,10 @@ export class FakeKwilApi implements IKwilApi {
     return faker.number.binary();
   }
 
+  async getProfile(profileId: number) {
+    return profiles.find((profile) => profile.id === profileId) || null;
+  }
+
   async getOwnersProfile(): Promise<Profile | null> {
     return (
       profiles.find((profile) => profile.owner_address === this.#address) ||
@@ -346,20 +350,20 @@ function getLastestEntityId<T extends Entity>(
     .map((entity) => entity.id)[0];
 }
 
-const header = "# Random Markdown Sample";
-const olist = `1. First item
-2. Second item
-3. Third item`;
-const ulist = `* Item 1
-* Item 2
-  * Subitem A
-  * Subitem B
-* Item 3`;
-const code = `
-function go() {
-    // some code
-}
-`;
+// const header = "# Random Markdown Sample";
+// const olist = `1. First item
+// 2. Second item
+// 3. Third item`;
+// const ulist = `* Item 1
+// * Item 2
+//   * Subitem A
+//   * Subitem B
+// * Item 3`;
+// const code = `
+// function go() {
+//     // some code
+// }
+// `;
 const md1: string = `# Random Markdown Sample
 
 ## Introduction
