@@ -48,7 +48,6 @@ interface EditorProps {
 }
 
 function ReadonlyEditor({ markdown }: EditorProps) {
-  console.log("markdown:", markdown);
   return (
     <MDXEditor
       className="mdx-container"
@@ -65,7 +64,7 @@ function WritableEditor({ mdRef, setEditorValue }: EditorProps) {
     <MDXEditor
       className="mdx-container"
       ref={mdRef}
-      markdown="Type your article"
+      markdown="Type your story here"
       onChange={setEditorValue}
       plugins={WritePlugins}
     />

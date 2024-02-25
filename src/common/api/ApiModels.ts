@@ -9,7 +9,8 @@ export class Work implements Entity {
     public updated_at: string,
     public title: string,
     public content: string,
-    public author_id: number
+    public author_id: number,
+    public description: string | undefined
   ) {}
 }
 

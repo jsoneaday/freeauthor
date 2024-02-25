@@ -13,7 +13,7 @@ import { faker } from "@faker-js/faker";
 import { formattedNow } from "../utils/DateTimeUtils";
 
 const profiles: Profile[] = [];
-const worksLength = 1;
+const worksLength = 60;
 const works: Work[] = [];
 const follows: Follow[] = [];
 const topics: Topic[] = [];
@@ -36,12 +36,18 @@ export class FakeKwilApi implements IKwilApi {
 
   async connect() {}
 
-  async addWork(title: string, content: string, authorId: number) {
+  async addWork(
+    title: string,
+    description: string | undefined,
+    content: string,
+    authorId: number
+  ) {
     const id = getLastestEntityId(works);
     works.push({
       id,
       updated_at: formattedNow(),
       title,
+      description,
       content,
       author_id: authorId,
     });
@@ -237,6 +243,7 @@ export class FakeKwilApi implements IKwilApi {
         id: i + 1,
         updated_at: formattedNow(),
         title: faker.lorem.sentence(),
+        description: faker.lorem.sentences({ min: 2, max: 2 }),
         content: md1,
         author_id: getRandomEntityId(profiles, "profiles"),
       });

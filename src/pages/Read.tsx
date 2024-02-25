@@ -48,7 +48,7 @@ export function Read() {
             getCurrentSelectedFollowedId={getCurrentSelectedFollowedId}
           />
         </div>
-        <div style={{ width: "100%" }}>{works}</div>
+        <div style={{ marginTop: "1.5em", width: "100%" }}>{works}</div>
       </div>
     </Layout>
   );
@@ -61,9 +61,12 @@ function setWorkElements(works: Work[] | null) {
   const workElements: JSX.Element[] = [];
   for (let i = 0; i < works.length; i++) {
     workElements.push(
-      <div key={`work-${works[i].id}`} style={{ marginBottom: "2em" }}>
-        <h1>{works[i].title}</h1>
-        <MarkdownEditor readOnly={true} markdown={works[i].content} />
+      <div key={`work-${works[i].id}`} style={{ marginBottom: "4em" }}>
+        <span className="work-title">{works[i].title}</span>
+        <MarkdownEditor
+          readOnly={true}
+          markdown={works[i].content.substring(0, 500)}
+        />
       </div>
     );
   }

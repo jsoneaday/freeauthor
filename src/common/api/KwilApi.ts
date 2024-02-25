@@ -45,7 +45,12 @@ export class KwilApi implements IKwilApi {
     console.log("Connected with Eth address:", this.#address);
   }
 
-  async addWork(title: string, content: string, authorId: number) {
+  async addWork(
+    title: string,
+    description: string | undefined,
+    content: string,
+    authorId: number
+  ) {
     let id = await this.#getLastId("get_last_work_id");
 
     console.log("Send addWork authorId:", authorId);
@@ -57,6 +62,7 @@ export class KwilApi implements IKwilApi {
           $work_id: id + 1,
           $updated_at: formattedNow(),
           $title: title,
+          $description: description || "",
           $content: content,
           $author_id: authorId,
         },

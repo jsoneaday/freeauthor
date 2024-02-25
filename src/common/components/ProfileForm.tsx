@@ -2,7 +2,7 @@ import { ChangeEvent, useState, MouseEvent } from "react";
 import { kwilApi } from "../api/KwilApiInstance";
 import { useProfile } from "../redux/profile/ProfileHooks";
 import { PrimaryButton } from "./Buttons";
-import { Spinner } from "./Spinner";
+import { ValidationAndProgressMsg } from "./ValidationAndProgressMsg";
 
 enum InputValidationState {
   UsernameTooLong = "Username cannot be greater than 50 characters",
@@ -15,7 +15,7 @@ enum InputValidationState {
   FieldIsValid = "",
 }
 
-const CREATE_PROFILE_STARTED_MSG = "Please wait while your profile is created";
+const START_CREATE_PROFILE_MSG = "Please wait while your profile is created";
 
 export interface ProfileFormProps {
   profileCreatedCallback: () => void;
@@ -168,7 +168,7 @@ export function ProfileForm({ profileCreatedCallback }: ProfileFormProps) {
 
     if (!validateAllFields()) return;
 
-    setValidationMsg(CREATE_PROFILE_STARTED_MSG);
+    setValidationMsg(START_CREATE_PROFILE_MSG);
     await kwilApi.addProfile(
       username,
       fullname,
@@ -256,16 +256,10 @@ export function ProfileForm({ profileCreatedCallback }: ProfileFormProps) {
         <span
           style={{ marginTop: "0.75em", display: "flex", alignItems: "center" }}
         >
-          {validationMsg ? (
-            <>
-              <span style={{ color: "var(--warning-cl)" }}>
-                {validationMsg}
-              </span>
-              {validationMsg === CREATE_PROFILE_STARTED_MSG ? (
-                <Spinner size={18} style={{ marginLeft: "1em" }} />
-              ) : null}
-            </>
-          ) : null}
+          <ValidationAndProgressMsg
+            validationMsg={validationMsg}
+            progressStartMsg={START_CREATE_PROFILE_MSG}
+          />
         </span>
 
         <PrimaryButton

@@ -143,16 +143,6 @@ textarea {
   margin-bottom: 1em;
 }
 
-.modal-container {
-  position: fixed;
-  z-index: 10;
-  width: 100vw;
-  height: 100vh;
-  top: 0;
-  left: 0;
-  background: rgba(0, 0, 0, 0.85);
-}
-
 .modal-content {
   z-index: 20;
   width: 25%;
@@ -281,9 +271,11 @@ select {
   flex-direction: column;
   align-items: flex-start;
   justify-content: flex-start;
+  z-index: 100;
 }
 
 .modal-container {
+  z-index: 100;
   outline: 0;
   position: absolute;
   top: 15%;
@@ -322,6 +314,8 @@ select {
   outline: none;
   width: 100%;
   height: 2em;
+  border: 0;
+  border-bottom: solid 1px var(--border-cl);
 }
 
 .profile-avatar {
@@ -372,4 +366,9 @@ select {
 
 .followed-list-scrollable {
   overflow-x: scroll;
+}
+
+.work-title {
+  font-weight: bold;
+  font-size: 2.5em;
 }

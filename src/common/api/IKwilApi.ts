@@ -6,7 +6,12 @@ export interface IKwilApi {
   get Address(): string;
   connect(): Promise<void>;
 
-  addWork(title: string, content: string, authorId: number): TxHashPromise;
+  addWork(
+    title: string,
+    description: string | undefined,
+    content: string,
+    authorId: number
+  ): TxHashPromise;
   addProfile(
     userName: string,
     fullName: string,
