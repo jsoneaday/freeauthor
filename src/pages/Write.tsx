@@ -1,10 +1,9 @@
-import { ChangeEvent, MouseEvent, useEffect, useRef, useState } from "react";
+import { ChangeEvent, MouseEvent, useRef, useState } from "react";
 import { useProfile } from "../common/redux/profile/ProfileHooks";
 import { kwilApi } from "../common/api/KwilApiInstance";
 import { PrimaryButton } from "../common/components/Buttons";
 import { MDXEditorMethods } from "@mdxeditor/editor";
 import { MarkdownEditor } from "../common/components/MarkdownEditor";
-import useNotificationState from "../common/redux/notification/NotificationStateHooks";
 import { ValidationAndProgressMsg } from "../common/components/ValidationAndProgressMsg";
 
 enum WriteValidation {
@@ -23,18 +22,6 @@ export function Write() {
   const [description, setDescription] = useState("");
   const [validationMsg, setValidationMsg] = useState("");
   const [isSubmitBtnDisabled, setIsSubmitBtnDisabled] = useState(true);
-  const [notificationState, setNotificationState] = useNotificationState();
-
-  useEffect(() => {
-    if (!profile) {
-      const newNotificationState = {
-        ...notificationState,
-        isOpen: !notificationState.isOpen,
-      };
-
-      setNotificationState(newNotificationState);
-    }
-  }, [profile]);
 
   const submitValue = async (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
@@ -98,7 +85,7 @@ export function Write() {
   };
 
   return (
-    <div className="home-content">
+    <div className="home-content" style={{ marginTop: "1.75em" }}>
       <section className="profile-form-section" style={{ marginBottom: "3em" }}>
         <label htmlFor="title">Title</label>
         <input
@@ -109,7 +96,10 @@ export function Write() {
           onChange={onChangeTitle}
         />
       </section>
-      <section className="profile-form-section" style={{ marginBottom: "4em" }}>
+      <section
+        className="profile-form-section"
+        style={{ marginBottom: "4.5em" }}
+      >
         <label htmlFor="description">Description</label>
         <input
           id="description"

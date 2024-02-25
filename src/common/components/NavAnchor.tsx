@@ -14,7 +14,6 @@ export function NavAnchor({ label, path }: NavAnchorProps) {
   const location = useLocation();
 
   useEffect(() => {
-    console.log("pathname", location.pathname, path);
     if (location.pathname === path) {
       setColor(SELECTED_COLOR);
     } else {

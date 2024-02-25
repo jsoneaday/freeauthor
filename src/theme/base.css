@@ -96,6 +96,7 @@
 }
 
 body {
+  overflow-y: scroll;
   font-family: Clarkson, Helvetica, sans-serif;
   margin: 0;
 }
