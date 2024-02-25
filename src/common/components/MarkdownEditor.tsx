@@ -13,39 +13,49 @@ import {
   ConditionalContents,
   InsertCodeBlock,
   ChangeCodeMirrorLanguage,
+  markdown$,
 } from "@mdxeditor/editor";
 import "@mdxeditor/editor/style.css";
 import { useCallback } from "react";
 
 interface MarkdownEditorProps {
-  mdRef: React.RefObject<MDXEditorMethods>;
   readOnly: boolean;
+  markdown?: string;
+  mdRef?: React.RefObject<MDXEditorMethods>;
 }
 
-export function MarkdownEditor({ mdRef, readOnly }: MarkdownEditorProps) {
+export function MarkdownEditor({
+  mdRef,
+  markdown,
+  readOnly,
+}: MarkdownEditorProps) {
   const setEditorValue = useCallback((markdownStr: string) => {
     console.log("editor updated value", markdownStr);
   }, []);
 
   if (readOnly) {
-    return <ReadonlyEditor mdRef={mdRef} setEditorValue={setEditorValue} />;
+    return (
+      <ReadonlyEditor markdown={markdown} setEditorValue={setEditorValue} />
+    );
   } else {
     return <WritableEditor mdRef={mdRef} setEditorValue={setEditorValue} />;
   }
 }
 
 interface EditorProps {
-  mdRef: React.RefObject<MDXEditorMethods>;
   setEditorValue: (markdownStr: string) => void;
+  markdown?: string;
+  mdRef?: React.RefObject<MDXEditorMethods>;
 }
 
-function ReadonlyEditor({ mdRef, setEditorValue }: EditorProps) {
+function ReadonlyEditor({ markdown, setEditorValue }: EditorProps) {
+  console.log("markdown:", markdown);
   return (
     <MDXEditor
       className="mdx-container"
-      ref={mdRef}
-      markdown="Type your article"
+      markdown={markdown || ""}
       onChange={setEditorValue}
+      readOnly={true}
     />
   );
 }

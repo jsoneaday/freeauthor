@@ -13,7 +13,7 @@ import { faker } from "@faker-js/faker";
 import { formattedNow } from "../utils/DateTimeUtils";
 
 const profiles: Profile[] = [];
-const worksLength = 40;
+const worksLength = 50;
 const works: Work[] = [];
 const follows: Follow[] = [];
 const topics: Topic[] = [];
@@ -243,13 +243,25 @@ export class FakeKwilApi implements IKwilApi {
     }
 
     for (let i = 0; i < 40; i++) {
-      let follower_id = getRandomEntityId(profiles, "profiles", 1);
+      let follower_id = getRandomEntityId(profiles, "profiles", 1); // for testing I want only my test account following
       let followed_id = getRandomEntityId(profiles, "profiles");
       if (follower_id === followed_id) {
         followed_id =
           follower_id === profiles.length
             ? profiles.length - 1
             : follower_id + 1;
+
+        const alreadyFollowedIds = follows
+          .filter((follow) => follow.follower_id === follower_id)
+          .map((follow) => follow.followed_id);
+
+        if (alreadyFollowedIds.includes(followed_id)) {
+          followed_id = alreadyFollowedIds.sort((a, b) => {
+            if (a > b) return 1;
+            if (a < b) return -1;
+            return 0;
+          })[alreadyFollowedIds.length - 1];
+        }
       }
 
       follows.push({
@@ -259,7 +271,6 @@ export class FakeKwilApi implements IKwilApi {
         followed_id,
       });
     }
-    console.log("follows", follows);
 
     for (let i = 0; i < 8; i++) {
       topics.push({
