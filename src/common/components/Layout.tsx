@@ -36,7 +36,7 @@ export function Layout({ children }: LayoutProps) {
           FREE-AUTHOR
         </a>
         <span className="layout-links">
-          <NavAnchor path="/write" label="WRITE" />
+          <NavAnchor path="/write/new" label="WRITE" />
           <NavAnchor path="/read" label="READ" />
           <NavAnchor path="/explore" label="EXPLORE" />
         </span>

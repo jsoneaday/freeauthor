@@ -1,5 +1,4 @@
 import { ReactNode, useEffect, useState } from "react";
-import { Layout } from "../common/components/Layout";
 import { kwilApi } from "../common/api/KwilApiInstance";
 import { useProfile } from "../common/redux/profile/ProfileHooks";
 
@@ -22,10 +21,8 @@ export function ManageStories() {
   }, [profile]);
 
   return (
-    <Layout>
-      <div className="home-single">
-        <ul className="stories-list"></ul>
-      </div>
-    </Layout>
+    <div className="home-content">
+      <ul className="stories-list">Manage</ul>
+    </div>
   );
 }

@@ -1,11 +1,9 @@
 import { ChangeEvent, MouseEvent, useEffect, useRef, useState } from "react";
-import { Layout } from "../common/components/Layout";
 import { useProfile } from "../common/redux/profile/ProfileHooks";
 import { kwilApi } from "../common/api/KwilApiInstance";
 import { PrimaryButton } from "../common/components/Buttons";
 import { MDXEditorMethods } from "@mdxeditor/editor";
 import { MarkdownEditor } from "../common/components/MarkdownEditor";
-import { NavAnchor } from "../common/components/NavAnchor";
 import useNotificationState from "../common/redux/notification/NotificationStateHooks";
 import { ValidationAndProgressMsg } from "../common/components/ValidationAndProgressMsg";
 
@@ -100,72 +98,48 @@ export function Write() {
   };
 
   return (
-    <Layout>
-      <div className="home-double">
-        <nav className="home-menu" style={{ marginTop: ".1em" }}>
-          <span
-            className="standard-header"
-            style={{ fontSize: "20px", marginBottom: "1em" }}
-          >
-            Manage Content
-          </span>
-          <span className="vertical-links">
-            <span style={{ marginBottom: ".5em" }}>
-              <NavAnchor path="/write/manage" label="Manage Stories" />
-            </span>
-            <NavAnchor path="/write" label="New Story" />
-          </span>
-        </nav>
-        <div className="home-content">
-          <section
-            className="profile-form-section"
-            style={{ marginBottom: "3em" }}
-          >
-            <label htmlFor="title">Title</label>
-            <input
-              id="title"
-              type="text"
-              className="profile-form-item"
-              value={title}
-              onChange={onChangeTitle}
-            />
-          </section>
-          <section
-            className="profile-form-section"
-            style={{ marginBottom: "3em" }}
-          >
-            <label htmlFor="description">Description</label>
-            <input
-              id="description"
-              type="text"
-              className="profile-form-item"
-              value={description}
-              onChange={onChangeDescription}
-            />
-          </section>
-          <section
-            className="profile-form-section"
-            style={{ marginBottom: "4.5em" }}
-          >
-            <label>Story</label>
-            <MarkdownEditor mdRef={mdRef} readOnly={false} />
-          </section>
-          <div className="btn-span-align">
-            <span style={{ marginRight: "2em" }}>
-              <ValidationAndProgressMsg
-                validationMsg={validationMsg}
-                progressStartMsg={START_CONTENT_SUBMIT_MSG}
-              />
-            </span>
-            <PrimaryButton
-              label="Submit"
-              onClick={submitValue}
-              style={{ width: "80px" }}
-              isDisabled={isSubmitBtnDisabled}
-            />
-          </div>
-        </div>
+    <div className="home-content">
+      <section className="profile-form-section" style={{ marginBottom: "3em" }}>
+        <label htmlFor="title">Title</label>
+        <input
+          id="title"
+          type="text"
+          className="profile-form-item"
+          value={title}
+          onChange={onChangeTitle}
+        />
+      </section>
+      <section className="profile-form-section" style={{ marginBottom: "4em" }}>
+        <label htmlFor="description">Description</label>
+        <input
+          id="description"
+          type="text"
+          className="profile-form-item"
+          value={description}
+          onChange={onChangeDescription}
+        />
+      </section>
+      <section
+        className="profile-form-section"
+        style={{ marginBottom: "4.5em" }}
+      >
+        <label>Story</label>
+        <MarkdownEditor mdRef={mdRef} readOnly={false} />
+      </section>
+      <div className="btn-span-align">
+        <span style={{ marginRight: "2em" }}>
+          <ValidationAndProgressMsg
+            validationMsg={validationMsg}
+            progressStartMsg={START_CONTENT_SUBMIT_MSG}
+          />
+        </span>
+        <PrimaryButton
+          label="Submit"
+          onClick={submitValue}
+          style={{ width: "80px" }}
+          isDisabled={isSubmitBtnDisabled}
+        />
       </div>
-    </Layout>
+    </div>
   );
 }

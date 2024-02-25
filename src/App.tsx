@@ -10,6 +10,7 @@ import { Home } from "./pages/Home";
 import { Write } from "./pages/Write";
 import { Read } from "./pages/Read";
 import { ManageStories } from "./pages/ManageStories";
+import { WriteMngStories } from "./pages/WriteMngStories";
 
 const router = createBrowserRouter([
   {
@@ -18,15 +19,21 @@ const router = createBrowserRouter([
   },
   {
     path: "/write",
-    element: <Write />,
-  },
-  {
-    path: "/write/:post_id",
-    element: <Write />,
-  },
-  {
-    path: "/write/manage",
-    element: <ManageStories />,
+    element: <WriteMngStories />,
+    children: [
+      {
+        path: "new",
+        element: <Write />,
+      },
+      {
+        path: "edit/:work_id",
+        element: <Write />,
+      },
+      {
+        path: "manage",
+        element: <ManageStories />,
+      },
+    ],
   },
   {
     path: "/read",
