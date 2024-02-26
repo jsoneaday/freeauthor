@@ -13,7 +13,7 @@ import { faker } from "@faker-js/faker";
 import { formattedNow } from "../utils/DateTimeUtils";
 
 const profiles: Profile[] = [];
-const worksLength = 60;
+const worksLength = 150;
 const works: Work[] = [];
 const follows: Follow[] = [];
 const topics: Topic[] = [];
@@ -178,15 +178,26 @@ export class FakeKwilApi implements IKwilApi {
     const followedIds = follows
       .filter((follow) => follow.follower_id === followerId)
       .map((follow) => follow.followed_id);
-
-    return works
+    console.log("get range", lastKeyset, lastKeyset + pageSize);
+    const filteredWorks = works
       .filter((work) => followedIds.includes(work.author_id))
       .sort((a, b) => {
-        if (a.updated_at > b.updated_at) return -1;
-        if (a.updated_at < b.updated_at) return 1;
+        if (a.id > b.id) return -1;
+        if (a.id < b.id) return 1;
         return 0;
-      })
-      .slice(lastKeyset, lastKeyset + pageSize);
+      });
+    console.log(
+      "filteredWorks ids:",
+      filteredWorks.flatMap((wk) => wk.id)
+    );
+    if (lastKeyset === 0) {
+      console.log("slice", filteredWorks.length - pageSize);
+      return filteredWorks.slice(0, pageSize);
+    }
+    console.log("filter");
+    return filteredWorks.filter(
+      (work) => work.id >= lastKeyset && work.id <= lastKeyset + pageSize
+    );
   }
 
   async getWorksByOneFollowed(
@@ -205,8 +216,8 @@ export class FakeKwilApi implements IKwilApi {
     return works
       .filter((work) => followedIds.includes(work.author_id))
       .sort((a, b) => {
-        if (a.updated_at > b.updated_at) return -1;
-        if (a.updated_at < b.updated_at) return 1;
+        if (a.id > b.id) return -1;
+        if (a.id < b.id) return 1;
         return 0;
       })
       .slice(lastKeyset, lastKeyset + pageSize);

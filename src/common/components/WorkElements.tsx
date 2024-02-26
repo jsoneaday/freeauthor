@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { MarkdownEditor } from "./MarkdownEditor";
 import { WorkWithAuthor } from "./models/UIModels";
 import { RandomImg } from "./FollowedList";
+/// @ts-ignore
+import { v4 as uuidv4 } from "uuid";
 
 interface WorkElementsProps {
   works: WorkWithAuthor[] | null;
@@ -16,18 +18,18 @@ export function WorkElements({
   showContent = true,
   twoColumn = false,
 }: WorkElementsProps) {
-  const [workElements, setWorkElements] = useState<JSX.Element[] | null>();
+  const [workElements, setWorkElements] = useState<JSX.Element[]>([]);
 
   useEffect(() => {
     if (!works) {
       return undefined;
     }
 
-    const workElements: JSX.Element[] = [];
+    const localWorkElements: JSX.Element[] = [];
     for (let i = 0; i < works.length; i++) {
-      workElements.push(
+      localWorkElements.push(
         <li
-          key={`work-${works[i].id}`}
+          key={`work-${uuidv4()}`}
           className="stories-list-item"
           style={{ width: twoColumn ? "45%" : "100%" }}
         >
@@ -66,8 +68,14 @@ export function WorkElements({
       );
     }
 
-    setWorkElements(workElements);
+    setWorkElements([...workElements, ...localWorkElements]);
   }, [works]);
 
-  return <ul className="stories-list">{workElements}</ul>;
+  return (
+    <>
+      <div>
+        <ul className="stories-list">{workElements}</ul>
+      </div>
+    </>
+  );
 }

@@ -10,27 +10,38 @@ import {
 
 export function ManageStories() {
   const [works, setWorks] = useState<WorkWithAuthor[] | null>(null);
-  const [lastKeyset, _setLastKeyset] = useState(0);
+  const [priorKeyset, setPriorKeyset] = useState(0);
   const [profile, _setProfile] = useProfile();
 
   useEffect(() => {
-    if (profile) {
-      kwilApi
-        .getAuthorWorks(profile.id, lastKeyset, PAGE_SIZE)
-        .then((works) => {
-          if (!works) {
-            setWorks(null);
-            return;
-          }
-          console.log("got works", works);
-          getWorkWithAuthor(works)
-            .then((works) => setWorks(works))
-            .catch((e) => console.log(e));
-        })
-        .catch((e) => {
-          console.log(e);
-        });
-    }
+    if (!profile) return;
+
+    if (priorKeyset === 1) return;
+
+    kwilApi
+      .getAuthorWorks(profile.id, priorKeyset, PAGE_SIZE)
+      .then((works) => {
+        if (!works) {
+          setWorks(null);
+          return;
+        }
+
+        if (works.length > 0) {
+          const keyset = works[works.length - 1].id - PAGE_SIZE;
+          console.log(
+            "reset priorKeyset:",
+            keyset <= 0 ? 1 : keyset,
+            works[works.length - 1].id
+          );
+          setPriorKeyset(keyset <= 0 ? 1 : keyset);
+        }
+        getWorkWithAuthor(works)
+          .then((works) => setWorks(works))
+          .catch((e) => console.log(e));
+      })
+      .catch((e) => {
+        console.log(e);
+      });
   }, [profile]);
 
   return (
