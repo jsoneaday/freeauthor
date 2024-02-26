@@ -163,8 +163,8 @@ export class FakeKwilApi implements IKwilApi {
     return works
       .filter((work) => work.author_id === authorId)
       .sort((a, b) => {
-        if (a.id > b.id) return 1;
-        if (a.id < b.id) return -1;
+        if (a.updated_at > b.updated_at) return -1;
+        if (a.updated_at < b.updated_at) return 1;
         return 0;
       })
       .slice(lastKeyset, lastKeyset + pageSize);
@@ -182,8 +182,8 @@ export class FakeKwilApi implements IKwilApi {
     return works
       .filter((work) => followedIds.includes(work.author_id))
       .sort((a, b) => {
-        if (a.id > b.id) return 1;
-        if (a.id < b.id) return -1;
+        if (a.updated_at > b.updated_at) return -1;
+        if (a.updated_at < b.updated_at) return 1;
         return 0;
       })
       .slice(lastKeyset, lastKeyset + pageSize);
@@ -205,8 +205,8 @@ export class FakeKwilApi implements IKwilApi {
     return works
       .filter((work) => followedIds.includes(work.author_id))
       .sort((a, b) => {
-        if (a.id > b.id) return 1;
-        if (a.id < b.id) return -1;
+        if (a.updated_at > b.updated_at) return -1;
+        if (a.updated_at < b.updated_at) return 1;
         return 0;
       })
       .slice(lastKeyset, lastKeyset + pageSize);
@@ -268,8 +268,8 @@ export class FakeKwilApi implements IKwilApi {
 
         if (alreadyFollowedIds.includes(followed_id)) {
           followed_id = alreadyFollowedIds.sort((a, b) => {
-            if (a > b) return 1;
-            if (a < b) return -1;
+            if (a > b) return -1;
+            if (a < b) return 1;
             return 0;
           })[alreadyFollowedIds.length - 1];
         }
