@@ -17,7 +17,6 @@ export class WorkWithAuthor {
 export async function getWorkWithAuthor(works: Work[]) {
   const profileIds = works.map((work) => work.author_id);
   const uniqueProfileIds = [...new Set(profileIds)];
-  console.log("uniqueProfileIds", uniqueProfileIds);
   const profiles: Profile[] = [];
   for (let i = 0; i < uniqueProfileIds.length; i++) {
     const profile = await kwilApi.getProfile(uniqueProfileIds[i]);
@@ -31,7 +30,7 @@ export async function getWorkWithAuthor(works: Work[]) {
     const profile = profiles.find(
       (profile) => profile.id === works[i].author_id
     );
-    console.log("profile", profile);
+
     const work = works[i];
     if (profile) {
       worksWithAuthor.push({

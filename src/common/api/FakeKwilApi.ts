@@ -213,7 +213,7 @@ export class FakeKwilApi implements IKwilApi {
   }
 
   async waitAndGetId(_tx: string | null | undefined): Promise<number> {
-    throw new Error("Not implemented!");
+    return 1;
   }
 
   async #setupTestData() {

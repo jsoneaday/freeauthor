@@ -38,6 +38,10 @@ export function Write() {
       profile.id
     );
     await kwilApi.waitAndGetId(tx);
+
+    setValidationMsg(
+      "Story submitted successfully. You can continue editing it here or browse other stories."
+    );
   };
 
   const validateTitle = (title: string) => {
