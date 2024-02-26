@@ -35,7 +35,7 @@ export function ManageStories() {
 
   return (
     <div className="home-content" style={{ marginTop: "1.5em" }}>
-      <WorkElements works={works} />
+      <WorkElements works={works} showAuthor={false} showContent={false} />
     </div>
   );
 }

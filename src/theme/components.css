@@ -365,6 +365,7 @@ select {
 }
 
 .followed-list-scrollable {
+  padding: 0.5em;
   overflow-x: scroll;
 }
 
@@ -374,13 +375,20 @@ select {
   margin-bottom: 0.5em;
 }
 
+.story-title-small {
+  font-size: 1.25em;
+}
+
 .story-desc {
   font-size: 2em;
-  margin-bottom: 1em;
+  margin-bottom: 0.75em;
+}
+
+.story-desc-small {
+  font-size: 1em;
 }
 
 .story-title-item {
-  font-weight: bold;
   margin-bottom: 1em;
 }
 
@@ -388,6 +396,10 @@ select {
   list-style: none;
   margin: 0;
   padding: 0;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-wrap: wrap;
 }
 
 .stories-list-item {

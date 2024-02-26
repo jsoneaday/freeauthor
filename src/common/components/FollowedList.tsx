@@ -1,4 +1,10 @@
-import { MouseEvent, useEffect, useState } from "react";
+import {
+  CSSProperties,
+  HTMLAttributes,
+  MouseEvent,
+  useEffect,
+  useState,
+} from "react";
 import { kwilApi } from "../api/KwilApiInstance";
 import longhair from "../../theme/assets/profiles/longhair.jpg";
 import mrglasses from "../../theme/assets/profiles/mrglasses.jpg";
@@ -60,9 +66,11 @@ export function FollowedList({
               0,
               0,
               <div
+                data-profile-id={0}
                 key={`followed-${profile.username}`}
                 className="followed-list-item"
                 style={{ marginLeft: "1em", marginRight: "1em" }}
+                onClick={onClickSelectProfile}
               >
                 <img src={allFollow} className="profile-avatar" />
                 <div
@@ -101,8 +109,9 @@ const profileImages = [
     src: mylady,
   },
 ];
+
 /// todo: remove when ready
-function RandomImg() {
+export function RandomImg({ style }: { style?: CSSProperties }) {
   const [src, setSrc] = useState(longhair);
 
   useEffect(() => {
@@ -110,5 +119,5 @@ function RandomImg() {
     setSrc(profileImages.find((img) => img.id === id)?.src || longhair);
   }, []);
 
-  return <img src={src} className="profile-avatar" />;
+  return <img src={src} className="profile-avatar" style={style} />;
 }

@@ -66,7 +66,7 @@ export function Read() {
           />
         </div>
         <div style={{ marginTop: "1.5em", width: "100%" }}>
-          <WorkElements works={works} />
+          <WorkElements works={works} showContent={false} twoColumn={true} />
         </div>
       </div>
     </Layout>
