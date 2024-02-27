@@ -54,7 +54,6 @@ export function Read() {
   const getData = () => {
     if (!profile) return;
 
-    console.log("priorKeyset + PAGE_SIZE", priorKeyset + PAGE_SIZE);
     if (priorKeyset === 1) {
       return; // if priorKeyset to PAGE_SIZE range is 0 or less there is no more data to get
     }
@@ -70,16 +69,11 @@ export function Read() {
 
           if (works.length > 0) {
             const keyset = works[works.length - 1].id - PAGE_SIZE;
-            console.log(
-              "reset priorKeyset:",
-              keyset <= 0 ? 1 : keyset,
-              works[works.length - 1].id
-            );
+
             setPriorKeyset(keyset <= 0 ? 1 : keyset);
           }
           getWorkWithAuthor(works)
             .then((works) => {
-              console.log("getWorksByAllFollowed works", works);
               setWorks(works);
             })
             .catch((e) => console.log(e));
@@ -102,11 +96,9 @@ export function Read() {
           if (works.length > 0) {
             const keyset = works[works.length - 1].id - PAGE_SIZE;
             setPriorKeyset(keyset <= 0 ? 1 : keyset);
-            console.log("reset priorKeyset:", keyset <= 0 ? 1 : keyset);
           }
           getWorkWithAuthor(works)
             .then((works) => {
-              console.log("getWorksByOneFollowed works", works);
               setWorks(works);
             })
             .catch((e) => console.log(e));

@@ -1,10 +1,11 @@
-import { ChangeEvent, MouseEvent, useRef, useState } from "react";
+import { ChangeEvent, MouseEvent, useEffect, useRef, useState } from "react";
 import { useProfile } from "../common/redux/profile/ProfileHooks";
 import { kwilApi } from "../common/api/KwilApiInstance";
 import { PrimaryButton } from "../common/components/Buttons";
 import { MDXEditorMethods } from "@mdxeditor/editor";
 import { MarkdownEditor } from "../common/components/MarkdownEditor";
 import { ValidationAndProgressMsg } from "../common/components/ValidationAndProgressMsg";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 
 enum WriteValidation {
   TitleTooLong = "Title must be less than 100 characters",
@@ -14,14 +15,45 @@ enum WriteValidation {
 }
 
 const START_CONTENT_SUBMIT_MSG = "Please wait while your story is submitted";
+const PLACEHOLDER_TEXT = "Type your story here";
+
+enum PageState {
+  NewSubmit = "Submit",
+  Edit = "Edit",
+}
 
 export function Write() {
   const mdRef = useRef<MDXEditorMethods>(null);
   const [profile, _setProfile] = useProfile();
   const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
+  const [description, setDescription] = useState<string | undefined>("");
   const [validationMsg, setValidationMsg] = useState("");
   const [isSubmitBtnDisabled, setIsSubmitBtnDisabled] = useState(true);
+  const [pageState, setPageState] = useState(PageState.NewSubmit);
+  const location = useLocation();
+  const navigate = useNavigate();
+  const { work_id } = useParams<{ work_id: string }>();
+
+  useEffect(() => {
+    console.log("current pathname", location.pathname);
+    if (location.pathname === "/write/new") {
+      setPageState(PageState.NewSubmit);
+    } else {
+      setPageState(PageState.Edit);
+    }
+  }, [location.pathname]);
+
+  useEffect(() => {
+    if (work_id) {
+      kwilApi.getWork(Number(work_id)).then((work) => {
+        if (!work) throw new Error("Work cannot be found trying to edit");
+
+        setTitle(work.title);
+        setDescription(work.description);
+        mdRef.current?.setMarkdown(work.content);
+      });
+    }
+  }, [work_id]);
 
   const submitValue = async (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
@@ -32,6 +64,30 @@ export function Write() {
     if (!validateAllFields()) return;
 
     const tx = await kwilApi.addWork(
+      title,
+      description,
+      mdRef.current?.getMarkdown() || "",
+      profile.id
+    );
+    const id = await kwilApi.waitAndGetId(tx);
+
+    setValidationMsg("");
+
+    // todo: need to test this navigation with real data
+    navigate(`/write/edit/${id}`);
+  };
+
+  // todo: getWork can load anyones work so need to test that user can only edit their own record
+  const editValue = async (e: MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+
+    if (!profile || profile?.id === 0)
+      throw new Error("First register a profile and connect");
+
+    if (!validateAllFields()) return;
+    console.log("work_id:", work_id);
+    const tx = await kwilApi.updateWork(
+      Number(work_id),
       title,
       description,
       mdRef.current?.getMarkdown() || "",
@@ -50,8 +106,8 @@ export function Write() {
     return WriteValidation.FieldIsValid;
   };
 
-  const validateDesc = (desc: string) => {
-    if (desc.length > 100) return WriteValidation.DescTooLong;
+  const validateDesc = (desc: string | undefined) => {
+    if (desc && desc.length > 100) return WriteValidation.DescTooLong;
     return WriteValidation.FieldIsValid;
   };
 
@@ -118,7 +174,11 @@ export function Write() {
         style={{ marginBottom: "4.5em" }}
       >
         <label>Story</label>
-        <MarkdownEditor mdRef={mdRef} readOnly={false} />
+        <MarkdownEditor
+          mdRef={mdRef}
+          readOnly={false}
+          markdown={PLACEHOLDER_TEXT}
+        />
       </section>
       <div className="btn-span-align">
         <span style={{ marginRight: "2em" }}>
@@ -128,8 +188,8 @@ export function Write() {
           />
         </span>
         <PrimaryButton
-          label="Submit"
-          onClick={submitValue}
+          label={pageState}
+          onClick={pageState === PageState.NewSubmit ? submitValue : editValue}
           style={{ width: "80px" }}
           isDisabled={isSubmitBtnDisabled}
         />

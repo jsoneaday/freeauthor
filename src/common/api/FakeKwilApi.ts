@@ -133,6 +133,24 @@ export class FakeKwilApi implements IKwilApi {
     return faker.number.binary();
   }
 
+  async updateWork(
+    workId: number,
+    title: string,
+    description: string | undefined,
+    content: string,
+    _authorId: number
+  ) {
+    const work = works.find((work) => work.id === workId);
+    if (work) {
+      work.title = title;
+      work.description = description;
+      work.content = content;
+    } else {
+      throw new Error(`work to update is not found ${workId}`);
+    }
+    return faker.number.binary();
+  }
+
   async cleanDb() {
     return faker.number.binary();
   }
@@ -153,6 +171,10 @@ export class FakeKwilApi implements IKwilApi {
       .filter((follow) => follow.follower_id === followerId)
       .map((follow) => follow.followed_id);
     return profiles.filter((profile) => followedIds.includes(profile.id));
+  }
+
+  async getWork(workId: number) {
+    return works.find((work) => work.id === workId) || null;
   }
 
   async getAuthorWorks(

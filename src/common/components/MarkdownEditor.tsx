@@ -32,46 +32,21 @@ export function MarkdownEditor({
     console.log("MDXEditor updated value:", markdownStr);
   }, []);
 
-  if (readOnly) {
-    return (
-      <ReadonlyEditor markdown={markdown} setEditorValue={setEditorValue} />
-    );
-  } else {
-    return <WritableEditor mdRef={mdRef} setEditorValue={setEditorValue} />;
-  }
-}
+  console.log("markdown", markdown);
 
-interface EditorProps {
-  setEditorValue: (markdownStr: string) => void;
-  markdown?: string;
-  mdRef?: React.RefObject<MDXEditorMethods>;
-}
-
-function ReadonlyEditor({ markdown }: EditorProps) {
-  return (
-    <MDXEditor
-      className="mdx-container"
-      markdown={markdown || ""}
-      readOnly={true}
-      plugins={ReadonlyPlugin}
-    />
-  );
-}
-
-/// Needed to do this because plugins cannot be set dynamically
-function WritableEditor({ mdRef, setEditorValue }: EditorProps) {
   return (
     <MDXEditor
       className="mdx-container"
       ref={mdRef}
-      markdown="Type your story here"
+      markdown={markdown || ""}
+      readOnly={readOnly}
       onChange={setEditorValue}
-      plugins={WritePlugins}
+      plugins={readOnly ? ReadonlyPlugins : WritePlugins}
     />
   );
 }
 
-const ReadonlyPlugin = [
+const ReadonlyPlugins = [
   codeBlockPlugin({ defaultCodeBlockLanguage: "js" }),
   codeMirrorPlugin({
     codeBlockLanguages: {

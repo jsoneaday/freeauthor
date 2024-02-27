@@ -214,6 +214,33 @@ export class KwilApi implements IKwilApi {
     );
   }
 
+  async updateWork(
+    workId: number,
+    title: string,
+    description: string | undefined,
+    content: string,
+    authorId: number
+  ) {
+    const actionBody = {
+      dbid: this.#dbid,
+      action: "update_work",
+      inputs: [
+        {
+          $work_id: workId,
+          $updated_at: formattedNow(),
+          $title: title,
+          $description: description || "",
+          $content: content,
+          $author_id: authorId,
+        },
+      ],
+    };
+
+    return this.#getResultHash(
+      await this.#kwil!.execute(actionBody, this.#kwilSigner!)
+    );
+  }
+
   async cleanDb() {
     if (!this.#kwil) {
       await this.connect();
@@ -283,6 +310,23 @@ export class KwilApi implements IKwilApi {
       ],
     };
     return this.#convertToWorks(await this.#kwil!.call(actionBody));
+  }
+
+  async getWork(workId: number) {
+    const actionBody = {
+      dbid: this.#dbid,
+      action: "get_work",
+      inputs: [
+        {
+          $work_id: workId,
+        },
+      ],
+    };
+
+    const works = this.#convertToWorks(
+      await this.#kwil!.call(actionBody, this.#kwilSigner)
+    );
+    return this.#getFirstItem(works);
   }
 
   async getProfile(profileId: number) {

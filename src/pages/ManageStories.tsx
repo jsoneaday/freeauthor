@@ -28,11 +28,7 @@ export function ManageStories() {
 
         if (works.length > 0) {
           const keyset = works[works.length - 1].id - PAGE_SIZE;
-          console.log(
-            "reset priorKeyset:",
-            keyset <= 0 ? 1 : keyset,
-            works[works.length - 1].id
-          );
+
           setPriorKeyset(keyset <= 0 ? 1 : keyset);
         }
         getWorkWithAuthor(works)

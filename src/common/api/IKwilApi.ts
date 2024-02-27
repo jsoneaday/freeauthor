@@ -30,11 +30,20 @@ export interface IKwilApi {
     responderId: number
   ): TxHashPromise;
 
+  updateWork(
+    workId: number,
+    title: string,
+    description: string | undefined,
+    content: string,
+    authorId: number
+  ): TxHashPromise;
+
   cleanDb(): TxHashPromise;
 
   getProfile(profileId: number): Promise<Profile | null>;
   getOwnersProfile(): Promise<Profile | null>;
   getFollwedProfiles(profileId: number): Promise<Profile[] | null>;
+  getWork(workId: number): Promise<Work | null>;
   getAuthorWorks(
     authorId: number,
     lastKeyset: number,
