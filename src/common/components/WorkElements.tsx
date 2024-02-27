@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { MarkdownEditor } from "./MarkdownEditor";
 import { WorkWithAuthor } from "./models/UIModels";
-import { RandomImg } from "./FollowedList";
+import { RandomImg } from "./RandomImage";
 /// @ts-ignore
 import { v4 as uuidv4 } from "uuid";
 import { Link } from "react-router-dom";
@@ -29,11 +29,15 @@ export function WorkElements({
     const localWorkElements: JSX.Element[] = [];
     for (let i = 0; i < works.length; i++) {
       localWorkElements.push(
-        <Link to={`/write/edit/${works[i].id}`} key={`work-${uuidv4()}`}>
-          <li
-            className="stories-list-item"
-            style={{ width: twoColumn ? "45%" : "100%" }}
-          >
+        <li
+          key={`work-${uuidv4()}`}
+          style={{ display: "flex", width: twoColumn ? "49%" : "100%" }}
+        >
+          <RandomImg
+            isProfile={false}
+            style={{ height: "6em", marginRight: "1em" }}
+          />
+          <Link to={`/write/edit/${works[i].id}`} className="stories-list-item">
             <span
               className={`story-title ${twoColumn ? "story-title-small" : ""}`}
             >
@@ -48,8 +52,9 @@ export function WorkElements({
               <span
                 style={{
                   display: "flex",
-                  alignItems: "flex-start",
+                  alignItems: "center",
                   justifyContent: "flex-start",
+                  marginBottom: ".5em",
                 }}
               >
                 <RandomImg
@@ -59,20 +64,22 @@ export function WorkElements({
                     marginRight: ".5em",
                   }}
                 />
-                <span className="story-title-item">
+                <div className="story-title-item">
                   <b>{works[i].fullName}</b> {`@${works[i].userName}`}
-                </span>
+                </div>
               </span>
             ) : null}
-            <span style={{ fontSize: ".8em" }}>{works[i].updatedAt}</span>
+            <span style={{ fontSize: ".75em", color: "var(--tertiary-cl)" }}>
+              {works[i].updatedAt}
+            </span>
             {showContent ? (
               <MarkdownEditor
                 readOnly={true}
                 markdown={works[i].content.substring(0, 500)}
               />
             ) : null}
-          </li>
-        </Link>
+          </Link>
+        </li>
       );
     }
 

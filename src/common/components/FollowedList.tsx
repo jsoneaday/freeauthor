@@ -1,19 +1,10 @@
-import {
-  CSSProperties,
-  HTMLAttributes,
-  MouseEvent,
-  useEffect,
-  useState,
-} from "react";
+import { MouseEvent, useEffect, useState } from "react";
 import { kwilApi } from "../api/KwilApiInstance";
-import longhair from "../../theme/assets/profiles/longhair.jpg";
-import mrglasses from "../../theme/assets/profiles/mrglasses.jpg";
-import mylady from "../../theme/assets/profiles/mylady.jpg";
 import allFollow from "../../theme/assets/profiles/l-all.png";
 import { useProfile } from "../redux/profile/ProfileHooks";
 /// @ts-ignore
 import { v4 as uuidv4 } from "uuid";
-import { faker } from "@faker-js/faker";
+import { RandomImg } from "./RandomImage";
 
 interface FollowedListProps {
   getCurrentSelectedFollowedId: (id: number) => void;
@@ -93,31 +84,4 @@ export function FollowedList({
       {followedProfiles}
     </div>
   );
-}
-
-const profileImages = [
-  {
-    id: 1,
-    src: longhair,
-  },
-  {
-    id: 2,
-    src: mrglasses,
-  },
-  {
-    id: 3,
-    src: mylady,
-  },
-];
-
-/// todo: remove when ready
-export function RandomImg({ style }: { style?: CSSProperties }) {
-  const [src, setSrc] = useState(longhair);
-
-  useEffect(() => {
-    const id = faker.number.int({ min: 1, max: 3 });
-    setSrc(profileImages.find((img) => img.id === id)?.src || longhair);
-  }, []);
-
-  return <img src={src} className="profile-avatar" style={style} />;
 }

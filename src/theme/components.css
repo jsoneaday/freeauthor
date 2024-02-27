@@ -320,7 +320,7 @@ select {
 
 .profile-avatar {
   width: 3em;
-  height: .em;
+  height: 3em;
   border-radius: 50%;
   padding: 0.2em;
   border: solid 2px var(--primary-cl);
@@ -389,7 +389,8 @@ select {
 }
 
 .story-title-item {
-  margin-bottom: 1em;
+  color: var(--tertiary-cl);
+  font-size: 0.8em;
 }
 
 .stories-list {
