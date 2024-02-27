@@ -31,7 +31,7 @@ export function Layout({ children }: LayoutProps) {
 
   return (
     <div className="layout-container">
-      <nav className="layout-nav" style={{ marginBottom: "1em" }}>
+      <nav className="layout-nav">
         <a href="/" className="layout-title">
           FREE-AUTHOR
         </a>

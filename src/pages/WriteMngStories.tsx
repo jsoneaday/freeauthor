@@ -22,7 +22,7 @@ export function WriteMngStories() {
 
   return (
     <Layout>
-      <div className="home-double">
+      <div className="home-double" style={{ marginTop: "1em" }}>
         <nav className="home-menu" style={{ marginTop: "1em" }}>
           <span
             className="standard-header"
