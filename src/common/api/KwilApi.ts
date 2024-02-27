@@ -396,6 +396,13 @@ export class KwilApi implements IKwilApi {
     return id;
   }
 
+  async testWaitAndGetId(
+    _tx: string | null | undefined,
+    _entityType: string
+  ): Promise<number> {
+    throw new Error("Do not use for production");
+  }
+
   async #confirmTxCompleteAndGetEntityId(tx: string) {
     const result = await this.#kwil!.txInfo(tx);
     console.log("tx info:", result);

@@ -62,4 +62,8 @@ export interface IKwilApi {
   ): Promise<Work[] | null>;
 
   waitAndGetId(tx: string | null | undefined): Promise<number>;
+  testWaitAndGetId(
+    tx: string | null | undefined,
+    entityType: string
+  ): Promise<number>;
 }

@@ -38,15 +38,20 @@ export function Write() {
     console.log("current pathname", location.pathname);
     if (location.pathname === "/write/new") {
       setPageState(PageState.NewSubmit);
+      setTitle("");
+      setDescription("");
+      setValidationMsg("");
+      mdRef.current?.setMarkdown(PLACEHOLDER_TEXT);
     } else {
       setPageState(PageState.Edit);
+      setIsSubmitBtnDisabled(false);
     }
   }, [location.pathname]);
 
   useEffect(() => {
     if (work_id) {
       kwilApi.getWork(Number(work_id)).then((work) => {
-        if (!work) throw new Error("Work cannot be found trying to edit");
+        if (!work) throw new Error("Work item cannot be found trying to edit");
 
         setTitle(work.title);
         setDescription(work.description);
@@ -69,11 +74,12 @@ export function Write() {
       mdRef.current?.getMarkdown() || "",
       profile.id
     );
-    const id = await kwilApi.waitAndGetId(tx);
+    // todo: remove when read for prod
+    const id = await kwilApi.testWaitAndGetId(tx, "works");
 
     setValidationMsg("");
 
-    // todo: need to test this navigation with real data
+    console.log("submit complete, navigate to"), `/write/edit/${id}`;
     navigate(`/write/edit/${id}`);
   };
 
@@ -86,14 +92,13 @@ export function Write() {
 
     if (!validateAllFields()) return;
     console.log("work_id:", work_id);
-    const tx = await kwilApi.updateWork(
+    await kwilApi.updateWork(
       Number(work_id),
       title,
       description,
       mdRef.current?.getMarkdown() || "",
       profile.id
     );
-    await kwilApi.waitAndGetId(tx);
 
     setValidationMsg(
       "Story submitted successfully. You can continue editing it here or browse other stories."

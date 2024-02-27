@@ -43,8 +43,9 @@ export class FakeKwilApi implements IKwilApi {
     authorId: number
   ) {
     const id = getLastestEntityId(works);
+    console.log("last work id", id);
     works.push({
-      id,
+      id: id + 1,
       updated_at: formattedNow(),
       title,
       description,
@@ -65,7 +66,7 @@ export class FakeKwilApi implements IKwilApi {
     const id = getLastestEntityId(profiles);
 
     profiles.push({
-      id,
+      id: id + 1,
       updated_at: formattedNow(),
       username: userName,
       fullname: fullName,
@@ -81,7 +82,7 @@ export class FakeKwilApi implements IKwilApi {
   async addFollow(followerId: number, followedId: number) {
     const id = getLastestEntityId(follows);
     follows.push({
-      id,
+      id: id + 1,
       updated_at: formattedNow(),
       follower_id: followerId,
       followed_id: followedId,
@@ -92,7 +93,7 @@ export class FakeKwilApi implements IKwilApi {
   async addTopic(name: string) {
     const id = getLastestEntityId(topics);
     topics.push({
-      id,
+      id: id + 1,
       updated_at: formattedNow(),
       name,
     });
@@ -102,7 +103,7 @@ export class FakeKwilApi implements IKwilApi {
   async addWorkTopic(topicId: number, workId: number) {
     const id = getLastestEntityId(workTopics);
     workTopics.push({
-      id,
+      id: id + 1,
       updated_at: formattedNow(),
       topic_id: topicId,
       work_id: workId,
@@ -113,7 +114,7 @@ export class FakeKwilApi implements IKwilApi {
   async addWorkLikes(workId: number, likerId: number) {
     const id = getLastestEntityId(workLikes);
     workLikes.push({
-      id,
+      id: id + 1,
       updated_at: formattedNow(),
       work_id: workId,
       liker_id: likerId,
@@ -124,7 +125,7 @@ export class FakeKwilApi implements IKwilApi {
   async addWorkResponses(content: string, workId: number, responderId: number) {
     const id = getLastestEntityId(workResponses);
     workResponses.push({
-      id,
+      id: id + 1,
       updated_at: formattedNow(),
       content,
       work_id: workId,
@@ -246,7 +247,22 @@ export class FakeKwilApi implements IKwilApi {
   }
 
   async waitAndGetId(_tx: string | null | undefined): Promise<number> {
-    return 1;
+    throw new Error(
+      "Deliberately not implemented, for testing use waitAndGetId"
+    );
+  }
+
+  async testWaitAndGetId(
+    _tx: string | null | undefined,
+    entityType: string
+  ): Promise<number> {
+    let entities: Entity[] = [];
+    if (entityType === "works") {
+      entities = works;
+    } else {
+      throw new Error(`testWaitAndGetId for ${entityType} not implemented yet`);
+    }
+    return getLastestEntityId(entities);
   }
 
   async #setupTestData() {
@@ -376,8 +392,8 @@ function getLastestEntityId<T extends Entity>(
 
   return entities
     .sort((a, b) => {
-      if (a.id > b.id) return 1;
-      if (a.id < b.id) return -1;
+      if (a.id > b.id) return -1;
+      if (a.id < b.id) return 1;
       return 0;
     })
     .map((entity) => entity.id)[0];

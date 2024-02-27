@@ -32,8 +32,6 @@ export function MarkdownEditor({
     console.log("MDXEditor updated value:", markdownStr);
   }, []);
 
-  console.log("markdown", markdown);
-
   return (
     <MDXEditor
       className="mdx-container"
