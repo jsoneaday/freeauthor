@@ -292,7 +292,6 @@ export class KwilApi implements IKwilApi {
   }
 
   async getWorksByOneFollowed(
-    followerId: number,
     followedId: number,
     lastKeyset: number,
     pageSize: number
@@ -302,7 +301,6 @@ export class KwilApi implements IKwilApi {
       action: "get_works_by_all_followed",
       inputs: [
         {
-          $follower_id: followerId,
           $followed_id: followedId,
           $last_keyset: lastKeyset,
           $page_size: pageSize,

@@ -19,7 +19,7 @@ const profileSlice = createSlice({
   reducers: {
     setUserProfile: (state: any, action: PayloadAction<Profile | null>) => {
       state = action.payload;
-
+      console.log("send profile state to reducer", state);
       return state;
     },
   },

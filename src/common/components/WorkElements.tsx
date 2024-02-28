@@ -8,6 +8,7 @@ import { Link } from "react-router-dom";
 
 interface WorkElementsProps {
   works: WorkWithAuthor[] | null;
+  refresh: boolean; // reset all data, do not append
   showAuthor?: boolean;
   showContent?: boolean;
   twoColumn?: boolean;
@@ -15,6 +16,7 @@ interface WorkElementsProps {
 
 export function WorkElements({
   works,
+  refresh,
   showAuthor = true,
   showContent = true,
   twoColumn = false,
@@ -25,7 +27,7 @@ export function WorkElements({
     if (!works) {
       return undefined;
     }
-
+    console.log("WorkElements works updated", works);
     const localWorkElements: JSX.Element[] = [];
     for (let i = 0; i < works.length; i++) {
       localWorkElements.push(
@@ -83,7 +85,11 @@ export function WorkElements({
       );
     }
 
-    setWorkElements([...workElements, ...localWorkElements]);
+    if (!refresh) {
+      setWorkElements([...workElements, ...localWorkElements]);
+    } else {
+      setWorkElements(localWorkElements);
+    }
   }, [works]);
 
   return (

@@ -55,7 +55,6 @@ export interface IKwilApi {
     pageSize: number
   ): Promise<Work[] | null>;
   getWorksByOneFollowed(
-    followerId: number,
     followedId: number,
     lastKeyset: number,
     pageSize: number

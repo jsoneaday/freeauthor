@@ -26,20 +26,26 @@ export function Read() {
   const [profile, _setProfile] = useProfile();
   const targetRef = useRef(null);
   const [isIntersecting, setIsIntersecting] = useState(false);
+  const [refreshWorksList, setRefreshWorksList] = useState(false);
 
   const getCurrentSelectedFollowedId = (id: number) => {
+    setRefreshWorksList(true);
+    console.log("Read received id", id);
     setCurrentFollowedId(id);
   };
 
   useEffect(() => {
+    console.log("currentFollowerId updated running getData", currentFollowedId);
     getData();
   }, [currentFollowedId, profile]);
 
   useEffect(() => {
     const observer = new IntersectionObserver((entries: any) => {
       const [entry] = entries;
-      setIsIntersecting(entry.isIntersecting);
+      // setIsIntersecting(entry.isIntersecting);
       if (entry.isIntersecting) {
+        setRefreshWorksList(false);
+        console.log("Read Intersection running getData", profile);
         getData();
       }
     }, observerOptions);
@@ -49,14 +55,18 @@ export function Read() {
     return () => {
       if (ref) observer.unobserve(ref);
     };
-  }, [isIntersecting]);
+  }, []);
 
   const getData = () => {
+    console.log(
+      `entered getData currentFollowedId: ${currentFollowedId}, profile.id: ${profile?.id}, priorKeyset: ${priorKeyset}, refreshWorksList: ${refreshWorksList}`
+    );
     if (!profile) return;
 
-    if (priorKeyset === 1) {
+    if (!refreshWorksList && priorKeyset === 1) {
       return; // if priorKeyset to PAGE_SIZE range is 0 or less there is no more data to get
     }
+
     // todo: need to test these calls each
     if (currentFollowedId === 0) {
       kwilApi
@@ -69,11 +79,11 @@ export function Read() {
 
           if (works.length > 0) {
             const keyset = works[works.length - 1].id - PAGE_SIZE;
-
             setPriorKeyset(keyset <= 0 ? 1 : keyset);
           }
           getWorkWithAuthor(works)
             .then((works) => {
+              console.log("Read set all follower works", works);
               setWorks(works);
             })
             .catch((e) => console.log(e));
@@ -81,12 +91,7 @@ export function Read() {
         .catch((e) => console.log(e));
     } else {
       kwilApi
-        .getWorksByOneFollowed(
-          profile.id,
-          currentFollowedId,
-          priorKeyset,
-          PAGE_SIZE
-        )
+        .getWorksByOneFollowed(currentFollowedId, priorKeyset, PAGE_SIZE)
         .then((works) => {
           if (!works) {
             setWorks(null);
@@ -99,6 +104,7 @@ export function Read() {
           }
           getWorkWithAuthor(works)
             .then((works) => {
+              console.log("Read set followed works", works);
               setWorks(works);
             })
             .catch((e) => console.log(e));
@@ -116,7 +122,12 @@ export function Read() {
           />
         </div>
         <div style={{ marginTop: "1.5em", width: "100%" }}>
-          <WorkElements works={works} showContent={false} twoColumn={true} />
+          <WorkElements
+            works={works}
+            refresh={refreshWorksList}
+            showContent={false}
+            twoColumn={true}
+          />
         </div>
         <div ref={targetRef} style={{ bottom: "0" }}>
           {works && works.length > 0 ? <Spinner size={15} /> : null}

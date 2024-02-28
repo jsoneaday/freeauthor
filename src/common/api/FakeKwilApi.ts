@@ -201,7 +201,7 @@ export class FakeKwilApi implements IKwilApi {
     const followedIds = follows
       .filter((follow) => follow.follower_id === followerId)
       .map((follow) => follow.followed_id);
-    console.log("get range", lastKeyset, lastKeyset + pageSize);
+
     const filteredWorks = works
       .filter((work) => followedIds.includes(work.author_id))
       .sort((a, b) => {
@@ -209,12 +209,9 @@ export class FakeKwilApi implements IKwilApi {
         if (a.id < b.id) return 1;
         return 0;
       });
-    console.log(
-      "filteredWorks ids:",
-      filteredWorks.flatMap((wk) => wk.id)
-    );
+
     if (lastKeyset === 0) {
-      console.log("slice", filteredWorks.length - pageSize);
+      console.log("slice");
       return filteredWorks.slice(0, pageSize);
     }
     console.log("filter");
@@ -224,26 +221,26 @@ export class FakeKwilApi implements IKwilApi {
   }
 
   async getWorksByOneFollowed(
-    followerId: number,
     followedId: number,
     lastKeyset: number,
     pageSize: number
   ): Promise<Work[] | null> {
-    const followedIds = follows
-      .filter(
-        (follow) =>
-          follow.follower_id === followerId && follow.followed_id === followedId
-      )
-      .map((follow) => follow.followed_id);
-
-    return works
-      .filter((work) => followedIds.includes(work.author_id))
+    const filteredWorks = works
+      .filter((work) => work.author_id === followedId)
       .sort((a, b) => {
         if (a.id > b.id) return -1;
         if (a.id < b.id) return 1;
         return 0;
-      })
-      .slice(lastKeyset, lastKeyset + pageSize);
+      });
+    console.log("getWorksByOneFollowed filteredWorks", filteredWorks);
+    console.log("getWorksByOneFollowed lastKeyset", lastKeyset);
+    if (lastKeyset === 0) {
+      return filteredWorks.slice(0, pageSize);
+    }
+    console.log("getWorksByOneFollowed filter");
+    return filteredWorks.filter(
+      (work) => work.id >= lastKeyset && work.id <= lastKeyset + pageSize
+    );
   }
 
   async waitAndGetId(_tx: string | null | undefined): Promise<number> {

@@ -38,10 +38,12 @@ const router = createBrowserRouter([
   {
     path: "/read",
     element: <Read />,
-  },
-  {
-    path: "/read/:profile_id",
-    element: <Read />,
+    children: [
+      {
+        path: "/read/:profile_id",
+        element: <Read />,
+      },
+    ],
   },
   {
     path: "/explore",

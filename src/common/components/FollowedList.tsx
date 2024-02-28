@@ -20,6 +20,10 @@ export function FollowedList({
 
   const onClickSelectProfile = (e: MouseEvent<HTMLDivElement>) => {
     const currentElementProfileId = e.currentTarget.dataset.profileId || 0;
+    console.log(
+      "FollowedList currentElementProfileId",
+      Number(currentElementProfileId)
+    );
     getCurrentSelectedFollowedId(Number(currentElementProfileId));
 
     let lastForwardSibling: Element | null = e.currentTarget.nextElementSibling;
