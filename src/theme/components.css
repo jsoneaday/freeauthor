@@ -369,6 +369,15 @@ select {
   overflow-x: scroll;
 }
 
+.followed-list-selected {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border-radius: 50%;
+  padding: 0.25em;
+  border: solid 1px var(--secondary-cl);
+}
+
 .story-title {
   font-weight: bold;
   font-size: 2em;

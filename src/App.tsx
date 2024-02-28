@@ -40,6 +40,10 @@ const router = createBrowserRouter([
     element: <Read />,
   },
   {
+    path: "/read/:profile_id",
+    element: <Read />,
+  },
+  {
     path: "/explore",
     element: <Explorer />,
   },

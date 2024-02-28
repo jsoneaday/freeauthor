@@ -6,6 +6,8 @@ import { useProfile } from "../redux/profile/ProfileHooks";
 import { v4 as uuidv4 } from "uuid";
 import { RandomImg } from "./RandomImage";
 
+const SELECTED_CLASS = "followed-list-selected";
+
 interface FollowedListProps {
   getCurrentSelectedFollowedId: (id: number) => void;
 }
@@ -13,15 +15,47 @@ interface FollowedListProps {
 export function FollowedList({
   getCurrentSelectedFollowedId,
 }: FollowedListProps) {
-  const [followedProfiles, setFollowedProfiles] = useState<
-    JSX.Element[] | string
-  >([]);
+  const [followedProfiles, setFollowedProfiles] = useState<JSX.Element[]>([]);
   const [profile, _setProfile] = useProfile();
 
   const onClickSelectProfile = (e: MouseEvent<HTMLDivElement>) => {
-    getCurrentSelectedFollowedId(
-      Number(e.currentTarget.dataset.profileId || 0)
-    );
+    const currentElementProfileId = e.currentTarget.dataset.profileId || 0;
+    getCurrentSelectedFollowedId(Number(currentElementProfileId));
+
+    let lastForwardSibling: Element | null = e.currentTarget.nextElementSibling;
+    let lastPreviousSibling: Element | null =
+      e.currentTarget.previousElementSibling;
+    while (true) {
+      const nextSiblingProfileId =
+        lastForwardSibling?.getAttribute("data-profile-id");
+
+      if (!lastForwardSibling) break;
+
+      if (nextSiblingProfileId != currentElementProfileId) {
+        lastForwardSibling.children[0].classList.remove(SELECTED_CLASS);
+      } else {
+        break;
+      }
+
+      lastForwardSibling = lastForwardSibling.nextElementSibling;
+    }
+    while (true) {
+      const previousSiblingProfileId =
+        lastPreviousSibling?.getAttribute("data-profile-id");
+
+      if (!lastPreviousSibling) break;
+
+      if (previousSiblingProfileId != currentElementProfileId) {
+        lastPreviousSibling.children[0].classList.remove(SELECTED_CLASS);
+      } else {
+        break;
+      }
+
+      lastPreviousSibling = lastPreviousSibling.previousElementSibling;
+    }
+
+    e.currentTarget.children[0].classList.remove(SELECTED_CLASS);
+    e.currentTarget.children[0].classList.add(SELECTED_CLASS);
   };
 
   useEffect(() => {
@@ -30,9 +64,12 @@ export function FollowedList({
         .getFollwedProfiles(profile.id)
         .then((profiles) => {
           if (!profiles || profiles.length === 0) {
-            setFollowedProfiles(
-              "You are not following anyone. Use the Explore tab to find writers to follow"
-            );
+            setFollowedProfiles([
+              <span key={1}>
+                You are not following anyone. Use the Explore tab to find
+                writers to follow
+              </span>,
+            ]);
           } else {
             // todo: use images from chain when ready
             const followed = profiles?.map((profile) => (
@@ -42,7 +79,9 @@ export function FollowedList({
                 className="followed-list-item"
                 onClick={onClickSelectProfile}
               >
-                <RandomImg />
+                <div>
+                  <RandomImg />
+                </div>
                 <div className="followed-list-font-items">
                   <b>{`${profile.id} ${profile.fullname}`}</b>
                   <div>
@@ -63,7 +102,9 @@ export function FollowedList({
                 style={{ marginLeft: "1em", marginRight: "1em" }}
                 onClick={onClickSelectProfile}
               >
-                <img src={allFollow} className="profile-avatar" />
+                <div className={SELECTED_CLASS}>
+                  <img src={allFollow} className="profile-avatar" />
+                </div>
                 <div
                   className="followed-list-font-items"
                   style={{ alignItems: "center" }}
@@ -76,6 +117,13 @@ export function FollowedList({
           }
         })
         .catch((e) => console.log(e));
+    } else {
+      setFollowedProfiles([
+        <span key={1}>
+          You must create a profile and follow users in order to view their
+          stories. You can view people to follow in the Explore section
+        </span>,
+      ]);
     }
   }, [profile]);
 
