@@ -123,9 +123,9 @@ export function FollowedList({
         .catch((e) => console.log(e));
     } else {
       setFollowedProfiles([
-        <span key={1}>
+        <span key={1} style={{ fontSize: "1.25em" }}>
           You must create a profile and follow users in order to view their
-          stories. You can view people to follow in the Explore section
+          stories. You can find people to follow in the Explore section
         </span>,
       ]);
     }

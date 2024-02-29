@@ -15,7 +15,7 @@ import {
   ChangeCodeMirrorLanguage,
 } from "@mdxeditor/editor";
 import "@mdxeditor/editor/style.css";
-import { useCallback, useEffect } from "react";
+import { useCallback } from "react";
 
 interface MarkdownEditorProps {
   readOnly: boolean;
