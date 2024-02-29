@@ -123,6 +123,7 @@ export function ReadFollowed() {
       <WorkElements
         works={works}
         refresh={refreshWorksList}
+        readOnly={true}
         showContent={false}
         twoColumn={true}
       />

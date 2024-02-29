@@ -416,3 +416,20 @@ select {
   justify-content: flex-start;
   margin-bottom: 4em;
 }
+
+.story-detail {
+  margin-left: 0.5em;
+  margin-top: 1.5em;
+}
+
+.story-detail-top {
+  padding-bottom: 0.5em;
+  margin-bottom: 0.5em;
+  border-bottom: solid 1px var(--header-border-cl);
+}
+
+.story-detail-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}

@@ -59,6 +59,7 @@ export interface IKwilApi {
     lastKeyset: number,
     pageSize: number
   ): Promise<Work[] | null>;
+  getWorksLikeCount(workId: number): Promise<number>;
 
   waitAndGetId(tx: string | null | undefined): Promise<number>;
   testWaitAndGetId(

@@ -394,6 +394,20 @@ export class KwilApi implements IKwilApi {
     return id;
   }
 
+  async getWorksLikeCount(workId: number): Promise<number> {
+    const actionBody = {
+      dbid: this.#dbid,
+      action: "get_followed_profiles",
+      inputs: [
+        {
+          $work_id: workId,
+        },
+      ],
+    };
+
+    throw new Error("Not implemented yet");
+  }
+
   async testWaitAndGetId(
     _tx: string | null | undefined,
     _entityType: string
