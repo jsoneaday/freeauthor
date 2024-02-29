@@ -21,7 +21,12 @@ export function ReadFollowed() {
     currentFollowedId,
     priorKeysetState: [priorKeyset, setPriorKeyset],
     refreshWorksListState: [refreshWorksList, setRefreshWorksList],
+    setShowFollowedList,
   } = useOutletContext<ReadOutletType>();
+
+  useEffect(() => {
+    setShowFollowedList(true);
+  }, [setShowFollowedList]);
 
   useEffect(() => {
     getData();

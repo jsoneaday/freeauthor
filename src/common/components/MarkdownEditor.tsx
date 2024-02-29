@@ -33,10 +33,6 @@ export function MarkdownEditor({
     console.log("MDXEditor updated value:", markdownStr);
   }, []);
 
-  useEffect(() => {
-    console.log("markdown", markdown);
-  }, [markdown]);
-
   return (
     <MDXEditor
       className="mdx-container"

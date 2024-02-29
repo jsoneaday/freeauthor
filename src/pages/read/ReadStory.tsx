@@ -42,7 +42,13 @@ export function ReadStory() {
     <div>
       <h1 className="story-title">{title}</h1>
       <h2 className="story-desc">{description}</h2>
-      <div style={{ marginLeft: ".5em" }}>
+      <div
+        style={{
+          marginLeft: ".5em",
+          paddingBlock: "1em",
+          borderBottom: "solid 1px var(--header-border-cl)",
+        }}
+      >
         <span
           style={{
             display: "flex",
