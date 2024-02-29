@@ -24,7 +24,7 @@ enum PageState {
 
 export function Write() {
   const mdRef = useRef<MDXEditorMethods>(null);
-  const [profile, _setProfile] = useProfile();
+  const [profile] = useProfile();
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState<string | undefined>("");
   const [validationMsg, setValidationMsg] = useState("");

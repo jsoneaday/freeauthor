@@ -16,7 +16,7 @@ export function FollowedList({
   getCurrentSelectedFollowedId,
 }: FollowedListProps) {
   const [followedProfiles, setFollowedProfiles] = useState<JSX.Element[]>([]);
-  const [profile, _setProfile] = useProfile();
+  const [profile] = useProfile();
 
   const onClickSelectProfile = (e: MouseEvent<HTMLDivElement>) => {
     const currentElementProfileId = e.currentTarget.dataset.profileId || 0;

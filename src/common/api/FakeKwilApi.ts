@@ -211,10 +211,9 @@ export class FakeKwilApi implements IKwilApi {
       });
 
     if (lastKeyset === 0) {
-      console.log("slice");
       return filteredWorks.slice(0, pageSize);
     }
-    console.log("filter");
+
     return filteredWorks.filter(
       (work) => work.id >= lastKeyset && work.id <= lastKeyset + pageSize
     );
@@ -232,12 +231,11 @@ export class FakeKwilApi implements IKwilApi {
         if (a.id < b.id) return 1;
         return 0;
       });
-    console.log("getWorksByOneFollowed filteredWorks", filteredWorks);
-    console.log("getWorksByOneFollowed lastKeyset", lastKeyset);
+
     if (lastKeyset === 0) {
       return filteredWorks.slice(0, pageSize);
     }
-    console.log("getWorksByOneFollowed filter");
+
     return filteredWorks.filter(
       (work) => work.id >= lastKeyset && work.id <= lastKeyset + pageSize
     );

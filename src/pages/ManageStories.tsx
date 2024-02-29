@@ -11,7 +11,7 @@ import {
 export function ManageStories() {
   const [works, setWorks] = useState<WorkWithAuthor[] | null>(null);
   const [priorKeyset, setPriorKeyset] = useState(0);
-  const [profile, _setProfile] = useProfile();
+  const [profile] = useProfile();
 
   useEffect(() => {
     if (!profile) return;
@@ -42,7 +42,12 @@ export function ManageStories() {
 
   return (
     <div className="home-content" style={{ marginTop: "1.5em" }}>
-      <WorkElements works={works} showAuthor={false} showContent={false} />
+      <WorkElements
+        works={works}
+        showAuthor={false}
+        showContent={false}
+        refresh={false}
+      />
     </div>
   );
 }

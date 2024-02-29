@@ -27,7 +27,7 @@ export function WorkElements({
     if (!works) {
       return undefined;
     }
-    console.log("WorkElements works updated", works);
+
     const localWorkElements: JSX.Element[] = [];
     for (let i = 0; i < works.length; i++) {
       localWorkElements.push(

@@ -6,7 +6,7 @@ import useNotificationState from "../common/redux/notification/NotificationState
 import { useEffect } from "react";
 
 export function WriteMngStories() {
-  const [profile, _setProfile] = useProfile();
+  const [profile] = useProfile();
   const [notificationState, setNotificationState] = useNotificationState();
 
   useEffect(() => {

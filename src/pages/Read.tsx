@@ -19,13 +19,12 @@ const observerOptions = {
 };
 
 export function Read() {
-  // 0 means all
-  const [currentFollowedId, setCurrentFollowedId] = useState(0);
+  const [currentFollowedId, setCurrentFollowedId] = useState(0); // 0 means all
   const [priorKeyset, setPriorKeyset] = useState(0); // todo: need to build this out
   const [works, setWorks] = useState<WorkWithAuthor[] | null>(null);
-  const [profile, _setProfile] = useProfile();
-  const targetRef = useRef(null);
-  const [isIntersecting, setIsIntersecting] = useState(false);
+  const [profile] = useProfile();
+  const targetRef = useRef<HTMLDivElement>(null);
+  const readWorkListRef = useRef<HTMLDivElement>(null);
   const [refreshWorksList, setRefreshWorksList] = useState(false);
 
   const getCurrentSelectedFollowedId = (id: number) => {
@@ -36,30 +35,57 @@ export function Read() {
 
   useEffect(() => {
     console.log("currentFollowerId updated running getData", currentFollowedId);
+    console.log("profile updated running getData", profile);
+
     getData();
   }, [currentFollowedId, profile]);
 
   useEffect(() => {
-    const observer = new IntersectionObserver((entries: any) => {
-      const [entry] = entries;
-      // setIsIntersecting(entry.isIntersecting);
-      if (entry.isIntersecting) {
-        setRefreshWorksList(false);
-        console.log("Read Intersection running getData", profile);
-        getData();
-      }
-    }, observerOptions);
+    readWorkListRef.current?.addEventListener("scroll", scrollEventHandler);
 
-    const ref = targetRef.current;
-    if (ref) observer.observe(ref);
     return () => {
-      if (ref) observer.unobserve(ref);
+      readWorkListRef.current?.removeEventListener(
+        "scroll",
+        scrollEventHandler
+      );
     };
   }, []);
 
+  const scrollEventHandler = () => {
+    const targetBounds = targetRef.current?.getBoundingClientRect();
+    const readWorkListBounds = readWorkListRef.current?.getBoundingClientRect();
+
+    const inView =
+      (targetBounds?.bottom || 0) === (readWorkListBounds?.bottom || 0) - 1;
+
+    if (inView) {
+      setRefreshWorksList(false);
+      console.log("Scroll, running getData", profile);
+      getData();
+    }
+  };
+
+  // useEffect(() => {
+  //   const observer = new IntersectionObserver((entries: any) => {
+  //     const [entry] = entries;
+
+  //     if (entry.isIntersecting) {
+  //       setRefreshWorksList(false);
+  //       console.log("Read Intersection, running getData", profile);
+  //       getData();
+  //     }
+  //   }, observerOptions);
+
+  //   const ref = targetRef.current;
+  //   if (ref) observer.observe(ref);
+  //   return () => {
+  //     if (ref) observer.unobserve(ref);
+  //   };
+  // }, []);
+
   const getData = () => {
     console.log(
-      `entered getData currentFollowedId: ${currentFollowedId}, profile.id: ${profile?.id}, priorKeyset: ${priorKeyset}, refreshWorksList: ${refreshWorksList}`
+      `entered getData currentFollowedId: ${currentFollowedId}, profile: ${profile}, priorKeyset: ${priorKeyset}, refreshWorksList: ${refreshWorksList}`
     );
     if (!profile) return;
 
@@ -83,7 +109,6 @@ export function Read() {
           }
           getWorkWithAuthor(works)
             .then((works) => {
-              console.log("Read set all follower works", works);
               setWorks(works);
             })
             .catch((e) => console.log(e));
@@ -104,7 +129,6 @@ export function Read() {
           }
           getWorkWithAuthor(works)
             .then((works) => {
-              console.log("Read set followed works", works);
               setWorks(works);
             })
             .catch((e) => console.log(e));
@@ -121,16 +145,24 @@ export function Read() {
             getCurrentSelectedFollowedId={getCurrentSelectedFollowedId}
           />
         </div>
-        <div className="read-work-list">
+        <div ref={readWorkListRef} className="read-work-list">
           <WorkElements
             works={works}
             refresh={refreshWorksList}
             showContent={false}
             twoColumn={true}
           />
-        </div>
-        <div ref={targetRef} style={{ bottom: "0" }}>
-          {works && works.length > 0 ? <Spinner size={15} /> : null}
+          <div
+            ref={targetRef}
+            style={{
+              bottom: "0",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+            }}
+          >
+            {works && works.length > 0 ? <Spinner size={15} /> : null}
+          </div>
         </div>
       </div>
     </Layout>

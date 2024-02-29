@@ -12,7 +12,7 @@ export interface LayoutProps {
 
 /** todo: add button for editable modal **/
 export function Layout({ children }: LayoutProps) {
-  const [profile, _setProfile] = useProfile();
+  const [profile] = useProfile();
   const [notificationState, setNotificationState] = useNotificationState();
 
   const toggleNotificationState = () => {
