@@ -24,9 +24,7 @@ export function Layout({ children }: LayoutProps) {
 
   const onClickConnect = (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    console.log("notificationState before toggle", notificationIsOpen);
     toggleNotificationState();
-    console.log("notificationState after toggle", notificationIsOpen);
   };
 
   return (

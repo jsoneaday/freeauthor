@@ -8,7 +8,6 @@ import "./theme/animations.css";
 import { Explorer } from "./pages/Explorer";
 import { Home } from "./pages/Home";
 import { WriteStory } from "./pages/write/WriteStory";
-import { Read } from "./pages/read/Read";
 import { ManageStories } from "./pages/write/ManageStories";
 import { Write } from "./pages/write/Write";
 import { ReadFollowed } from "./pages/read/ReadFollowed";

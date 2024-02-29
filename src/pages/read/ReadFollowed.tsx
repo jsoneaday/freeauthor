@@ -2,7 +2,6 @@ import { FollowedList } from "../../common/components/FollowedList";
 import { Layout } from "../../common/components/Layout";
 import { useEffect, useRef, useState } from "react";
 import { kwilApi } from "../../common/api/KwilApiInstance";
-//import { useProfile } from "../common/redux/profile/ProfileHooks";
 import { WorkElements } from "../../common/components/WorkElements";
 import { PAGE_SIZE } from "../../common/utils/StandardValues";
 import {
@@ -13,18 +12,10 @@ import { Spinner } from "../../common/components/Spinner";
 import { useProfile } from "../../common/zustand/Store";
 import { Work } from "../../common/api/ApiModels";
 
-// const observerOptions = {
-//   root: null,
-//   // root: document.querySelector("body"),
-//   rootMargin: "0px",
-//   threshold: 0.1,
-// };
-
 export function ReadFollowed() {
   const [currentFollowedId, setCurrentFollowedId] = useState(0); // 0 means all
-  const [priorKeyset, setPriorKeyset] = useState(0); // todo: need to build this out
+  const [priorKeyset, setPriorKeyset] = useState(0);
   const [works, setWorks] = useState<WorkWithAuthor[] | null>(null);
-  //const [profile] = useProfile();
   const profile = useProfile((state) => state.profile);
   const targetRef = useRef<HTMLDivElement>(null);
   const readWorkListRef = useRef<HTMLDivElement>(null);
@@ -32,15 +23,11 @@ export function ReadFollowed() {
 
   const getCurrentSelectedFollowedId = (id: number) => {
     setRefreshWorksList(true);
-    console.log("Read received id", id);
     setCurrentFollowedId(id);
     setPriorKeyset(0);
   };
 
   useEffect(() => {
-    console.log("currentFollowerId updated running getData", currentFollowedId);
-    console.log("profile updated running getData", profile);
-
     getData();
   }, [currentFollowedId, profile, priorKeyset, refreshWorksList]);
 
@@ -70,7 +57,6 @@ export function ReadFollowed() {
 
     if (inView) {
       setRefreshWorksList(false);
-      console.log("Scroll, running getData", profile);
     }
   };
 
