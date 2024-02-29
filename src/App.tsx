@@ -12,6 +12,7 @@ import { ManageStories } from "./pages/write/ManageStories";
 import { Write } from "./pages/write/Write";
 import { ReadFollowed } from "./pages/read/ReadFollowed";
 import { ReadStory } from "./pages/read/ReadStory";
+import { Read } from "./pages/read/Read";
 
 const router = createBrowserRouter([
   {
@@ -37,12 +38,18 @@ const router = createBrowserRouter([
     ],
   },
   {
-    path: "/read/followed",
-    element: <ReadFollowed />,
-  },
-  {
-    path: "/read/:profile_id",
-    element: <ReadStory />,
+    path: "/read",
+    element: <Read />,
+    children: [
+      {
+        path: "followed",
+        element: <ReadFollowed />,
+      },
+      {
+        path: ":profile_id",
+        element: <ReadStory />,
+      },
+    ],
   },
   {
     path: "/explore",

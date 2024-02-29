@@ -1,5 +1,3 @@
-import { FollowedList } from "../../common/components/FollowedList";
-import { Layout } from "../../common/components/Layout";
 import { useEffect, useRef, useState } from "react";
 import { kwilApi } from "../../common/api/KwilApiInstance";
 import { WorkElements } from "../../common/components/WorkElements";
@@ -11,21 +9,19 @@ import {
 import { Spinner } from "../../common/components/Spinner";
 import { useProfile } from "../../common/zustand/Store";
 import { Work } from "../../common/api/ApiModels";
+import { useOutletContext } from "react-router-dom";
+import { ReadOutletType } from "./Read";
 
 export function ReadFollowed() {
-  const [currentFollowedId, setCurrentFollowedId] = useState(0); // 0 means all
-  const [priorKeyset, setPriorKeyset] = useState(0);
   const [works, setWorks] = useState<WorkWithAuthor[] | null>(null);
   const profile = useProfile((state) => state.profile);
   const targetRef = useRef<HTMLDivElement>(null);
   const readWorkListRef = useRef<HTMLDivElement>(null);
-  const [refreshWorksList, setRefreshWorksList] = useState(true);
-
-  const getCurrentSelectedFollowedId = (id: number) => {
-    setRefreshWorksList(true);
-    setCurrentFollowedId(id);
-    setPriorKeyset(0);
-  };
+  const {
+    currentFollowedId,
+    priorKeysetState: [priorKeyset, setPriorKeyset],
+    refreshWorksListState: [refreshWorksList, setRefreshWorksList],
+  } = useOutletContext<ReadOutletType>();
 
   useEffect(() => {
     getData();
@@ -118,33 +114,24 @@ export function ReadFollowed() {
   };
 
   return (
-    <Layout>
-      <div className="home-single">
-        <div style={{ marginBottom: "2em", width: "100%" }}>
-          <FollowedList
-            getCurrentSelectedFollowedId={getCurrentSelectedFollowedId}
-          />
-        </div>
-        <div ref={readWorkListRef} className="read-work-list">
-          <WorkElements
-            works={works}
-            refresh={refreshWorksList}
-            showContent={false}
-            twoColumn={true}
-          />
-          <div
-            ref={targetRef}
-            style={{
-              bottom: "0",
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-            }}
-          >
-            {works && works.length > 0 ? <Spinner size={15} /> : null}
-          </div>
-        </div>
+    <div ref={readWorkListRef} className="read-work-list">
+      <WorkElements
+        works={works}
+        refresh={refreshWorksList}
+        showContent={false}
+        twoColumn={true}
+      />
+      <div
+        ref={targetRef}
+        style={{
+          bottom: "0",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+        }}
+      >
+        {works && works.length > 0 ? <Spinner size={15} /> : null}
       </div>
-    </Layout>
+    </div>
   );
 }
