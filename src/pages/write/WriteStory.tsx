@@ -1,10 +1,10 @@
 import { ChangeEvent, MouseEvent, useEffect, useRef, useState } from "react";
-import { useProfile } from "../common/zustand/store";
-import { kwilApi } from "../common/api/KwilApiInstance";
-import { PrimaryButton } from "../common/components/Buttons";
+import { useProfile } from "../../common/zustand/store";
+import { kwilApi } from "../../common/api/KwilApiInstance";
+import { PrimaryButton } from "../../common/components/Buttons";
 import { MDXEditorMethods } from "@mdxeditor/editor";
-import { MarkdownEditor } from "../common/components/MarkdownEditor";
-import { ValidationAndProgressMsg } from "../common/components/ValidationAndProgressMsg";
+import { MarkdownEditor } from "../../common/components/MarkdownEditor";
+import { ValidationAndProgressMsg } from "../../common/components/ValidationAndProgressMsg";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 
 enum WriteValidation {
@@ -22,7 +22,7 @@ enum PageState {
   Edit = "Edit",
 }
 
-export function Write() {
+export function WriteStory() {
   const mdRef = useRef<MDXEditorMethods>(null);
   const profile = useProfile((state) => state.profile);
   const [title, setTitle] = useState("");

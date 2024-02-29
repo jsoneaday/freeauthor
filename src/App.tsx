@@ -7,10 +7,12 @@ import "./theme/layout.css";
 import "./theme/animations.css";
 import { Explorer } from "./pages/Explorer";
 import { Home } from "./pages/Home";
-import { Write } from "./pages/Write";
-import { Read } from "./pages/Read";
-import { ManageStories } from "./pages/ManageStories";
-import { WriteMngStories } from "./pages/WriteMngStories";
+import { WriteStory } from "./pages/write/WriteStory";
+import { Read } from "./pages/read/Read";
+import { ManageStories } from "./pages/write/ManageStories";
+import { Write } from "./pages/write/Write";
+import { ReadFollowed } from "./pages/read/ReadFollowed";
+import { ReadStory } from "./pages/read/ReadStory";
 
 const router = createBrowserRouter([
   {
@@ -19,15 +21,15 @@ const router = createBrowserRouter([
   },
   {
     path: "/write",
-    element: <WriteMngStories />,
+    element: <Write />,
     children: [
       {
         path: "new",
-        element: <Write />,
+        element: <WriteStory />,
       },
       {
         path: "edit/:work_id",
-        element: <Write />,
+        element: <WriteStory />,
       },
       {
         path: "manage",
@@ -36,14 +38,12 @@ const router = createBrowserRouter([
     ],
   },
   {
-    path: "/read",
-    element: <Read />,
-    children: [
-      {
-        path: "/read/:profile_id",
-        element: <Read />,
-      },
-    ],
+    path: "/read/followed",
+    element: <ReadFollowed />,
+  },
+  {
+    path: "/read/:profile_id",
+    element: <ReadStory />,
   },
   {
     path: "/explore",

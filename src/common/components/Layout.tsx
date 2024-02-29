@@ -37,7 +37,7 @@ export function Layout({ children }: LayoutProps) {
         </a>
         <span className="layout-links">
           <NavAnchor path="/write/new" label="WRITE" />
-          <NavAnchor path="/read" label="READ" />
+          <NavAnchor path="/read/followed" label="READ" />
           <NavAnchor path="/explore" label="EXPLORE" />
         </span>
         <span style={{ display: "flex", alignItems: "center" }}>

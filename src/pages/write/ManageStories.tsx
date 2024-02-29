@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
-import { kwilApi } from "../common/api/KwilApiInstance";
-import { useProfile } from "../common/zustand/store";
-import { WorkElements } from "../common/components/WorkElements";
-import { PAGE_SIZE } from "../common/utils/StandardValues";
+import { kwilApi } from "../../common/api/KwilApiInstance";
+import { useProfile } from "../../common/zustand/store";
+import { WorkElements } from "../../common/components/WorkElements";
+import { PAGE_SIZE } from "../../common/utils/StandardValues";
 import {
   WorkWithAuthor,
   getWorkWithAuthor,
-} from "../common/components/models/UIModels";
+} from "../../common/components/models/UIModels";
 
 export function ManageStories() {
   const [works, setWorks] = useState<WorkWithAuthor[] | null>(null);

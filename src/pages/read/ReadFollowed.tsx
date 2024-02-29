@@ -1,17 +1,17 @@
-import { FollowedList } from "../common/components/FollowedList";
-import { Layout } from "../common/components/Layout";
+import { FollowedList } from "../../common/components/FollowedList";
+import { Layout } from "../../common/components/Layout";
 import { useEffect, useRef, useState } from "react";
-import { kwilApi } from "../common/api/KwilApiInstance";
+import { kwilApi } from "../../common/api/KwilApiInstance";
 //import { useProfile } from "../common/redux/profile/ProfileHooks";
-import { WorkElements } from "../common/components/WorkElements";
-import { PAGE_SIZE } from "../common/utils/StandardValues";
+import { WorkElements } from "../../common/components/WorkElements";
+import { PAGE_SIZE } from "../../common/utils/StandardValues";
 import {
   WorkWithAuthor,
   getWorkWithAuthor,
-} from "../common/components/models/UIModels";
-import { Spinner } from "../common/components/Spinner";
-import { useProfile } from "../common/zustand/store";
-import { Work } from "../common/api/ApiModels";
+} from "../../common/components/models/UIModels";
+import { Spinner } from "../../common/components/Spinner";
+import { useProfile } from "../../common/zustand/store";
+import { Work } from "../../common/api/ApiModels";
 
 // const observerOptions = {
 //   root: null,
@@ -20,7 +20,7 @@ import { Work } from "../common/api/ApiModels";
 //   threshold: 0.1,
 // };
 
-export function Read() {
+export function ReadFollowed() {
   const [currentFollowedId, setCurrentFollowedId] = useState(0); // 0 means all
   const [priorKeyset, setPriorKeyset] = useState(0); // todo: need to build this out
   const [works, setWorks] = useState<WorkWithAuthor[] | null>(null);

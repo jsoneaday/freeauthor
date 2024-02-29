@@ -190,7 +190,7 @@ export class FakeKwilApi implements IKwilApi {
         if (a.updated_at < b.updated_at) return 1;
         return 0;
       })
-      .slice(lastKeyset, lastKeyset + pageSize);
+      .slice(lastKeyset, lastKeyset + pageSize); // todo: fix like getWorksByAllFollowed
   }
 
   async getWorksByAllFollowed(

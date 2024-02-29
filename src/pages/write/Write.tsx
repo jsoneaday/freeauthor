@@ -1,11 +1,11 @@
-import { Layout } from "../common/components/Layout";
-import { NavAnchor } from "../common/components/NavAnchor";
+import { Layout } from "../../common/components/Layout";
+import { NavAnchor } from "../../common/components/NavAnchor";
 import { Outlet } from "react-router-dom";
-import { useProfile } from "../common/zustand/store";
-import useNotificationState from "../common/redux/notification/NotificationStateHooks";
+import { useProfile } from "../../common/zustand/store";
+import useNotificationState from "../../common/redux/notification/NotificationStateHooks";
 import { useEffect } from "react";
 
-export function WriteMngStories() {
+export function Write() {
   const profile = useProfile((state) => state.profile);
   const [notificationState, setNotificationState] = useNotificationState();
 
