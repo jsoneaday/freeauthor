@@ -1,7 +1,7 @@
 import { MouseEvent, useEffect, useState } from "react";
 import { kwilApi } from "../api/KwilApiInstance";
 import allFollow from "../../theme/assets/profiles/l-all.png";
-import { useProfile } from "../redux/profile/ProfileHooks";
+import { useProfile } from "../zustand/store";
 /// @ts-ignore
 import { v4 as uuidv4 } from "uuid";
 import { RandomImg } from "./RandomImage";
@@ -16,7 +16,7 @@ export function FollowedList({
   getCurrentSelectedFollowedId,
 }: FollowedListProps) {
   const [followedProfiles, setFollowedProfiles] = useState<JSX.Element[]>([]);
-  const [profile] = useProfile();
+  const profile = useProfile((state) => state.profile);
 
   const onClickSelectProfile = (e: MouseEvent<HTMLDivElement>) => {
     const currentElementProfileId = e.currentTarget.dataset.profileId || 0;

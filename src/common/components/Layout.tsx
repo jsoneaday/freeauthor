@@ -1,5 +1,5 @@
 import { MouseEvent, ReactNode } from "react";
-import { useProfile } from "../redux/profile/ProfileHooks";
+import { useProfile } from "../zustand/store";
 import profileIcon from "../../theme/assets/profiles/mrglasses.jpg"; // todo: replace with user avatar when ready
 import { kwilApi } from "../api/KwilApiInstance";
 import { NavAnchor } from "./NavAnchor";
@@ -12,7 +12,7 @@ export interface LayoutProps {
 
 /** todo: add button for editable modal **/
 export function Layout({ children }: LayoutProps) {
-  const [profile] = useProfile();
+  const profile = useProfile((state) => state.profile);
   const [notificationState, setNotificationState] = useNotificationState();
 
   const toggleNotificationState = () => {

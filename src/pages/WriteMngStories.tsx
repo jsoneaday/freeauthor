@@ -1,12 +1,12 @@
 import { Layout } from "../common/components/Layout";
 import { NavAnchor } from "../common/components/NavAnchor";
 import { Outlet } from "react-router-dom";
-import { useProfile } from "../common/redux/profile/ProfileHooks";
+import { useProfile } from "../common/zustand/store";
 import useNotificationState from "../common/redux/notification/NotificationStateHooks";
 import { useEffect } from "react";
 
 export function WriteMngStories() {
-  const [profile] = useProfile();
+  const profile = useProfile((state) => state.profile);
   const [notificationState, setNotificationState] = useNotificationState();
 
   useEffect(() => {

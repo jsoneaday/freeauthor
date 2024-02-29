@@ -1,5 +1,5 @@
 import { ChangeEvent, MouseEvent, useEffect, useRef, useState } from "react";
-import { useProfile } from "../common/redux/profile/ProfileHooks";
+import { useProfile } from "../common/zustand/store";
 import { kwilApi } from "../common/api/KwilApiInstance";
 import { PrimaryButton } from "../common/components/Buttons";
 import { MDXEditorMethods } from "@mdxeditor/editor";
@@ -24,7 +24,7 @@ enum PageState {
 
 export function Write() {
   const mdRef = useRef<MDXEditorMethods>(null);
-  const [profile] = useProfile();
+  const profile = useProfile((state) => state.profile);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState<string | undefined>("");
   const [validationMsg, setValidationMsg] = useState("");

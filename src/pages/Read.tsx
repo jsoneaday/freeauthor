@@ -2,7 +2,6 @@ import { FollowedList } from "../common/components/FollowedList";
 import { Layout } from "../common/components/Layout";
 import { useEffect, useRef, useState } from "react";
 import { kwilApi } from "../common/api/KwilApiInstance";
-import { useProfile } from "../common/redux/profile/ProfileHooks";
 import { WorkElements } from "../common/components/WorkElements";
 import { PAGE_SIZE } from "../common/utils/StandardValues";
 import {
@@ -10,6 +9,7 @@ import {
   getWorkWithAuthor,
 } from "../common/components/models/UIModels";
 import { Spinner } from "../common/components/Spinner";
+import { useProfile } from "../common/zustand/store";
 
 const observerOptions = {
   root: null,
@@ -22,7 +22,7 @@ export function Read() {
   const [currentFollowedId, setCurrentFollowedId] = useState(0); // 0 means all
   const [priorKeyset, setPriorKeyset] = useState(0); // todo: need to build this out
   const [works, setWorks] = useState<WorkWithAuthor[] | null>(null);
-  const [profile] = useProfile();
+  const profile = useProfile((state) => state.profile);
   const targetRef = useRef<HTMLDivElement>(null);
   const readWorkListRef = useRef<HTMLDivElement>(null);
   const [refreshWorksList, setRefreshWorksList] = useState(false);
@@ -41,47 +41,22 @@ export function Read() {
   }, [currentFollowedId, profile]);
 
   useEffect(() => {
-    readWorkListRef.current?.addEventListener("scroll", scrollEventHandler);
+    const observer = new IntersectionObserver((entries: any) => {
+      const [entry] = entries;
 
+      if (entry.isIntersecting) {
+        setRefreshWorksList(false);
+        console.log("Read Intersection, running getData", profile);
+        getData();
+      }
+    }, observerOptions);
+
+    const ref = targetRef.current;
+    if (ref) observer.observe(ref);
     return () => {
-      readWorkListRef.current?.removeEventListener(
-        "scroll",
-        scrollEventHandler
-      );
+      if (ref) observer.unobserve(ref);
     };
-  }, []);
-
-  const scrollEventHandler = () => {
-    const targetBounds = targetRef.current?.getBoundingClientRect();
-    const readWorkListBounds = readWorkListRef.current?.getBoundingClientRect();
-
-    const inView =
-      (targetBounds?.bottom || 0) === (readWorkListBounds?.bottom || 0) - 1;
-
-    if (inView) {
-      setRefreshWorksList(false);
-      console.log("Scroll, running getData", profile);
-      getData();
-    }
-  };
-
-  // useEffect(() => {
-  //   const observer = new IntersectionObserver((entries: any) => {
-  //     const [entry] = entries;
-
-  //     if (entry.isIntersecting) {
-  //       setRefreshWorksList(false);
-  //       console.log("Read Intersection, running getData", profile);
-  //       getData();
-  //     }
-  //   }, observerOptions);
-
-  //   const ref = targetRef.current;
-  //   if (ref) observer.observe(ref);
-  //   return () => {
-  //     if (ref) observer.unobserve(ref);
-  //   };
-  // }, []);
+  }, [targetRef.current]);
 
   const getData = () => {
     console.log(

@@ -4,8 +4,9 @@ import { PrimaryButton } from "./Buttons";
 import { ProfileForm } from "./ProfileForm";
 import Notification from "./modals/Notification";
 import { kwilApi } from "../api/KwilApiInstance";
-import { useProfile } from "../redux/profile/ProfileHooks";
+// import { useProfile } from "../redux/profile/ProfileHooks";
 import { NotificationState } from "../redux/notification/NotificationStateSlice";
+import { useProfile } from "../zustand/store";
 
 export const SMALL_NOTIFICATION_HEIGHT = "170px";
 export const LARGE_NOTIFICATION_HEIGHT = "580px";
@@ -19,7 +20,9 @@ export function ConnectCreateProfile({
   notificationState,
   toggleNotificationState,
 }: ConnectCreateProfileProps) {
-  const [profile, setProfile] = useProfile();
+  // const [profile, setProfile] = useProfile();
+  const profile = useProfile((state) => state.profile);
+  const setProfile = useProfile((state) => state.setProfile);
   const [notificationHeight, setNotificationHeight] = useState(
     SMALL_NOTIFICATION_HEIGHT
   );

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { kwilApi } from "../common/api/KwilApiInstance";
-import { useProfile } from "../common/redux/profile/ProfileHooks";
+import { useProfile } from "../common/zustand/store";
 import { WorkElements } from "../common/components/WorkElements";
 import { PAGE_SIZE } from "../common/utils/StandardValues";
 import {
@@ -11,7 +11,7 @@ import {
 export function ManageStories() {
   const [works, setWorks] = useState<WorkWithAuthor[] | null>(null);
   const [priorKeyset, setPriorKeyset] = useState(0);
-  const [profile] = useProfile();
+  const profile = useProfile((state) => state.profile);
 
   useEffect(() => {
     if (!profile) return;

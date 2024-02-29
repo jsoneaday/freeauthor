@@ -1,6 +1,6 @@
 import { ChangeEvent, useState, MouseEvent } from "react";
 import { kwilApi } from "../api/KwilApiInstance";
-import { useProfile } from "../redux/profile/ProfileHooks";
+import { useProfile } from "../zustand/store";
 import { PrimaryButton } from "./Buttons";
 import { ValidationAndProgressMsg } from "./ValidationAndProgressMsg";
 
@@ -28,7 +28,7 @@ export function ProfileForm({ profileCreatedCallback }: ProfileFormProps) {
   const [description, setDescription] = useState("");
   const [socialPrimary, setSocialPrimary] = useState("");
   const [socialSecondary, setSocialSecondary] = useState("");
-  const [_profile, setProfile] = useProfile();
+  const setProfile = useProfile((state) => state.setProfile);
   const [createProfileBtnDisabled, setCreateProfileBtnDisabled] =
     useState(true);
 
