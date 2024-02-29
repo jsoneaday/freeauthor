@@ -209,14 +209,14 @@ export class FakeKwilApi implements IKwilApi {
         if (a.id < b.id) return 1;
         return 0;
       });
-
+    console.log("getWorksByAllFollowed", filteredWorks);
     if (lastKeyset === 0) {
       return filteredWorks.slice(0, pageSize);
     }
 
-    return filteredWorks.filter(
-      (work) => work.id >= lastKeyset && work.id <= lastKeyset + pageSize
-    );
+    return filteredWorks
+      .filter((work) => work.id >= lastKeyset)
+      .slice(0, pageSize);
   }
 
   async getWorksByOneFollowed(
@@ -236,9 +236,9 @@ export class FakeKwilApi implements IKwilApi {
       return filteredWorks.slice(0, pageSize);
     }
 
-    return filteredWorks.filter(
-      (work) => work.id >= lastKeyset && work.id <= lastKeyset + pageSize
-    );
+    return filteredWorks
+      .filter((work) => work.id >= lastKeyset)
+      .slice(0, pageSize);
   }
 
   async waitAndGetId(_tx: string | null | undefined): Promise<number> {
