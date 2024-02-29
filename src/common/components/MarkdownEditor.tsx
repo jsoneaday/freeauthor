@@ -15,7 +15,7 @@ import {
   ChangeCodeMirrorLanguage,
 } from "@mdxeditor/editor";
 import "@mdxeditor/editor/style.css";
-import { useCallback } from "react";
+import { useCallback, useEffect } from "react";
 
 interface MarkdownEditorProps {
   readOnly: boolean;
@@ -23,6 +23,7 @@ interface MarkdownEditorProps {
   mdRef?: React.RefObject<MDXEditorMethods>;
 }
 
+/// @markdown parameter can only be set on first load, subsequent sets are ignored by MDXEditor!
 export function MarkdownEditor({
   mdRef,
   markdown,
@@ -31,6 +32,10 @@ export function MarkdownEditor({
   const setEditorValue = useCallback((markdownStr: string) => {
     console.log("MDXEditor updated value:", markdownStr);
   }, []);
+
+  useEffect(() => {
+    console.log("markdown", markdown);
+  }, [markdown]);
 
   return (
     <MDXEditor

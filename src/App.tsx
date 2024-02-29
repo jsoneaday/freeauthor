@@ -46,7 +46,7 @@ const router = createBrowserRouter([
         element: <ReadFollowed />,
       },
       {
-        path: ":profile_id",
+        path: ":work_id",
         element: <ReadStory />,
       },
     ],

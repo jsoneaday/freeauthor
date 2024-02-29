@@ -9,6 +9,7 @@ import { Link } from "react-router-dom";
 interface WorkElementsProps {
   works: WorkWithAuthor[] | null;
   refresh: boolean; // reset all data, do not append
+  readOnly?: boolean;
   showAuthor?: boolean;
   showContent?: boolean;
   twoColumn?: boolean;
@@ -17,6 +18,7 @@ interface WorkElementsProps {
 export function WorkElements({
   works,
   refresh,
+  readOnly,
   showAuthor = true,
   showContent = true,
   twoColumn = false,
@@ -39,7 +41,12 @@ export function WorkElements({
             isProfile={false}
             style={{ height: "6em", marginRight: "1em" }}
           />
-          <Link to={`/write/edit/${works[i].id}`} className="stories-list-item">
+          <Link
+            to={
+              !readOnly ? `/write/edit/${works[i].id}` : `/read/${works[i].id}`
+            }
+            className="stories-list-item"
+          >
             <span
               className={`story-title ${twoColumn ? "story-title-small" : ""}`}
             >

@@ -386,6 +386,7 @@ select {
 }
 
 .story-desc {
+  color: var(--tertiary-cl);
   font-size: 1.5em;
   margin-bottom: 0.75em;
 }
@@ -395,7 +396,6 @@ select {
 }
 
 .story-title-item {
-  color: var(--tertiary-cl);
   font-size: 0.8em;
 }
 
