@@ -38,6 +38,10 @@ export default function Notification({
     }
   }, [notiType]);
 
+  useEffect(() => {
+    console.log("Notification isOpen", isOpen);
+  }, [isOpen]);
+
   return (
     <BaseModal
       isOpen={isOpen}

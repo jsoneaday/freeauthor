@@ -10,7 +10,7 @@ import {
   getWorkWithAuthor,
 } from "../../common/components/models/UIModels";
 import { Spinner } from "../../common/components/Spinner";
-import { useProfile } from "../../common/zustand/store";
+import { useProfile } from "../../common/zustand/Store";
 import { Work } from "../../common/api/ApiModels";
 
 // const observerOptions = {

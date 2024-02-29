@@ -1,22 +1,19 @@
 import { Layout } from "../../common/components/Layout";
 import { NavAnchor } from "../../common/components/NavAnchor";
 import { Outlet } from "react-router-dom";
-import { useProfile } from "../../common/zustand/store";
-import useNotificationState from "../../common/redux/notification/NotificationStateHooks";
+import { useProfile } from "../../common/zustand/Store";
+import { useNotification } from "../../common/zustand/Store";
 import { useEffect } from "react";
 
 export function Write() {
   const profile = useProfile((state) => state.profile);
-  const [notificationState, setNotificationState] = useNotificationState();
+  const toggleNotification = useNotification(
+    (state) => state.toggleNotification
+  );
 
   useEffect(() => {
     if (!profile) {
-      const newNotificationState = {
-        ...notificationState,
-        isOpen: !notificationState.isOpen,
-      };
-
-      setNotificationState(newNotificationState);
+      toggleNotification();
     }
   }, [profile]);
 

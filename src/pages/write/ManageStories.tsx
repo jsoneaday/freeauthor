@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { kwilApi } from "../../common/api/KwilApiInstance";
-import { useProfile } from "../../common/zustand/store";
+import { useProfile } from "../../common/zustand/Store";
 import { WorkElements } from "../../common/components/WorkElements";
 import { PAGE_SIZE } from "../../common/utils/StandardValues";
 import {

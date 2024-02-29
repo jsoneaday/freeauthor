@@ -4,15 +4,13 @@ import { PrimaryButton } from "./Buttons";
 import { ProfileForm } from "./ProfileForm";
 import Notification from "./modals/Notification";
 import { kwilApi } from "../api/KwilApiInstance";
-// import { useProfile } from "../redux/profile/ProfileHooks";
-import { NotificationState } from "../redux/notification/NotificationStateSlice";
-import { useProfile } from "../zustand/store";
+import { useProfile } from "../zustand/Store";
 
 export const SMALL_NOTIFICATION_HEIGHT = "170px";
 export const LARGE_NOTIFICATION_HEIGHT = "580px";
 
 interface ConnectCreateProfileProps {
-  notificationState: NotificationState;
+  notificationState: boolean;
   toggleNotificationState: () => void;
 }
 
@@ -65,7 +63,7 @@ export function ConnectCreateProfile({
     <Notification
       title="Notification"
       notiType={NotificationType.Warning}
-      isOpen={notificationState.isOpen}
+      isOpen={notificationState}
       toggleIsOpen={toggleNotificationState}
       width="25%"
       height={notificationHeight}

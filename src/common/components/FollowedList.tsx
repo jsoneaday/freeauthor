@@ -1,7 +1,7 @@
 import { MouseEvent, useEffect, useState } from "react";
 import { kwilApi } from "../api/KwilApiInstance";
 import allFollow from "../../theme/assets/profiles/l-all.png";
-import { useProfile } from "../zustand/store";
+import { useProfile } from "../zustand/Store";
 /// @ts-ignore
 import { v4 as uuidv4 } from "uuid";
 import { RandomImg } from "./RandomImage";

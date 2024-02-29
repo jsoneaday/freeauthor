@@ -1,5 +1,5 @@
 import { ChangeEvent, MouseEvent, useEffect, useRef, useState } from "react";
-import { useProfile } from "../../common/zustand/store";
+import { useProfile } from "../../common/zustand/Store";
 import { kwilApi } from "../../common/api/KwilApiInstance";
 import { PrimaryButton } from "../../common/components/Buttons";
 import { MDXEditorMethods } from "@mdxeditor/editor";

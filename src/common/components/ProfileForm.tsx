@@ -1,6 +1,6 @@
 import { ChangeEvent, useState, MouseEvent } from "react";
 import { kwilApi } from "../api/KwilApiInstance";
-import { useProfile } from "../zustand/store";
+import { useProfile } from "../zustand/Store";
 import { PrimaryButton } from "./Buttons";
 import { ValidationAndProgressMsg } from "./ValidationAndProgressMsg";
 

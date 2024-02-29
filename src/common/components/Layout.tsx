@@ -1,10 +1,10 @@
 import { MouseEvent, ReactNode } from "react";
-import { useProfile } from "../zustand/store";
+import { useProfile } from "../zustand/Store";
 import profileIcon from "../../theme/assets/profiles/mrglasses.jpg"; // todo: replace with user avatar when ready
 import { kwilApi } from "../api/KwilApiInstance";
 import { NavAnchor } from "./NavAnchor";
 import { ConnectCreateProfile } from "./ConnectCreateProfile";
-import useNotificationState from "../redux/notification/NotificationStateHooks";
+import { useNotification } from "../zustand/Store";
 
 export interface LayoutProps {
   children: ReactNode;
@@ -13,20 +13,20 @@ export interface LayoutProps {
 /** todo: add button for editable modal **/
 export function Layout({ children }: LayoutProps) {
   const profile = useProfile((state) => state.profile);
-  const [notificationState, setNotificationState] = useNotificationState();
+  const notificationIsOpen = useNotification((state) => state.isOpen);
+  const toggleNotification = useNotification(
+    (state) => state.toggleNotification
+  );
 
   const toggleNotificationState = () => {
-    const newNotificationState = {
-      ...notificationState,
-      isOpen: !notificationState.isOpen,
-    };
-
-    setNotificationState(newNotificationState);
+    toggleNotification();
   };
 
   const onClickConnect = (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
+    console.log("notificationState before toggle", notificationIsOpen);
     toggleNotificationState();
+    console.log("notificationState after toggle", notificationIsOpen);
   };
 
   return (
@@ -56,7 +56,7 @@ export function Layout({ children }: LayoutProps) {
             <>
               <button onClick={onClickConnect}>CONNECT</button>
               <ConnectCreateProfile
-                notificationState={notificationState}
+                notificationState={notificationIsOpen}
                 toggleNotificationState={toggleNotificationState}
               />
             </>
