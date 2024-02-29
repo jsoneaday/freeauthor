@@ -96,7 +96,7 @@
 }
 
 body {
-  overflow-y: scroll;
+  overflow-y: hidden;
   font-family: Clarkson, Helvetica, sans-serif;
   margin: 0;
 }
@@ -106,9 +106,19 @@ main {
   margin-right: auto;
 }
 
-.layout-container {
-  margin: auto;
-  height: 100vh;
+::-webkit-scrollbar {
+  width: 0.5em;
+  height: 0.5em;
+}
+
+::-webkit-scrollbar-track {
+  background-color: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #d6dee1;
+  border-radius: 20px;
+  border: 6px solid transparent;
 }
 
 .panel-col {

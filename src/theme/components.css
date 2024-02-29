@@ -339,9 +339,6 @@ select {
   align-items: flex-start;
   justify-content: flex-start;
   width: 100%;
-  border-bottom-color: var(--header-border-cl);
-  border-bottom-width: 1px;
-  border-bottom-style: solid;
   cursor: pointer;
 }
 

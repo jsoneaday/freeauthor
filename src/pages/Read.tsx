@@ -121,7 +121,7 @@ export function Read() {
             getCurrentSelectedFollowedId={getCurrentSelectedFollowedId}
           />
         </div>
-        <div style={{ marginTop: "1.5em", width: "100%" }}>
+        <div className="read-work-list">
           <WorkElements
             works={works}
             refresh={refreshWorksList}

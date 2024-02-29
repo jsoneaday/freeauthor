@@ -38,6 +38,17 @@
   padding-top: 0;
 }
 
+.read-work-list {
+  overflow-y: scroll;
+  padding=bottom: 5em;
+  padding-top: 1.5em;
+  padding-right: 1.5em;
+  padding-left: 1.5em;
+  margin-bottom: 1em;
+  height: 76vh;
+  width: 100%;
+}
+
 @media only screen and (max-device-width: 926px) {
   .home {
     display: flex;
