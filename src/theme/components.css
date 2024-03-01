@@ -194,22 +194,9 @@ textarea {
   justify-content: flex-start;
 }
 
-.preview-content {
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-}
-
 .preview-timestamp {
   margin-top: 0.5em;
   font-size: 0.85em;
-}
-
-.preview-separator {
-  width: 80%;
-  color: var(--secondary-cl);
-  background-color: var(--secondary-cl);
-  margin-top: 1.5em;
 }
 
 select {

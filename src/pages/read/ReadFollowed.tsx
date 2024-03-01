@@ -52,12 +52,14 @@ export function ReadFollowed() {
   const scrollEventHandler = () => {
     const targetBounds = targetRef.current?.getBoundingClientRect();
     const readWorkListBounds = readWorkListRef.current?.getBoundingClientRect();
+    console.log("bounds", targetBounds, readWorkListBounds);
 
     const inView =
       (targetBounds?.bottom || 0) === (readWorkListBounds?.bottom || 0) - 1;
 
     if (inView) {
       setRefreshWorksList(false);
+      console.log("setRefreshWorksList", false);
     }
   };
 
@@ -67,9 +69,6 @@ export function ReadFollowed() {
   };
 
   const getData = () => {
-    console.log(
-      `entered getData currentFollowedId: ${currentFollowedId}, profile: ${profile}, priorKeyset: ${priorKeyset}, refreshWorksList: ${refreshWorksList}`
-    );
     if (!profile) return;
 
     if (!refreshWorksList && priorKeyset === 0) {

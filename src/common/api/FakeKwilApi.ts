@@ -13,7 +13,7 @@ import { faker } from "@faker-js/faker";
 import { formattedNow } from "../utils/DateTimeUtils";
 
 const profiles: Profile[] = [];
-const worksLength = 150;
+const worksLength = 600;
 const works: Work[] = [];
 const follows: Follow[] = [];
 const topics: Topic[] = [];
@@ -183,14 +183,28 @@ export class FakeKwilApi implements IKwilApi {
     lastKeyset: number,
     pageSize: number
   ): Promise<Work[] | null> {
-    return works
-      .filter((work) => work.author_id === authorId)
+    console.log(
+      "getAuthorWorks count",
+      works.filter((work) => work.author_id === authorId).length
+    );
+    console.log("lastKeyset", lastKeyset);
+
+    let filteredWorks: Work[];
+    if (lastKeyset === 0) {
+      filteredWorks = works.filter((work) => work.author_id === authorId);
+    } else {
+      filteredWorks = works.filter(
+        (work) => work.author_id === authorId && work.id < lastKeyset
+      );
+    }
+
+    return filteredWorks
       .sort((a, b) => {
-        if (a.updated_at > b.updated_at) return -1;
-        if (a.updated_at < b.updated_at) return 1;
+        if (a.id > b.id) return -1;
+        if (a.id < b.id) return 1;
         return 0;
       })
-      .slice(lastKeyset, lastKeyset + pageSize); // todo: fix like getWorksByAllFollowed
+      .slice(0, pageSize);
   }
 
   async getWorksByAllFollowed(
