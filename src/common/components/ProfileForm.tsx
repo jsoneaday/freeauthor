@@ -169,7 +169,15 @@ export function ProfileForm({ profileCreatedCallback }: ProfileFormProps) {
     if (!validateAllFields()) return;
 
     setValidationMsg(START_CREATE_PROFILE_MSG);
-    await kwilApi.addProfile(
+
+    const existingProfile = await kwilApi.getOwnersProfile();
+    if (existingProfile) {
+      setValidationMsg(
+        "A wallet with that address already exists. Please use a different wallet address to create a profile"
+      );
+      return;
+    }
+    const tx = await kwilApi.addProfile(
       username,
       fullname,
       description,
@@ -177,6 +185,7 @@ export function ProfileForm({ profileCreatedCallback }: ProfileFormProps) {
       socialPrimary,
       socialSecondary
     );
+    await kwilApi.testWaitAndGetId(tx, "profiles");
 
     const profile = await kwilApi.getOwnersProfile();
     if (!profile) throw new Error("Profile has not been created!");

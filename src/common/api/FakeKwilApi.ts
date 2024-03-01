@@ -255,12 +255,8 @@ export class FakeKwilApi implements IKwilApi {
 
   async waitAndGetId(_tx: string | null | undefined): Promise<number> {
     throw new Error(
-      "Deliberately not implemented, for testing use waitAndGetId"
+      "Deliberately not implemented, for testing use testWaitAndGetId"
     );
-  }
-
-  async getWorksLikeCount(_workId: number): Promise<number> {
-    return faker.number.int({ min: 2589, max: 19892 });
   }
 
   async testWaitAndGetId(
@@ -270,10 +266,16 @@ export class FakeKwilApi implements IKwilApi {
     let entities: Entity[] = [];
     if (entityType === "works") {
       entities = works;
+    } else if (entityType === "profiles") {
+      entities = profiles;
     } else {
       throw new Error(`testWaitAndGetId for ${entityType} not implemented yet`);
     }
     return getLastestEntityId(entities);
+  }
+
+  async getWorksLikeCount(_workId: number): Promise<number> {
+    return faker.number.int({ min: 2589, max: 19892 });
   }
 
   async #setupTestData() {
@@ -288,7 +290,7 @@ export class FakeKwilApi implements IKwilApi {
       social_link_primary: faker.internet.url(),
       social_link_second: faker.internet.url(),
     });
-    // index 1 already taken by test runner
+    // index 1 already taken by test runner profile
     for (let i = 1; i < 20; i++) {
       profiles.push({
         id: i + 1,

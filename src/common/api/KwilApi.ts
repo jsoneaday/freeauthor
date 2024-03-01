@@ -394,6 +394,13 @@ export class KwilApi implements IKwilApi {
     return id;
   }
 
+  async testWaitAndGetId(
+    _tx: string | null | undefined,
+    _entityType: string
+  ): Promise<number> {
+    throw new Error("Do not use for production");
+  }
+
   async getWorksLikeCount(workId: number): Promise<number> {
     const actionBody = {
       dbid: this.#dbid,
@@ -406,13 +413,6 @@ export class KwilApi implements IKwilApi {
     };
 
     throw new Error("Not implemented yet");
-  }
-
-  async testWaitAndGetId(
-    _tx: string | null | undefined,
-    _entityType: string
-  ): Promise<number> {
-    throw new Error("Do not use for production");
   }
 
   async #confirmTxCompleteAndGetEntityId(tx: string) {
@@ -435,7 +435,7 @@ export class KwilApi implements IKwilApi {
         }
       }
     }
-    return 0;
+    throw new Error("Transaction has failed");
   }
 
   #convertToProfiles(res: GenericResponse<MsgReceipt>) {
