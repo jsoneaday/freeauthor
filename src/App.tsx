@@ -28,7 +28,7 @@ const router = createBrowserRouter([
         element: <WriteStory />,
       },
       {
-        path: "edit/:work_id",
+        path: "edit/:work_id/:validation_msg?",
         element: <WriteStory />,
       },
       {

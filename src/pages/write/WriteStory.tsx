@@ -32,7 +32,10 @@ export function WriteStory() {
   const [pageState, setPageState] = useState(PageState.NewSubmit);
   const location = useLocation();
   const navigate = useNavigate();
-  const { work_id } = useParams<{ work_id: string }>();
+  const { work_id, validation_msg } = useParams<{
+    work_id: string;
+    validation_msg: string | undefined;
+  }>();
 
   useEffect(() => {
     console.log("current pathname", location.pathname);
@@ -56,6 +59,7 @@ export function WriteStory() {
         setTitle(work.title);
         setDescription(work.description);
         mdRef.current?.setMarkdown(work.content);
+        setValidationMsg(validation_msg || "");
       });
     }
   }, [work_id]);
@@ -80,7 +84,9 @@ export function WriteStory() {
     setValidationMsg("");
 
     console.log("submit complete, navigate to"), `/write/edit/${id}`;
-    navigate(`/write/edit/${id}`);
+    navigate(
+      `/write/edit/${id}/Story created successfully. You can edit it here.`
+    );
   };
 
   // todo: getWork can load anyones work so need to test that user can only edit their own record
