@@ -17,7 +17,7 @@ export function ManageStories() {
   const targetRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    getData();
+    if (profile) getData();
   }, [profile]);
 
   useEffect(() => {
