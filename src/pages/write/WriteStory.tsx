@@ -11,6 +11,8 @@ enum WriteValidation {
   TitleTooLong = "Title must be less than 100 characters",
   TitleBlank = "Title cannot be blank",
   DescTooLong = "Description must be less than 250 characters",
+  ContentTooShort = "You must write at least 250 characters of content",
+  ContentTooLong = "Content cannot be more than 1 million characters",
   FieldIsValid = "",
 }
 
@@ -38,7 +40,6 @@ export function WriteStory() {
   }>();
 
   useEffect(() => {
-    console.log("current pathname", location.pathname);
     if (location.pathname === "/write/new") {
       setPageState(PageState.NewSubmit);
       setTitle("");
@@ -85,7 +86,7 @@ export function WriteStory() {
 
     console.log("submit complete, navigate to"), `/write/edit/${id}`;
     navigate(
-      `/write/edit/${id}/Story created successfully. You can edit it here.`
+      `/write/edit/${id}/Story created successfully. You can continue to edit it here.`
     );
   };
 
@@ -122,6 +123,13 @@ export function WriteStory() {
     return WriteValidation.FieldIsValid;
   };
 
+  const validateContent = () => {
+    if (!mdRef.current?.getMarkdown()) return WriteValidation.ContentTooShort;
+    if (mdRef.current?.getMarkdown().length > 1000000)
+      return WriteValidation.ContentTooLong;
+    return WriteValidation.FieldIsValid;
+  };
+
   const onChangeTitle = (e: ChangeEvent<HTMLInputElement>) => {
     const validationMsg = validateTitle(e.target.value);
     setIsSubmitBtnDisabled(
@@ -143,12 +151,16 @@ export function WriteStory() {
   const validateAllFields = (): boolean => {
     const titleValidation = validateTitle(title);
     const descValidation = validateDesc(description);
+    const contentValidation = validateContent();
 
     if (titleValidation !== WriteValidation.FieldIsValid) {
       setValidationMsg(titleValidation);
       return false;
     } else if (descValidation !== WriteValidation.FieldIsValid) {
       setValidationMsg(descValidation);
+      return false;
+    } else if (contentValidation !== WriteValidation.FieldIsValid) {
+      setValidationMsg(contentValidation);
       return false;
     }
     setValidationMsg("");

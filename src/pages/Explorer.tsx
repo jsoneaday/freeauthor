@@ -7,7 +7,11 @@ import { Layout } from "../common/components/Layout";
 export function Explorer() {
   return (
     <Layout>
-      <div className="home-single"></div>
+      <div className="home-single">
+        <div>Search</div>
+        <div>Topics</div>
+        <div>Stories</div>
+      </div>
     </Layout>
   );
 }

@@ -6,7 +6,6 @@ import "./theme/mdxeditor.css";
 import "./theme/layout.css";
 import "./theme/animations.css";
 import { Explorer } from "./pages/Explorer";
-import { Home } from "./pages/Home";
 import { WriteStory } from "./pages/write/WriteStory";
 import { ManageStories } from "./pages/write/ManageStories";
 import { Write } from "./pages/write/Write";
@@ -17,7 +16,7 @@ import { Read } from "./pages/read/Read";
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <Home />,
+    element: <Explorer />,
   },
   {
     path: "/write",
