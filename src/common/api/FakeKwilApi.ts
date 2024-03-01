@@ -183,12 +183,6 @@ export class FakeKwilApi implements IKwilApi {
     lastKeyset: number,
     pageSize: number
   ): Promise<Work[] | null> {
-    console.log(
-      "getAuthorWorks count",
-      works.filter((work) => work.author_id === authorId).length
-    );
-    console.log("lastKeyset", lastKeyset);
-
     let filteredWorks: Work[];
     if (lastKeyset === 0) {
       filteredWorks = works.filter((work) => work.author_id === authorId);
@@ -216,20 +210,23 @@ export class FakeKwilApi implements IKwilApi {
       .filter((follow) => follow.follower_id === followerId)
       .map((follow) => follow.followed_id);
 
-    const filteredWorks = works
-      .filter((work) => followedIds.includes(work.author_id))
+    let filteredWorks: Work[];
+    if (lastKeyset === 0) {
+      filteredWorks = works.filter((work) =>
+        followedIds.includes(work.author_id)
+      );
+    } else {
+      filteredWorks = works.filter(
+        (work) => followedIds.includes(work.author_id) && work.id < lastKeyset
+      );
+    }
+
+    return filteredWorks
       .sort((a, b) => {
         if (a.id > b.id) return -1;
         if (a.id < b.id) return 1;
         return 0;
-      });
-
-    if (lastKeyset === 0) {
-      return filteredWorks.slice(0, pageSize);
-    }
-
-    return filteredWorks
-      .filter((work) => work.id >= lastKeyset)
+      })
       .slice(0, pageSize);
   }
 
@@ -238,20 +235,21 @@ export class FakeKwilApi implements IKwilApi {
     lastKeyset: number,
     pageSize: number
   ): Promise<Work[] | null> {
-    const filteredWorks = works
-      .filter((work) => work.author_id === followedId)
+    let filteredWorks: Work[];
+    if (lastKeyset === 0) {
+      filteredWorks = works.filter((work) => work.author_id === followedId);
+    } else {
+      filteredWorks = works.filter(
+        (work) => work.author_id === followedId && work.id < lastKeyset
+      );
+    }
+
+    return filteredWorks
       .sort((a, b) => {
         if (a.id > b.id) return -1;
         if (a.id < b.id) return 1;
         return 0;
-      });
-
-    if (lastKeyset === 0) {
-      return filteredWorks.slice(0, pageSize);
-    }
-
-    return filteredWorks
-      .filter((work) => work.id >= lastKeyset)
+      })
       .slice(0, pageSize);
   }
 

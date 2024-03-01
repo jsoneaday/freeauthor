@@ -29,8 +29,8 @@ export function ReadFollowed() {
   }, [setShowFollowedList]);
 
   useEffect(() => {
-    getData();
-  }, [currentFollowedId, profile, priorKeyset, refreshWorksList]);
+    if (profile) getData();
+  }, [profile, currentFollowedId]);
 
   useEffect(() => {
     readWorkListRef.current?.addEventListener("scroll", scrollEventHandler);
@@ -52,20 +52,19 @@ export function ReadFollowed() {
   const scrollEventHandler = () => {
     const targetBounds = targetRef.current?.getBoundingClientRect();
     const readWorkListBounds = readWorkListRef.current?.getBoundingClientRect();
-    console.log("bounds", targetBounds, readWorkListBounds);
 
     const inView =
       (targetBounds?.bottom || 0) === (readWorkListBounds?.bottom || 0) - 1;
 
     if (inView) {
       setRefreshWorksList(false);
+      getData();
       console.log("setRefreshWorksList", false);
     }
   };
 
   const setNextPriorKeyset = (works: Work[]) => {
-    const keyset = works[works.length - 1].id - PAGE_SIZE;
-    setPriorKeyset(keyset <= 0 ? 0 : keyset);
+    setPriorKeyset(works[works.length - 1].id);
   };
 
   const getData = () => {
@@ -110,6 +109,7 @@ export function ReadFollowed() {
           getWorkWithAuthor(works)
             .then((works) => {
               setWorks(works);
+              console.log("works", works);
             })
             .catch((e) => console.log(e));
         })
