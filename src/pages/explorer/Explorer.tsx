@@ -3,7 +3,6 @@ import { Layout } from "../../common/components/Layout";
 import { kwilApi } from "../../common/api/KwilApiInstance";
 import { Topic } from "../../common/components/Topic";
 import searchIcon from "../../theme/assets/search1.png";
-import { WorkElements } from "../../common/components/WorkElements";
 import {
   WorkWithAuthor,
   getWorkWithAuthor,
@@ -11,6 +10,7 @@ import {
 import { PAGE_SIZE } from "../../common/utils/StandardValues";
 import { useParams } from "react-router-dom";
 import { upperCaseFirstLetterOfWords } from "../../common/utils/CharacterUtils";
+import { PagedWorkElements } from "../../common/components/PagedWorkElements";
 
 export function Explorer() {
   const [searchTxt, setSearchTxt] = useState("");
@@ -32,8 +32,6 @@ export function Explorer() {
       topicId = Number(topic_id);
     }
 
-    console.log("priorKeyset", priorKeyset);
-
     kwilApi.getAllTopics().then((topics) => {
       setTopicName(
         upperCaseFirstLetterOfWords(
@@ -51,9 +49,19 @@ export function Explorer() {
           />
         );
       }
-      setTopics(topicItems);
-    });
 
+      setTopics(topicItems);
+      getData(false);
+    });
+  }, [topic_id]);
+
+  const getData = (_refreshWorksList: boolean) => {
+    let topicId = 1;
+    if (topic_id) {
+      topicId = Number(topic_id);
+    }
+
+    console.log("priorKeyset", priorKeyset);
     kwilApi
       .getWorksByTopic(topicId, priorKeyset, PAGE_SIZE)
       .then((works) => {
@@ -72,7 +80,7 @@ export function Explorer() {
           .catch((e) => console.log(e));
       })
       .catch((e) => console.log(e));
-  }, [topic_id]);
+  };
 
   return (
     <Layout>
@@ -98,15 +106,16 @@ export function Explorer() {
         <div className="explorer-container">
           <span className="explorer-header">{topicName}</span>
 
-          <div className="read-work-list" style={{ height: "70vh" }}>
-            <WorkElements
-              works={topicWorks}
-              refresh={true}
-              readOnly={true}
-              showContent={false}
-              columnCount={2}
-            />
-          </div>
+          <PagedWorkElements
+            getData={getData}
+            works={topicWorks}
+            refreshWorksList={false}
+            readOnly={true}
+            showContent={false}
+            showAuthor={true}
+            columnCount={2}
+            style={{ height: "70vh" }}
+          />
         </div>
       </div>
     </Layout>

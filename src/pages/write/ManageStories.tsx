@@ -1,54 +1,31 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { kwilApi } from "../../common/api/KwilApiInstance";
 import { useProfile } from "../../common/zustand/Store";
-import { WorkElements } from "../../common/components/WorkElements";
 import { PAGE_SIZE } from "../../common/utils/StandardValues";
 import {
   WorkWithAuthor,
   getWorkWithAuthor,
 } from "../../common/components/models/UIModels";
-import { Spinner } from "../../common/components/Spinner";
+import { PagedWorkElements } from "../../common/components/PagedWorkElements";
 
 export function ManageStories() {
   const [works, setWorks] = useState<WorkWithAuthor[] | null>(null);
   const [priorKeyset, setPriorKeyset] = useState(0);
   const profile = useProfile((state) => state.profile);
-  const readWorkListRef = useRef<HTMLDivElement>(null);
-  const targetRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (profile) getData();
+    if (profile) getData(false);
   }, [profile]);
 
-  useEffect(() => {
-    readWorkListRef.current?.addEventListener("scroll", scrollEventHandler);
-
-    return () => {
-      readWorkListRef.current?.removeEventListener(
-        "scroll",
-        scrollEventHandler
-      );
-    };
-  }, [readWorkListRef.current, profile, priorKeyset]);
-
-  const scrollEventHandler = () => {
-    const targetBounds = targetRef.current?.getBoundingClientRect();
-    const readWorkListBounds = readWorkListRef.current?.getBoundingClientRect();
-
-    const inView =
-      (targetBounds?.bottom || 0) ===
-      Math.floor(readWorkListBounds?.bottom || 0) - 1;
-
-    if (inView) {
-      console.log("scrolling");
-      getData();
-    }
-  };
-
-  const getData = () => {
+  const getData = (_refreshWorksList: boolean) => {
     if (!profile) return;
 
     if (priorKeyset === 1) return;
+
+    let count = 0;
+    kwilApi.getAuthorWorks(profile.id, priorKeyset, 500).then((works) => {
+      count = works?.length || 0;
+    });
 
     kwilApi
       .getAuthorWorks(profile.id, priorKeyset, PAGE_SIZE)
@@ -61,7 +38,7 @@ export function ManageStories() {
         getWorkWithAuthor(works)
           .then((works) => {
             setWorks(works);
-            console.log("WorksWithAuthor", works);
+            console.log("WorksWithAuthors and total", works, count);
             if (works.length > 0) {
               setPriorKeyset(works[works.length - 1].id);
             }
@@ -74,29 +51,15 @@ export function ManageStories() {
   };
 
   return (
-    <div
-      ref={readWorkListRef}
-      className="home-content read-work-list"
-      style={{ marginTop: "1.5em", height: "85vh", paddingBottom: 0 }} // warning: do not remove bottom padding, needed so as scrolling bottoms match
-    >
-      <WorkElements
-        works={works}
-        showAuthor={true}
-        showContent={false}
-        refresh={false}
-      />
-      <div
-        ref={targetRef}
-        style={{
-          bottom: "0",
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          width: "100%",
-        }}
-      >
-        {works && works.length > 0 ? <Spinner size={15} /> : null}
-      </div>
-    </div>
+    <PagedWorkElements
+      getData={getData}
+      works={works}
+      refreshWorksList={false}
+      showAuthor={true}
+      showContent={false}
+      readOnly={false}
+      columnCount={1}
+      style={{ marginTop: "1.5em", height: "85vh", paddingBottom: 0 }}
+    />
   );
 }

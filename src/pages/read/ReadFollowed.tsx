@@ -89,6 +89,10 @@ export function ReadFollowed() {
       getData={getData}
       refreshWorksList={refreshWorksList}
       works={works}
+      showContent={false}
+      showAuthor={true}
+      readOnly={true}
+      columnCount={2}
     />
   );
 }

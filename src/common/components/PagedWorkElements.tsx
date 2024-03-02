@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { CSSProperties, useEffect, useRef } from "react";
 import { WorkElements } from "./WorkElements";
 import { Spinner } from "./Spinner";
 import { WorkWithAuthor } from "./models/UIModels";
@@ -7,12 +7,22 @@ interface PagedWorkElementsProps {
   getData: (refreshWorksList: boolean) => void;
   refreshWorksList: boolean;
   works: WorkWithAuthor[] | null;
+  showContent: boolean;
+  showAuthor: boolean;
+  readOnly: boolean;
+  columnCount: number;
+  style?: CSSProperties;
 }
 
 export function PagedWorkElements({
   getData,
   refreshWorksList,
   works,
+  showContent,
+  showAuthor,
+  readOnly,
+  columnCount,
+  style,
 }: PagedWorkElementsProps) {
   const targetRef = useRef<HTMLDivElement>(null);
   const readWorkListRef = useRef<HTMLDivElement>(null);
@@ -32,8 +42,15 @@ export function PagedWorkElements({
     const targetBounds = targetRef.current?.getBoundingClientRect();
     const readWorkListBounds = readWorkListRef.current?.getBoundingClientRect();
 
+    console.log(
+      "bottom bounds",
+      Math.floor(targetBounds?.bottom || 0),
+      Math.floor(readWorkListBounds?.bottom || 0)
+    );
+
     const inView =
-      (targetBounds?.bottom || 0) === (readWorkListBounds?.bottom || 0) - 1;
+      Math.floor(targetBounds?.bottom || 0) ===
+      Math.floor(readWorkListBounds?.bottom || 0);
 
     if (inView) {
       getData(false);
@@ -42,13 +59,14 @@ export function PagedWorkElements({
   };
 
   return (
-    <div ref={readWorkListRef} className="read-work-list">
+    <div ref={readWorkListRef} className="read-work-list" style={{ ...style }}>
       <WorkElements
         works={works}
         refresh={refreshWorksList}
-        readOnly={true}
-        showContent={false}
-        columnCount={2}
+        readOnly={readOnly}
+        showContent={showContent}
+        showAuthor={showAuthor}
+        columnCount={columnCount}
       />
       <div
         ref={targetRef}
