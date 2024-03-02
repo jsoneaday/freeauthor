@@ -313,6 +313,11 @@ select {
   border: solid 2px var(--primary-cl);
 }
 
+.work-img {
+  padding: 0.2em;
+  border: solid 2px var(--tertiary-cl);
+}
+
 .standard-header {
   border-bottom-color: var(--header-border-cl);
   border-bottom-width: 1px;

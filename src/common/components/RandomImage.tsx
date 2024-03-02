@@ -42,7 +42,7 @@ export function RandomImg({ isProfile = true, style }: RandomImageProps) {
   return (
     <img
       src={src}
-      className={isProfile ? "profile-avatar" : ""}
+      className={isProfile ? "profile-avatar" : "work-img"}
       style={style}
     />
   );

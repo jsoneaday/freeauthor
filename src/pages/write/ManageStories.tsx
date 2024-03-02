@@ -55,7 +55,7 @@ export function ManageStories() {
       getData={getData}
       works={works}
       refreshWorksList={false}
-      showAuthor={true}
+      showAuthor={false}
       showContent={false}
       readOnly={false}
       columnCount={1}
