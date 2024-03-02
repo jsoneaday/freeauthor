@@ -381,6 +381,14 @@ export class KwilApi implements IKwilApi {
     throw new Error("Not implemented yet");
   }
 
+  async getWorksByTopic(
+    topicId: number,
+    lastKeyset: number,
+    pageSize: number
+  ): Promise<Work[] | null> {
+    throw new Error("Not implemented yet");
+  }
+
   async getWorksLikeCount(workId: number): Promise<number> {
     const actionBody = {
       dbid: this.#dbid,

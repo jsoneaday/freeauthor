@@ -1,22 +1,19 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { kwilApi } from "../../common/api/KwilApiInstance";
-import { WorkElements } from "../../common/components/WorkElements";
 import { PAGE_SIZE } from "../../common/utils/StandardValues";
 import {
   WorkWithAuthor,
   getWorkWithAuthor,
 } from "../../common/components/models/UIModels";
-import { Spinner } from "../../common/components/Spinner";
 import { useProfile } from "../../common/zustand/Store";
 import { Work } from "../../common/api/ApiModels";
 import { useOutletContext } from "react-router-dom";
 import { ReadOutletType } from "./Read";
+import { PagedWorkElements } from "../../common/components/PagedWorkElements";
 
 export function ReadFollowed() {
   const [works, setWorks] = useState<WorkWithAuthor[] | null>(null);
   const profile = useProfile((state) => state.profile);
-  const targetRef = useRef<HTMLDivElement>(null);
-  const readWorkListRef = useRef<HTMLDivElement>(null);
   const {
     currentFollowedId,
     priorKeysetState: [priorKeyset, setPriorKeyset],
@@ -29,45 +26,14 @@ export function ReadFollowed() {
   }, [setShowFollowedList]);
 
   useEffect(() => {
-    if (profile) getData();
+    if (profile) getData(refreshWorksList);
   }, [profile, currentFollowedId]);
-
-  useEffect(() => {
-    readWorkListRef.current?.addEventListener("scroll", scrollEventHandler);
-
-    return () => {
-      readWorkListRef.current?.removeEventListener(
-        "scroll",
-        scrollEventHandler
-      );
-    };
-  }, [
-    readWorkListRef.current,
-    currentFollowedId,
-    profile,
-    priorKeyset,
-    refreshWorksList,
-  ]);
-
-  const scrollEventHandler = () => {
-    const targetBounds = targetRef.current?.getBoundingClientRect();
-    const readWorkListBounds = readWorkListRef.current?.getBoundingClientRect();
-
-    const inView =
-      (targetBounds?.bottom || 0) === (readWorkListBounds?.bottom || 0) - 1;
-
-    if (inView) {
-      setRefreshWorksList(false);
-      getData();
-      console.log("setRefreshWorksList", false);
-    }
-  };
 
   const setNextPriorKeyset = (works: Work[]) => {
     setPriorKeyset(works[works.length - 1].id);
   };
 
-  const getData = () => {
+  const getData = (refreshWorksList: boolean) => {
     if (!profile) return;
 
     if (!refreshWorksList && priorKeyset === 0) {
@@ -75,6 +41,7 @@ export function ReadFollowed() {
     }
 
     // todo: need to test these calls each
+    setRefreshWorksList(refreshWorksList);
     if (currentFollowedId === 0) {
       kwilApi
         .getWorksByAllFollowed(profile.id, priorKeyset, PAGE_SIZE)
@@ -118,25 +85,10 @@ export function ReadFollowed() {
   };
 
   return (
-    <div ref={readWorkListRef} className="read-work-list">
-      <WorkElements
-        works={works}
-        refresh={refreshWorksList}
-        readOnly={true}
-        showContent={false}
-        columnCount={2}
-      />
-      <div
-        ref={targetRef}
-        style={{
-          bottom: "0",
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-        }}
-      >
-        {works && works.length > 0 ? <Spinner size={15} /> : null}
-      </div>
-    </div>
+    <PagedWorkElements
+      getData={getData}
+      refreshWorksList={refreshWorksList}
+      works={works}
+    />
   );
 }
