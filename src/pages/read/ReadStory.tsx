@@ -8,15 +8,13 @@ import { useOutletContext, useParams } from "react-router-dom";
 import { kwilApi } from "../../common/api/KwilApiInstance";
 import { ReadOutletType } from "./Read";
 import { RandomImg } from "../../common/components/RandomImage";
-import { formatLikeCount } from "../../common/utils/DetailInfoFormatter";
-import likeImg from "../../theme/assets/app-icons/l-like-100.png";
+import { TipsAndResponses } from "../../common/components/TipsAndResponses";
 
 export function ReadStory() {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState<string | undefined>("");
   const [work, setWork] = useState<WorkWithAuthor | null>();
   const { work_id } = useParams<{ work_id: string }>();
-  const [likeCount, setLikeCount] = useState(0);
   const { setShowFollowedList } = useOutletContext<ReadOutletType>();
 
   useEffect(() => {
@@ -29,13 +27,6 @@ export function ReadStory() {
           setWork(null);
           return;
         }
-
-        kwilApi
-          .getWorksLikeCount(work.id)
-          .then((count) => {
-            setLikeCount(count);
-          })
-          .catch((e) => console.log(e));
 
         getWorkWithAuthor([work])
           .then((work) => {
@@ -77,21 +68,7 @@ export function ReadStory() {
             {work?.updatedAt}
           </span>
         </div>
-        <div className="story-detail-bottom">
-          <img
-            src={likeImg}
-            style={{ width: "1.55em", marginRight: ".25em" }}
-          />
-          <span
-            style={{
-              fontSize: ".75em",
-              color: "var(--tertiary-cl)",
-              marginTop: ".1em",
-            }}
-          >
-            {formatLikeCount(likeCount)}
-          </span>
-        </div>
+        <TipsAndResponses workId={work?.id || 0} />
       </div>
       {work ? <MarkdownEditor readOnly={true} markdown={work.content} /> : null}
     </div>

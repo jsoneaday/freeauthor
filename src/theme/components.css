@@ -421,6 +421,12 @@ select {
   justify-content: flex-start;
 }
 
+.story-detail-bottom-item {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
 .explorer-item {
   display: flex;
   align-items: center;

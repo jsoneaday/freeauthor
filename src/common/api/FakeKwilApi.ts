@@ -257,6 +257,10 @@ export class FakeKwilApi implements IKwilApi {
     return faker.number.int({ min: 2589, max: 19892 });
   }
 
+  async getWorksResponseCount(_workId: number): Promise<number> {
+    return faker.number.int({ min: 2589, max: 19892 });
+  }
+
   async getAllTopics(): Promise<Topic[]> {
     return topics;
   }

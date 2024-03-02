@@ -60,6 +60,7 @@ export interface IKwilApi {
     pageSize: number
   ): Promise<Work[] | null>;
   getWorksLikeCount(workId: number): Promise<number>;
+  getWorksResponseCount(workId: number): Promise<number>;
   getAllTopics(): Promise<Topic[]>;
   getWorksByTopic(
     topicId: number,
