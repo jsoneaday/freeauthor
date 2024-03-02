@@ -12,11 +12,14 @@ interface PagedWorkElementsProps {
   readOnly: boolean;
   columnCount: number;
   style?: CSSProperties;
+  /// setRefreshWorksList means to reset or start paging from beginning, this function should also reset the priorKeyset
+  setRefreshWorksList?: (refresh: boolean) => void;
 }
 
 export function PagedWorkElements({
   getData,
   refreshWorksList,
+  setRefreshWorksList,
   works,
   showContent,
   showAuthor,
@@ -42,18 +45,14 @@ export function PagedWorkElements({
     const targetBounds = targetRef.current?.getBoundingClientRect();
     const readWorkListBounds = readWorkListRef.current?.getBoundingClientRect();
 
-    console.log(
-      "bottom bounds",
-      Math.floor(targetBounds?.bottom || 0),
-      Math.floor(readWorkListBounds?.bottom || 0)
-    );
-
     const inView =
       Math.floor(targetBounds?.bottom || 0) ===
       Math.floor(readWorkListBounds?.bottom || 0);
 
     if (inView) {
+      setRefreshWorksList && setRefreshWorksList(false);
       getData(false);
+
       console.log("scrolling");
     }
   };

@@ -88,6 +88,7 @@ export function ReadFollowed() {
     <PagedWorkElements
       getData={getData}
       refreshWorksList={refreshWorksList}
+      setRefreshWorksList={setRefreshWorksList}
       works={works}
       showContent={false}
       showAuthor={true}

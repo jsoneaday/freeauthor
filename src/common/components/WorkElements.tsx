@@ -104,8 +104,10 @@ export function WorkElements({
 
     if (!refresh) {
       setWorkElements([...workElements, ...localWorkElements]);
+      console.log("append works", works);
     } else {
       setWorkElements(localWorkElements);
+      console.log("refresh works", works);
     }
   }, [works]);
 

@@ -31,7 +31,13 @@ export function Read() {
           context={{
             currentFollowedId,
             priorKeysetState: [priorKeyset, setPriorKeyset],
-            refreshWorksListState: [refreshWorksList, setRefreshWorksList],
+            refreshWorksListState: [
+              refreshWorksList,
+              (refresh: boolean) => {
+                setRefreshWorksList(refresh);
+                if (refresh) setPriorKeyset(0);
+              },
+            ],
             setShowFollowedList,
           }}
         />
@@ -48,7 +54,7 @@ export type ReadOutletType = {
   ];
   refreshWorksListState: [
     refreshWorksList: boolean,
-    setRefreshWorksList: Dispatch<SetStateAction<boolean>>
+    setRefreshWorksList: (refresh: boolean) => void
   ];
   setShowFollowedList: Dispatch<SetStateAction<boolean>>;
 };

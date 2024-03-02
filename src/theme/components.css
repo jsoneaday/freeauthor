@@ -429,6 +429,16 @@ select {
   margin-bottom: 1em;
 }
 
+.topic-item-list {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  margin-bottom: 1.5em;
+  padding-left: 1.5em;
+  padding-right: 1.5em;
+}
+
 .topic-item {
   display: flex;
   align-items: center;
@@ -440,18 +450,14 @@ select {
   padding-bottom: 0.5em;
   padding-left: 1em;
   padding-right: 1em;
-  margin: 0.55em;
   font-size: 0.85em;
 }
 
-.topic-item-list {
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  flex-wrap: wrap;
-  margin-bottom: 1.5em;
-  padding-left: 1.5em;
-  padding-right: 1.5em;
+.topic-item-selected {
+  padding: 0.25em;
+  border-radius: 25px;
+  margin: 0.75em;
+  border: solid 1px var(--secondary-cl);
 }
 
 .explorer-container {
