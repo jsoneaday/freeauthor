@@ -124,7 +124,7 @@ export function ReadFollowed() {
         refresh={refreshWorksList}
         readOnly={true}
         showContent={false}
-        twoColumn={true}
+        columnCount={2}
       />
       <div
         ref={targetRef}

@@ -253,6 +253,41 @@ export class FakeKwilApi implements IKwilApi {
       .slice(0, pageSize);
   }
 
+  async getWorksLikeCount(_workId: number): Promise<number> {
+    return faker.number.int({ min: 2589, max: 19892 });
+  }
+
+  async getAllTopics(): Promise<Topic[]> {
+    return topics;
+  }
+
+  async getWorksByTopic(
+    topicId: number,
+    lastKeyset: number,
+    pageSize: number
+  ): Promise<Work[] | null> {
+    const workIds = workTopics
+      .filter((wt) => wt.topic_id === topicId)
+      .map((work) => work.id);
+
+    let filteredWorks: Work[];
+    if (lastKeyset === 0) {
+      filteredWorks = works.filter((work) => workIds.includes(work.id));
+    } else {
+      filteredWorks = works.filter(
+        (work) => workIds.includes(work.id) && work.id < lastKeyset
+      );
+    }
+
+    return filteredWorks
+      .sort((a, b) => {
+        if (a.id > b.id) return -1;
+        if (a.id < b.id) return 1;
+        return 0;
+      })
+      .slice(0, pageSize);
+  }
+
   async waitAndGetId(_tx: string | null | undefined): Promise<number> {
     throw new Error(
       "Deliberately not implemented, for testing use testWaitAndGetId"
@@ -272,10 +307,6 @@ export class FakeKwilApi implements IKwilApi {
       throw new Error(`testWaitAndGetId for ${entityType} not implemented yet`);
     }
     return getLastestEntityId(entities);
-  }
-
-  async getWorksLikeCount(_workId: number): Promise<number> {
-    return faker.number.int({ min: 2589, max: 19892 });
   }
 
   async #setupTestData() {
@@ -345,11 +376,28 @@ export class FakeKwilApi implements IKwilApi {
       });
     }
 
-    for (let i = 0; i < 8; i++) {
+    topics.push({
+      id: 1,
+      updated_at: formattedNow(),
+      name: "most tipped",
+    });
+    topics.push({
+      id: 2,
+      updated_at: formattedNow(),
+      name: "most responded",
+    });
+    topics.push({
+      id: 3,
+      updated_at: formattedNow(),
+      name: "most subscribed",
+    });
+    for (let i = 3; i < 16; i++) {
       topics.push({
         id: i + 1,
         updated_at: formattedNow(),
-        name: faker.lorem.text(),
+        name: faker.company.buzzNoun().includes("eyeballs")
+          ? faker.company.buzzNoun()
+          : faker.company.buzzNoun(),
       });
     }
 

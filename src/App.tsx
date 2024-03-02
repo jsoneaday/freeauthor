@@ -5,7 +5,7 @@ import "./theme/pages.css";
 import "./theme/mdxeditor.css";
 import "./theme/layout.css";
 import "./theme/animations.css";
-import { Explorer } from "./pages/Explorer";
+import { Explorer } from "./pages/explorer/Explorer";
 import { WriteStory } from "./pages/write/WriteStory";
 import { ManageStories } from "./pages/write/ManageStories";
 import { Write } from "./pages/write/Write";
@@ -51,7 +51,7 @@ const router = createBrowserRouter([
     ],
   },
   {
-    path: "/explore",
+    path: "/explorer/:topic_id?",
     element: <Explorer />,
   },
 ]);

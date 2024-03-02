@@ -12,7 +12,7 @@ interface WorkElementsProps {
   readOnly?: boolean;
   showAuthor?: boolean;
   showContent?: boolean;
-  twoColumn?: boolean;
+  columnCount?: number;
 }
 
 export function WorkElements({
@@ -21,7 +21,7 @@ export function WorkElements({
   readOnly,
   showAuthor = true,
   showContent = true,
-  twoColumn = false,
+  columnCount = 1,
 }: WorkElementsProps) {
   const [workElements, setWorkElements] = useState<JSX.Element[]>([]);
 
@@ -30,12 +30,18 @@ export function WorkElements({
       return undefined;
     }
 
+    let itemWidth = "100%";
+    if (columnCount === 2) {
+      itemWidth = "49%";
+    } else if (columnCount === 3) {
+      itemWidth = "33%";
+    }
     const localWorkElements: JSX.Element[] = [];
     for (let i = 0; i < works.length; i++) {
       localWorkElements.push(
         <li
           key={`work-${uuidv4()}`}
-          style={{ display: "flex", width: twoColumn ? "49%" : "100%" }}
+          style={{ display: "flex", width: itemWidth }}
         >
           <RandomImg
             isProfile={false}
@@ -48,12 +54,16 @@ export function WorkElements({
             className="stories-list-item"
           >
             <span
-              className={`story-title ${twoColumn ? "story-title-small" : ""}`}
+              className={`story-title ${
+                columnCount > 1 ? "story-title-small" : ""
+              }`}
             >
               {works[i].title}
             </span>
             <span
-              className={`story-desc ${twoColumn ? "story-desc-small" : ""}`}
+              className={`story-desc ${
+                columnCount > 1 ? "story-desc-small" : ""
+              }`}
             >
               {works[i].description}
             </span>

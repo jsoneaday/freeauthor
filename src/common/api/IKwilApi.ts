@@ -1,4 +1,4 @@
-import { Profile, Work } from "./ApiModels";
+import { Profile, Topic, Work } from "./ApiModels";
 
 export type TxHashPromise = Promise<string | null | undefined>;
 
@@ -60,6 +60,12 @@ export interface IKwilApi {
     pageSize: number
   ): Promise<Work[] | null>;
   getWorksLikeCount(workId: number): Promise<number>;
+  getAllTopics(): Promise<Topic[]>;
+  getWorksByTopic(
+    topicId: number,
+    lastKeyset: number,
+    pageSize: number
+  ): Promise<Work[] | null>;
 
   waitAndGetId(tx: string | null | undefined): Promise<number>;
   testWaitAndGetId(

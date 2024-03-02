@@ -4,7 +4,7 @@ import { formattedNow } from "../utils/DateTimeUtils";
 import { GenericResponse } from "@kwilteam/kwil-js/dist/core/resreq";
 import { TxReceipt } from "@kwilteam/kwil-js/dist/core/tx";
 import { JsonRpcSigner } from "ethers";
-import { Profile, Work } from "./ApiModels";
+import { Profile, Topic, Work } from "./ApiModels";
 import { MsgReceipt } from "@kwilteam/kwil-js/dist/core/message";
 import { IKwilApi } from "./IKwilApi";
 
@@ -377,6 +377,24 @@ export class KwilApi implements IKwilApi {
   //   return await this.#kwil!.txInfo(tx);
   // }
 
+  async getAllTopics(): Promise<Topic[]> {
+    throw new Error("Not implemented yet");
+  }
+
+  async getWorksLikeCount(workId: number): Promise<number> {
+    const actionBody = {
+      dbid: this.#dbid,
+      action: "get_followed_profiles",
+      inputs: [
+        {
+          $work_id: workId,
+        },
+      ],
+    };
+
+    throw new Error("Not implemented yet");
+  }
+
   /// Waits for tx to finish and gets id
   async waitAndGetId(tx: string | null | undefined) {
     let id = 0;
@@ -399,20 +417,6 @@ export class KwilApi implements IKwilApi {
     _entityType: string
   ): Promise<number> {
     throw new Error("Do not use for production");
-  }
-
-  async getWorksLikeCount(workId: number): Promise<number> {
-    const actionBody = {
-      dbid: this.#dbid,
-      action: "get_followed_profiles",
-      inputs: [
-        {
-          $work_id: workId,
-        },
-      ],
-    };
-
-    throw new Error("Not implemented yet");
   }
 
   async #confirmTxCompleteAndGetEntityId(tx: string) {
