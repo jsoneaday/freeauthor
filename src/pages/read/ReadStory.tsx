@@ -42,7 +42,9 @@ export function ReadStory() {
   return (
     <div>
       <h1 className="story-title">{title}</h1>
-      <h2 className="story-desc">{description}</h2>
+      <h2 className="story-desc" style={{ marginBottom: "2em" }}>
+        {description}
+      </h2>
       <div className="story-detail">
         <div className="story-detail-top">
           <span
