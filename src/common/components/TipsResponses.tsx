@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { formatLikeCount } from "../../common/utils/DetailInfoFormatter";
+import { formatLikeCount } from "../utils/DetailInfoFormatter";
 import tipJar from "../../theme/assets/app-icons/save-money.png";
 import response from "../../theme/assets/app-icons/l-resend-100.png";
 import { kwilApi } from "../api/KwilApiInstance";
@@ -8,7 +8,7 @@ interface TipsAndResponsesProps {
   workId: number;
 }
 
-export function TipsAndResponses({ workId }: TipsAndResponsesProps) {
+export function TipsResponses({ workId }: TipsAndResponsesProps) {
   const [likeCount, setLikeCount] = useState(0);
   const [responseCount, setResponseCount] = useState(0);
 

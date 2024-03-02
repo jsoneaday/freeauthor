@@ -5,6 +5,7 @@ import { RandomImg } from "./RandomImage";
 /// @ts-ignore
 import { v4 as uuidv4 } from "uuid";
 import { Link } from "react-router-dom";
+import { AuthorWorkDetail } from "./AuthorWorkDetail";
 
 interface WorkElementsProps {
   works: WorkWithAuthor[] | null;
@@ -67,30 +68,7 @@ export function WorkElements({
             >
               {works[i].description}
             </span>
-            {showAuthor ? (
-              <span
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "flex-start",
-                  marginBottom: ".5em",
-                }}
-              >
-                <RandomImg
-                  style={{
-                    width: "1.5em",
-                    height: "1.5em",
-                    marginRight: ".5em",
-                  }}
-                />
-                <div className="story-title-item">
-                  <b>{works[i].fullName}</b> {`@${works[i].userName}`}
-                </div>
-              </span>
-            ) : null}
-            <span style={{ fontSize: ".75em", color: "var(--tertiary-cl)" }}>
-              {works[i].updatedAt}
-            </span>
+            <AuthorWorkDetail showAuthor={showAuthor} work={works[i]} />
             {showContent ? (
               <MarkdownEditor
                 readOnly={true}

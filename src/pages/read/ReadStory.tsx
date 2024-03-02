@@ -7,8 +7,7 @@ import {
 import { useOutletContext, useParams } from "react-router-dom";
 import { kwilApi } from "../../common/api/KwilApiInstance";
 import { ReadOutletType } from "./Read";
-import { RandomImg } from "../../common/components/RandomImage";
-import { TipsAndResponses } from "../../common/components/TipsAndResponses";
+import { AuthorWorkDetail } from "../../common/components/AuthorWorkDetail";
 
 export function ReadStory() {
   const [title, setTitle] = useState("");
@@ -41,36 +40,14 @@ export function ReadStory() {
 
   return (
     <div>
-      <h1 className="story-title">{title}</h1>
+      <h1 className="story-title" style={{ marginBottom: "1.25em" }}>
+        {title}
+      </h1>
       <h2 className="story-desc" style={{ marginBottom: "2em" }}>
         {description}
       </h2>
       <div className="story-detail">
-        <div className="story-detail-top">
-          <span
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "flex-start",
-              marginBottom: ".5em",
-            }}
-          >
-            <RandomImg
-              style={{
-                width: "1.5em",
-                height: "1.5em",
-                marginRight: ".5em",
-              }}
-            />
-            <div className="story-title-item">
-              <b>{work?.fullName}</b> {`@${work?.userName}`}
-            </div>
-          </span>
-          <span style={{ fontSize: ".75em", color: "var(--tertiary-cl)" }}>
-            {work?.updatedAt}
-          </span>
-        </div>
-        <TipsAndResponses workId={work?.id || 0} />
+        <AuthorWorkDetail showAuthor={true} work={work ? work : null} />
       </div>
       {work ? <MarkdownEditor readOnly={true} markdown={work.content} /> : null}
     </div>
