@@ -25,14 +25,10 @@ export function AuthorWorkDetail({ showAuthor, work }: AuthorWorkDetailProps) {
     if (!showFollowTooltip) {
       setShowFollowTooltip(true);
     }
-    console.log(
-      "x, y:",
-      spanRef.current?.offsetLeft,
-      spanRef.current?.offsetTop
-    );
+
     if (spanRef.current) {
-      setFollowTooltipLeft(spanRef.current?.offsetLeft);
-      setFollowTooltipTop(spanRef.current?.offsetTop);
+      setFollowTooltipLeft(e.clientX + 16);
+      setFollowTooltipTop(e.clientY);
     }
   };
 
@@ -41,14 +37,10 @@ export function AuthorWorkDetail({ showAuthor, work }: AuthorWorkDetailProps) {
     if (!showFollowTooltip) {
       setShowFollowTooltip(true);
     }
-    console.log(
-      "x, y:",
-      spanRef.current?.offsetLeft,
-      spanRef.current?.offsetTop
-    );
+
     if (spanRef.current) {
-      setFollowTooltipLeft(spanRef.current?.offsetLeft);
-      setFollowTooltipTop(spanRef.current?.offsetTop);
+      setFollowTooltipLeft(e.clientX + 16);
+      setFollowTooltipTop(e.clientY);
     }
   };
 

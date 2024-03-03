@@ -1,6 +1,5 @@
 import { ProfileModel } from "../../api/ApiModels";
-import { Profile } from "../../zustand/Profile";
-import { MouseEvent, useEffect, useRef, useState } from "react";
+import { MouseEvent, useEffect, useState } from "react";
 import { RandomImg } from "../RandomImage";
 import { kwilApi } from "../../api/KwilApiInstance";
 import { useProfile } from "../../zustand/Store";
@@ -23,11 +22,10 @@ export function FollowTooltip({
   const profile = useProfile((state) => state.profile);
   const [isAlreadyFollowing, setIsAlreadyFollowing] = useState(false);
   const [followBtn, setFollowBtn] = useState<JSX.Element | null>(null);
-  const followTooltipRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (profile) {
-      confirmFollowed(profile);
+      confirmFollowed();
     } else {
       setIsAlreadyFollowing(false);
     }
@@ -38,27 +36,40 @@ export function FollowTooltip({
       setFollowBtn(<span>Following</span>);
     } else {
       setFollowBtn(
-        <button className="primary-btn" onClick={onClickFollow}>
+        <button
+          className="primary-btn"
+          onClick={async (e: MouseEvent<HTMLButtonElement>) => {
+            e.preventDefault();
+
+            if (profile) {
+              const tx = await kwilApi.addFollow(profile.id || 0, followed.id);
+              await kwilApi.testWaitAndGetId(tx, "follows");
+              await confirmFollowed();
+            } else {
+              console.log("Cannot follow not logged in!");
+            }
+          }}
+        >
           Follow
         </button>
       );
     }
-  }, [isAlreadyFollowing]);
+  }, [isAlreadyFollowing, profile]);
 
-  const confirmFollowed = (profile: Profile) => {
-    kwilApi
-      .getFollwedProfiles(profile.id)
-      .then((follows) => {
-        console.log("follows");
-        if (follows) {
-          if (follows.find((follow) => follow.id === followed.id)) {
-            setIsAlreadyFollowing(true);
-          }
+  const confirmFollowed = async () => {
+    if (profile) {
+      const follows = await kwilApi.getFollwedProfiles(profile.id || 0);
+
+      if (follows) {
+        if (follows.find((follow) => follow.id === followed.id)) {
+          setIsAlreadyFollowing(true);
         } else {
           setIsAlreadyFollowing(false);
         }
-      })
-      .catch((e) => console.log(e));
+      } else {
+        setIsAlreadyFollowing(false);
+      }
+    }
   };
 
   const onMouseLeave = (e: MouseEvent<HTMLSpanElement>) => {
@@ -75,19 +86,9 @@ export function FollowTooltip({
     e.preventDefault();
   };
 
-  const onClickFollow = async (e: MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault();
-
-    const tx = await kwilApi.addFollow(profile?.id || 0, followed.id);
-    console.log("tx", tx);
-    await kwilApi.testWaitAndGetId(tx, "follows");
-    confirmFollowed(profile!);
-  };
-
   if (isOpen) {
     return (
       <div
-        ref={followTooltipRef}
         onMouseLeave={onMouseLeave}
         onClick={onRootClick}
         className="follow-tooltip"
