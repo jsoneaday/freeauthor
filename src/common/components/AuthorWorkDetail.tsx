@@ -1,10 +1,12 @@
-import { useRef, MouseEvent, useState, useEffect } from "react";
+import { MouseEvent, useState, useEffect } from "react";
 import { RandomImg } from "./RandomImage";
 import { TipsResponses } from "./TipsResponses";
 import { WorkWithAuthor } from "./models/UIModels";
 import { FollowTooltip } from "./modals/FollowTooltip";
 import { kwilApi } from "../api/KwilApiInstance";
 import { Profile } from "../api/ApiModels";
+
+const TOP_DIFF = 240;
 
 interface AuthorWorkDetailProps {
   showAuthor: boolean;
@@ -23,8 +25,8 @@ export function AuthorWorkDetail({ showAuthor, work }: AuthorWorkDetailProps) {
       setShowFollowTooltip(true);
     }
 
-    setFollowTooltipLeft(e.clientX - 150);
-    setFollowTooltipTop(e.clientY - 200);
+    setFollowTooltipLeft(e.clientX - 200);
+    setFollowTooltipTop(e.clientY - TOP_DIFF);
   };
 
   const onMouseEnterUsername = (e: MouseEvent<HTMLSpanElement>) => {
@@ -34,7 +36,7 @@ export function AuthorWorkDetail({ showAuthor, work }: AuthorWorkDetailProps) {
     }
 
     setFollowTooltipLeft(e.clientX + 40);
-    setFollowTooltipTop(e.clientY - 200);
+    setFollowTooltipTop(e.clientY - TOP_DIFF);
   };
 
   const toggleShowFollowTooltip = () => {

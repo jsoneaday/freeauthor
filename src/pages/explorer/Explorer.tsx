@@ -2,7 +2,7 @@ import { ChangeEvent, useEffect, useState } from "react";
 import { Layout } from "../../common/components/Layout";
 import { kwilApi } from "../../common/api/KwilApiInstance";
 import { TopicElement } from "../../common/components/TopicElement";
-import searchIcon from "../../theme/assets/search1.png";
+import searchIcon from "../../theme/assets/app-icons/search1.png";
 import {
   WorkWithAuthor,
   getWorkWithAuthor,

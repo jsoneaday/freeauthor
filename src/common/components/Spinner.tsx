@@ -1,5 +1,5 @@
 import { CSSProperties } from "react";
-import Clock from "../../theme/assets/wall-clock.png";
+import Clock from "../../theme/assets/app-icons/wall-clock.png";
 
 interface SpinnerProps {
   size: number;

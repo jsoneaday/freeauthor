@@ -270,15 +270,25 @@ select {
   background-color: var(--bg-cl);
   z-index: 1;
   width: 300px;
-  height: 200px;
   border: solid 1px var(--border-cl);
-  padding-top: 0.75em;
-  padding-bottom: 0.75em;
-  padding-left: 0.75em;
-  padding-right: 0.75em;
+  padding: 1em;
+  padding-bottom: 1.25em;
 }
 
 .follow-tooltip-item {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  width: 100%;
+  background-color: var(--bg-cl);
+}
+
+.follow-tooltip-names {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: space-between;
   background-color: var(--bg-cl);
 }
 

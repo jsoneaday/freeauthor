@@ -8,6 +8,7 @@ interface ModalProps {
   height: string;
   children: ReactNode;
   overlayClickClose?: boolean;
+  className?: string;
 }
 
 export default function BaseModal({
@@ -17,10 +18,11 @@ export default function BaseModal({
   height,
   children,
   overlayClickClose = false,
+  className = "modal-container",
 }: ModalProps) {
   return (
     <ReactModal
-      className="modal-container"
+      className={className}
       style={{ content: { width, height } }}
       isOpen={isOpen}
       onRequestClose={toggleOpen}
