@@ -18,6 +18,7 @@ export function Write() {
               color: "var(--warning-cl)",
               width: "100%",
               marginTop: "2.5em",
+              fontSize: "1.15em",
             }}
           >
             You must be connected with a valid profile in order to start

@@ -12,6 +12,7 @@ import { Write } from "./pages/write/Write";
 import { ReadFollowed } from "./pages/read/ReadFollowed";
 import { ReadStory } from "./pages/read/ReadStory";
 import { Read } from "./pages/read/Read";
+import { Profile } from "./pages/Profile";
 
 const router = createBrowserRouter([
   {
@@ -53,6 +54,10 @@ const router = createBrowserRouter([
   {
     path: "/explorer/:topic_id?",
     element: <Explorer />,
+  },
+  {
+    path: "/profile/:profile_id",
+    element: <Profile />,
   },
 ]);
 

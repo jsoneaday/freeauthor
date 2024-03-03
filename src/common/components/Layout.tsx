@@ -5,6 +5,7 @@ import { kwilApi } from "../api/KwilApiInstance";
 import { NavAnchor } from "./NavAnchor";
 import { ConnectCreateProfile } from "./ConnectCreateProfile";
 import { useNotification } from "../zustand/Store";
+import { Link } from "react-router-dom";
 
 export interface LayoutProps {
   children: ReactNode;
@@ -49,7 +50,9 @@ export function Layout({ children }: LayoutProps) {
             (Add Test Data)
           </button>
           {profile ? (
-            <img src={profileIcon} className="profile-avatar" />
+            <Link to={`/profile/${profile.id}`}>
+              <img src={profileIcon} className="profile-avatar" />
+            </Link>
           ) : (
             <>
               <button onClick={onClickConnect}>CONNECT</button>
