@@ -1,6 +1,6 @@
 import { Spinner } from "./Spinner";
 
-interface ValidationAndProgressMsgProps {
+interface ValidationProgressMsgProps {
   validationMsg: string;
   progressStartMsg: string;
 }
@@ -8,7 +8,7 @@ interface ValidationAndProgressMsgProps {
 export function ValidationAndProgressMsg({
   validationMsg,
   progressStartMsg,
-}: ValidationAndProgressMsgProps) {
+}: ValidationProgressMsgProps) {
   return (
     <>
       {validationMsg ? (

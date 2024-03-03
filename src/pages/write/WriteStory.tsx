@@ -4,7 +4,7 @@ import { kwilApi } from "../../common/api/KwilApiInstance";
 import { PrimaryButton } from "../../common/components/Buttons";
 import { MDXEditorMethods } from "@mdxeditor/editor";
 import { MarkdownEditor } from "../../common/components/MarkdownEditor";
-import { ValidationAndProgressMsg } from "../../common/components/ValidationAndProgressMsg";
+import { ValidationAndProgressMsg } from "../../common/components/ValidationProgressMsg";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 
 enum WriteValidation {

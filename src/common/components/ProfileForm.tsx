@@ -2,7 +2,7 @@ import { ChangeEvent, useState, MouseEvent } from "react";
 import { kwilApi } from "../api/KwilApiInstance";
 import { useProfile } from "../zustand/Store";
 import { PrimaryButton } from "./Buttons";
-import { ValidationAndProgressMsg } from "./ValidationAndProgressMsg";
+import { ValidationAndProgressMsg } from "./ValidationProgressMsg";
 
 enum InputValidationState {
   UsernameTooLong = "Username cannot be greater than 50 characters",
