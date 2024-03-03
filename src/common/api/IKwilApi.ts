@@ -1,4 +1,4 @@
-import { Profile, Topic, Work } from "./ApiModels";
+import { ProfileModel, Topic, Work } from "./ApiModels";
 
 export type TxHashPromise = Promise<string | null | undefined>;
 
@@ -40,9 +40,9 @@ export interface IKwilApi {
 
   cleanDb(): TxHashPromise;
 
-  getProfile(profileId: number): Promise<Profile | null>;
-  getOwnersProfile(): Promise<Profile | null>;
-  getFollwedProfiles(profileId: number): Promise<Profile[] | null>;
+  getProfile(profileId: number): Promise<ProfileModel | null>;
+  getOwnersProfile(): Promise<ProfileModel | null>;
+  getFollwedProfiles(profileId: number): Promise<ProfileModel[] | null>;
   getWork(workId: number): Promise<Work | null>;
   getAuthorWorks(
     authorId: number,

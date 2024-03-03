@@ -14,7 +14,7 @@ export class Work implements Entity {
   ) {}
 }
 
-export class Profile implements Entity {
+export class ProfileModel implements Entity {
   constructor(
     public id: number,
     public updated_at: string,

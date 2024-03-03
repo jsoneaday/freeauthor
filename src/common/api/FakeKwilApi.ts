@@ -2,7 +2,7 @@ import { IKwilApi } from "./IKwilApi";
 import {
   Entity,
   Follow,
-  Profile,
+  ProfileModel,
   Topic,
   Work,
   WorkLike,
@@ -12,7 +12,7 @@ import {
 import { faker } from "@faker-js/faker";
 import { formattedNow } from "../utils/DateTimeUtils";
 
-const profiles: Profile[] = [];
+const profiles: ProfileModel[] = [];
 const worksLength = 600;
 const works: Work[] = [];
 const follows: Follow[] = [];
@@ -160,14 +160,14 @@ export class FakeKwilApi implements IKwilApi {
     return profiles.find((profile) => profile.id === profileId) || null;
   }
 
-  async getOwnersProfile(): Promise<Profile | null> {
+  async getOwnersProfile(): Promise<ProfileModel | null> {
     return (
       profiles.find((profile) => profile.owner_address === this.#address) ||
       null
     );
   }
 
-  async getFollwedProfiles(followerId: number): Promise<Profile[] | null> {
+  async getFollwedProfiles(followerId: number): Promise<ProfileModel[] | null> {
     const followedIds = follows
       .filter((follow) => follow.follower_id === followerId)
       .map((follow) => follow.followed_id);
@@ -307,6 +307,8 @@ export class FakeKwilApi implements IKwilApi {
       entities = works;
     } else if (entityType === "profiles") {
       entities = profiles;
+    } else if (entityType === "follows") {
+      entities = follows;
     } else {
       throw new Error(`testWaitAndGetId for ${entityType} not implemented yet`);
     }

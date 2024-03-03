@@ -1,9 +1,12 @@
-import { Profile } from "../../api/ApiModels";
-import { MouseEvent } from "react";
+import { ProfileModel } from "../../api/ApiModels";
+import { Profile } from "../../zustand/Profile";
+import { MouseEvent, useEffect, useRef, useState } from "react";
 import { RandomImg } from "../RandomImage";
+import { kwilApi } from "../../api/KwilApiInstance";
+import { useProfile } from "../../zustand/Store";
 
 interface FollowModalProps {
-  profile: Profile;
+  followed: ProfileModel;
   isOpen: boolean;
   toggleIsOpen: () => void;
   topPosition: number;
@@ -11,21 +14,82 @@ interface FollowModalProps {
 }
 
 export function FollowTooltip({
-  profile,
+  followed,
   isOpen,
   toggleIsOpen,
   topPosition,
   leftPosition,
 }: FollowModalProps) {
-  const onMouseLeaveFullname = (e: MouseEvent<HTMLSpanElement>) => {
+  const profile = useProfile((state) => state.profile);
+  const [isAlreadyFollowing, setIsAlreadyFollowing] = useState(false);
+  const [followBtn, setFollowBtn] = useState<JSX.Element | null>(null);
+  const followTooltipRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (profile) {
+      confirmFollowed(profile);
+    } else {
+      setIsAlreadyFollowing(false);
+    }
+  }, [profile]);
+
+  useEffect(() => {
+    if (isAlreadyFollowing) {
+      setFollowBtn(<span>Following</span>);
+    } else {
+      setFollowBtn(
+        <button className="primary-btn" onClick={onClickFollow}>
+          Follow
+        </button>
+      );
+    }
+  }, [isAlreadyFollowing]);
+
+  const confirmFollowed = (profile: Profile) => {
+    kwilApi
+      .getFollwedProfiles(profile.id)
+      .then((follows) => {
+        console.log("follows");
+        if (follows) {
+          if (follows.find((follow) => follow.id === followed.id)) {
+            setIsAlreadyFollowing(true);
+          }
+        } else {
+          setIsAlreadyFollowing(false);
+        }
+      })
+      .catch((e) => console.log(e));
+  };
+
+  const onMouseLeave = (e: MouseEvent<HTMLSpanElement>) => {
     e.preventDefault();
     toggleIsOpen();
+  };
+
+  const onExitClick = (e: MouseEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    toggleIsOpen();
+  };
+
+  const onRootClick = (e: MouseEvent<HTMLDivElement>) => {
+    e.preventDefault();
+  };
+
+  const onClickFollow = async (e: MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+
+    const tx = await kwilApi.addFollow(profile?.id || 0, followed.id);
+    console.log("tx", tx);
+    await kwilApi.testWaitAndGetId(tx, "follows");
+    confirmFollowed(profile!);
   };
 
   if (isOpen) {
     return (
       <div
-        onMouseLeave={onMouseLeaveFullname}
+        ref={followTooltipRef}
+        onMouseLeave={onMouseLeave}
+        onClick={onRootClick}
         className="follow-tooltip"
         style={{
           top: topPosition,
@@ -39,7 +103,7 @@ export function FollowTooltip({
             top: 10,
             left: 272,
           }}
-          onClick={() => toggleIsOpen()}
+          onClick={onExitClick}
         >
           x
         </div>
@@ -48,12 +112,16 @@ export function FollowTooltip({
             style={{ width: "4em", height: "4em", marginRight: "1.5em" }}
           />
           <div className="follow-tooltip-names">
-            <span>{profile.fullname}</span>
-            <span>{`@${profile.username}`}</span>
+            <span>{followed.fullname}</span>
+            <span>{`@${followed.username}`}</span>
           </div>
         </div>
         <div className="follow-tooltip-item" style={{ marginLeft: ".5em" }}>
-          <button className="primary-btn">Follow</button>
+          {profile ? (
+            followBtn
+          ) : (
+            <span>Please connect your wallet in order to follow</span>
+          )}
         </div>
       </div>
     );

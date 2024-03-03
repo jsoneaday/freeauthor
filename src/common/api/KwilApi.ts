@@ -4,7 +4,7 @@ import { formattedNow } from "../utils/DateTimeUtils";
 import { GenericResponse } from "@kwilteam/kwil-js/dist/core/resreq";
 import { TxReceipt } from "@kwilteam/kwil-js/dist/core/tx";
 import { JsonRpcSigner } from "ethers";
-import { Profile, Topic, Work } from "./ApiModels";
+import { ProfileModel, Topic, Work } from "./ApiModels";
 import { MsgReceipt } from "@kwilteam/kwil-js/dist/core/message";
 import { IKwilApi } from "./IKwilApi";
 
@@ -467,7 +467,7 @@ export class KwilApi implements IKwilApi {
   #convertToProfiles(res: GenericResponse<MsgReceipt>) {
     if (res.status == 200) {
       if (Array.isArray(res.data?.result)) {
-        return res.data.result.map((profile: Profile) => {
+        return res.data.result.map((profile: ProfileModel) => {
           return {
             id: profile.id,
             updated_at: profile.updated_at,
@@ -477,7 +477,7 @@ export class KwilApi implements IKwilApi {
             owner_address: profile.owner_address,
             social_link_primary: profile.social_link_primary,
             social_link_second: profile.social_link_second,
-          } as Profile;
+          } as ProfileModel;
         });
       }
     }

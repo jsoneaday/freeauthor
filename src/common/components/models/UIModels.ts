@@ -1,4 +1,4 @@
-import { Profile, Work } from "../../api/ApiModels";
+import { ProfileModel, Work } from "../../api/ApiModels";
 import { kwilApi } from "../../api/KwilApiInstance";
 
 export class WorkWithAuthor {
@@ -17,7 +17,7 @@ export class WorkWithAuthor {
 export async function getWorkWithAuthor(works: Work[]) {
   const profileIds = works.map((work) => work.author_id);
   const uniqueProfileIds = [...new Set(profileIds)];
-  const profiles: Profile[] = [];
+  const profiles: ProfileModel[] = [];
   for (let i = 0; i < uniqueProfileIds.length; i++) {
     const profile = await kwilApi.getProfile(uniqueProfileIds[i]);
     if (profile) {

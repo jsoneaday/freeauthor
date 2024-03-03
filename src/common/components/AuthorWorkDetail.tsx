@@ -1,12 +1,10 @@
-import { MouseEvent, useState, useEffect } from "react";
+import { MouseEvent, useState, useEffect, useRef } from "react";
 import { RandomImg } from "./RandomImage";
 import { TipsResponses } from "./TipsResponses";
 import { WorkWithAuthor } from "./models/UIModels";
 import { FollowTooltip } from "./modals/FollowTooltip";
 import { kwilApi } from "../api/KwilApiInstance";
-import { Profile } from "../api/ApiModels";
-
-const TOP_DIFF = 240;
+import { ProfileModel } from "../api/ApiModels";
 
 interface AuthorWorkDetailProps {
   showAuthor: boolean;
@@ -17,16 +15,25 @@ export function AuthorWorkDetail({ showAuthor, work }: AuthorWorkDetailProps) {
   const [showFollowTooltip, setShowFollowTooltip] = useState(false);
   const [followTooltipTop, setFollowTooltipTop] = useState(0);
   const [followTooltipLeft, setFollowTooltipLeft] = useState(0);
-  const [currentProfile, setCurrentProfile] = useState<Profile | null>(null);
+  const [currentProfile, setCurrentProfile] = useState<ProfileModel | null>(
+    null
+  );
+  const spanRef = useRef<HTMLSpanElement | null>(null);
 
   const onMouseEnterFullname = (e: MouseEvent<HTMLSpanElement>) => {
     e.preventDefault();
     if (!showFollowTooltip) {
       setShowFollowTooltip(true);
     }
-
-    setFollowTooltipLeft(e.clientX - 200);
-    setFollowTooltipTop(e.clientY - TOP_DIFF);
+    console.log(
+      "x, y:",
+      spanRef.current?.offsetLeft,
+      spanRef.current?.offsetTop
+    );
+    if (spanRef.current) {
+      setFollowTooltipLeft(spanRef.current?.offsetLeft);
+      setFollowTooltipTop(spanRef.current?.offsetTop);
+    }
   };
 
   const onMouseEnterUsername = (e: MouseEvent<HTMLSpanElement>) => {
@@ -34,9 +41,15 @@ export function AuthorWorkDetail({ showAuthor, work }: AuthorWorkDetailProps) {
     if (!showFollowTooltip) {
       setShowFollowTooltip(true);
     }
-
-    setFollowTooltipLeft(e.clientX + 40);
-    setFollowTooltipTop(e.clientY - TOP_DIFF);
+    console.log(
+      "x, y:",
+      spanRef.current?.offsetLeft,
+      spanRef.current?.offsetTop
+    );
+    if (spanRef.current) {
+      setFollowTooltipLeft(spanRef.current?.offsetLeft);
+      setFollowTooltipTop(spanRef.current?.offsetTop);
+    }
   };
 
   const toggleShowFollowTooltip = () => {
@@ -53,20 +66,20 @@ export function AuthorWorkDetail({ showAuthor, work }: AuthorWorkDetailProps) {
 
   return (
     <>
+      {currentProfile ? (
+        <FollowTooltip
+          followed={currentProfile}
+          isOpen={showFollowTooltip}
+          toggleIsOpen={toggleShowFollowTooltip}
+          topPosition={followTooltipTop}
+          leftPosition={followTooltipLeft}
+        />
+      ) : null}
       <div className="story-detail-top">
         {showAuthor ? (
           <>
-            {currentProfile ? (
-              <FollowTooltip
-                profile={currentProfile}
-                isOpen={showFollowTooltip}
-                toggleIsOpen={toggleShowFollowTooltip}
-                topPosition={followTooltipTop}
-                leftPosition={followTooltipLeft}
-              />
-            ) : null}
-
             <span
+              ref={spanRef}
               style={{
                 display: "flex",
                 alignItems: "center",
