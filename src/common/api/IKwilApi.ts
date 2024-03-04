@@ -37,6 +37,14 @@ export interface IKwilApi {
     content: string,
     authorId: number
   ): TxHashPromise;
+  updateProfile(
+    profileId: number,
+    userName: string,
+    fullName: string,
+    description: string,
+    socialLinkPrimary: string,
+    socialLinkSecond: string
+  ): TxHashPromise;
 
   cleanDb(): TxHashPromise;
 

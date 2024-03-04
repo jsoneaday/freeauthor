@@ -1,4 +1,4 @@
-import { ChangeEvent, useState, MouseEvent } from "react";
+import { ChangeEvent, useState, MouseEvent, useEffect } from "react";
 import { kwilApi } from "../api/KwilApiInstance";
 import { useProfile } from "../zustand/Store";
 import { PrimaryButton } from "./Buttons";
@@ -16,12 +16,23 @@ enum InputValidationState {
 }
 
 const START_CREATE_PROFILE_MSG = "Please wait while your profile is created";
+const START_EDIT_PROFILE_MSG = "Please wait while your profile is updated";
+
+enum PageState {
+  Create = "Create",
+  Edit = "Edit",
+}
 
 export interface ProfileFormProps {
   profileCreatedCallback: () => void;
+  profileId?: number;
 }
 
-export function ProfileForm({ profileCreatedCallback }: ProfileFormProps) {
+export function ProfileForm({
+  profileCreatedCallback,
+  profileId,
+}: ProfileFormProps) {
+  const [pageState, setPageState] = useState(PageState.Create);
   const [validationMsg, setValidationMsg] = useState("");
   const [username, setUsername] = useState("");
   const [fullname, setFullname] = useState("");
@@ -29,13 +40,34 @@ export function ProfileForm({ profileCreatedCallback }: ProfileFormProps) {
   const [socialPrimary, setSocialPrimary] = useState("");
   const [socialSecondary, setSocialSecondary] = useState("");
   const setProfile = useProfile((state) => state.setProfile);
-  const [createProfileBtnDisabled, setCreateProfileBtnDisabled] =
+  const [submitProfileBtnDisabled, setSubmitCreateProfileBtnDisabled] =
     useState(true);
+
+  useEffect(() => {
+    if (profileId) {
+      kwilApi
+        .getProfile(profileId)
+        .then((profile) => {
+          if (!profile)
+            throw new Error(`Failed to get Profile with id: ${profileId}`);
+
+          setPageState(PageState.Edit);
+
+          setUsername(profile.username);
+          setFullname(profile.fullname);
+          setDescription(profile.description);
+          setSocialPrimary(profile.social_link_primary);
+          setSocialSecondary(profile.social_link_second);
+          setValidationMsg("");
+        })
+        .catch((e) => console.log(e));
+    }
+  }, [profileId]);
 
   const onChangeUsername = (e: ChangeEvent<HTMLInputElement>) => {
     const validation = validateUsername(e.target.value);
 
-    setCreateProfileBtnDisabled(
+    setSubmitCreateProfileBtnDisabled(
       validation === InputValidationState.FieldIsValid ? false : true
     );
 
@@ -45,7 +77,7 @@ export function ProfileForm({ profileCreatedCallback }: ProfileFormProps) {
   const onChangeFullname = (e: ChangeEvent<HTMLInputElement>) => {
     const validation = validateFullname(e.target.value);
 
-    setCreateProfileBtnDisabled(
+    setSubmitCreateProfileBtnDisabled(
       validation === InputValidationState.FieldIsValid ? false : true
     );
 
@@ -55,7 +87,7 @@ export function ProfileForm({ profileCreatedCallback }: ProfileFormProps) {
   const onChangeDescription = (e: ChangeEvent<HTMLInputElement>) => {
     const validation = validateDescription(e.target.value);
 
-    setCreateProfileBtnDisabled(
+    setSubmitCreateProfileBtnDisabled(
       validation === InputValidationState.FieldIsValid ? false : true
     );
 
@@ -63,25 +95,25 @@ export function ProfileForm({ profileCreatedCallback }: ProfileFormProps) {
     setValidationMsg(validation);
   };
   const onChangeSocialPrimary = (e: ChangeEvent<HTMLInputElement>) => {
-    setCreateProfileBtnDisabled(true);
+    setSubmitCreateProfileBtnDisabled(true);
     if (e.target.value.length > 250) {
       setValidationMsg(
         "Primary social link cannot be greater than 250 characters"
       );
     } else {
       setSocialPrimary(e.target.value.trim());
-      setCreateProfileBtnDisabled(false);
+      setSubmitCreateProfileBtnDisabled(false);
     }
   };
   const onChangeSocialSecondary = (e: ChangeEvent<HTMLInputElement>) => {
-    setCreateProfileBtnDisabled(true);
+    setSubmitCreateProfileBtnDisabled(true);
     if (e.target.value.length > 250) {
       setValidationMsg(
         "Secondary social link cannot be greater than 250 characters"
       );
     } else {
       setSocialSecondary(e.target.value.trim());
-      setCreateProfileBtnDisabled(false);
+      setSubmitCreateProfileBtnDisabled(false);
     }
   };
 
@@ -204,6 +236,52 @@ export function ProfileForm({ profileCreatedCallback }: ProfileFormProps) {
     setValidationMsg("");
   };
 
+  const editProfile = async (e: MouseEvent<HTMLButtonElement>) => {
+    console.log("enter editProfile");
+    e.preventDefault();
+
+    if (!profileId) {
+      setValidationMsg("Error profile id was not given");
+      return;
+    }
+
+    if (!validateAllFields()) return;
+
+    setValidationMsg(START_EDIT_PROFILE_MSG);
+
+    const existingProfile = await kwilApi.getOwnersProfile();
+    if (!existingProfile) {
+      setValidationMsg(`No profile with the address ${kwilApi.Address} exists`);
+      return;
+    }
+
+    const tx = await kwilApi.updateProfile(
+      profileId,
+      username,
+      fullname,
+      description,
+      socialPrimary,
+      socialSecondary
+    );
+    await kwilApi.testWaitAndGetId(tx, "profiles");
+
+    const profile = await kwilApi.getOwnersProfile();
+    if (!profile) throw new Error("Error profile has not been updated!");
+
+    setProfile({
+      id: profile.id,
+      updatedAt: profile.updated_at,
+      username: profile.username,
+      fullname: profile.fullname,
+      description: profile.description,
+      ownerAddress: profile.owner_address,
+      socialLinkPrimary: profile.social_link_primary,
+      socialLinkSecond: profile.social_link_second,
+    });
+    profileCreatedCallback();
+    setValidationMsg("");
+  };
+
   return (
     <form className="profile-form-container">
       <section className="profile-form-section">
@@ -273,14 +351,14 @@ export function ProfileForm({ profileCreatedCallback }: ProfileFormProps) {
 
         <PrimaryButton
           label="Create"
-          isDisabled={createProfileBtnDisabled}
+          isDisabled={submitProfileBtnDisabled}
           style={{
             marginTop: "1em",
-            color: createProfileBtnDisabled
+            color: submitProfileBtnDisabled
               ? "var(--tertiary-cl)"
               : "var(--primary-cl)",
           }}
-          onClick={createProfile}
+          onClick={pageState === PageState.Create ? createProfile : editProfile}
         />
       </section>
     </form>

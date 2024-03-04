@@ -9,6 +9,7 @@ import { useParams } from "react-router-dom";
 import { upperCaseFirstLetterOfWords } from "../../common/utils/CharacterUtils";
 import { PagedWorkElements } from "../../common/components/PagedWorkElements";
 import { Topic } from "../../common/api/ApiModels";
+import { TabHeader } from "../../common/components/TabHeader";
 
 export function Explorer() {
   const [searchTxt, setSearchTxt] = useState("");
@@ -107,7 +108,7 @@ export function Explorer() {
         <div className="topic-item-list">{topicElements}</div>
 
         <div className="explorer-container">
-          <span className="explorer-header">{topicName}</span>
+          <TabHeader headerName={topicName} />
 
           <PagedWorkElements
             getNextData={getData}

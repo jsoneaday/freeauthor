@@ -241,6 +241,17 @@ export class KwilApi implements IKwilApi {
     );
   }
 
+  async updateProfile(
+    profileId: number,
+    userName: string,
+    fullName: string,
+    description: string,
+    socialLinkPrimary: string,
+    socialLinkSecond: string
+  ) {
+    throw new Error("Not implemented");
+  }
+
   async cleanDb() {
     if (!this.#kwil) {
       await this.connect();

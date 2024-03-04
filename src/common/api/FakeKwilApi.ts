@@ -152,6 +152,27 @@ export class FakeKwilApi implements IKwilApi {
     return faker.number.binary();
   }
 
+  async updateProfile(
+    profileId: number,
+    userName: string,
+    fullName: string,
+    description: string,
+    socialLinkPrimary: string,
+    socialLinkSecond: string
+  ) {
+    const profile = profiles.find((profile) => profile.id === profileId);
+    if (!profile) throw new Error(`No Profile found by id ${profileId}`);
+
+    profile.updated_at = formattedNow();
+    profile.username = userName;
+    profile.fullname = fullName;
+    profile.description = description;
+    profile.social_link_primary = socialLinkPrimary;
+    profile.social_link_second = socialLinkSecond;
+
+    return faker.number.binary();
+  }
+
   async cleanDb() {
     return faker.number.binary();
   }
