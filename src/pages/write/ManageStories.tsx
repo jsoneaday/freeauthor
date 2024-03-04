@@ -52,9 +52,9 @@ export function ManageStories() {
 
   return (
     <PagedWorkElements
-      getData={getData}
+      getNextData={getData}
       works={works}
-      refreshWorksList={false}
+      appendWorks={false}
       showAuthor={false}
       showContent={false}
       readOnly={false}

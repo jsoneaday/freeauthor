@@ -4,21 +4,18 @@ import {
   WorkWithAuthor,
   getWorkWithAuthor,
 } from "../../common/components/models/UIModels";
-import { useOutletContext, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { kwilApi } from "../../common/api/KwilApiInstance";
-import { ReadOutletType } from "./Read";
 import { AuthorWorkDetail } from "../../common/components/AuthorWorkDetail";
+import { Layout } from "../../common/components/Layout";
 
 export function ReadStory() {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState<string | undefined>("");
   const [work, setWork] = useState<WorkWithAuthor | null>();
   const { work_id } = useParams<{ work_id: string }>();
-  const { setShowFollowedList } = useOutletContext<ReadOutletType>();
 
   useEffect(() => {
-    setShowFollowedList(false);
-
     kwilApi
       .getWork(Number(work_id))
       .then((work) => {
@@ -39,17 +36,23 @@ export function ReadStory() {
   }, [work_id]);
 
   return (
-    <div>
-      <h1 className="story-title" style={{ marginBottom: "1.25em" }}>
-        {title}
-      </h1>
-      <h2 className="story-desc" style={{ marginBottom: "2em" }}>
-        {description}
-      </h2>
-      <div className="story-detail">
-        <AuthorWorkDetail showAuthor={true} work={work ? work : null} />
+    <Layout>
+      <div style={{ marginBottom: "2em", width: "100%" }}>
+        <div>
+          <h1 className="story-title" style={{ marginBottom: "1.25em" }}>
+            {title}
+          </h1>
+          <h2 className="story-desc" style={{ marginBottom: "2em" }}>
+            {description}
+          </h2>
+          <div className="story-detail">
+            <AuthorWorkDetail showAuthor={true} work={work ? work : null} />
+          </div>
+          {work ? (
+            <MarkdownEditor readOnly={true} markdown={work.content} />
+          ) : null}
+        </div>
       </div>
-      {work ? <MarkdownEditor readOnly={true} markdown={work.content} /> : null}
-    </div>
+    </Layout>
   );
 }

@@ -5,14 +5,14 @@ interface Topic {
   topic_id: number;
   name: string;
   isSelected: boolean;
-  setRefreshWorksList: (refresh: boolean) => void;
+  resetPagingState: () => void;
 }
 
 export function TopicElement({
   topic_id,
   name,
   isSelected,
-  setRefreshWorksList,
+  resetPagingState,
 }: Topic) {
   const [localIsSelected, setLocalIsSelected] = useState(true);
 
@@ -22,7 +22,7 @@ export function TopicElement({
 
   const onClickLinkTopic = () => {
     setLocalIsSelected(true);
-    setRefreshWorksList(true);
+    resetPagingState();
   };
 
   return (

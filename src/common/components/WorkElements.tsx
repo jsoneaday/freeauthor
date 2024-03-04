@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { memo, useEffect, useState } from "react";
 import { MarkdownEditor } from "./MarkdownEditor";
 import { WorkWithAuthor } from "./models/UIModels";
 import { RandomImg } from "./RandomImage";
@@ -7,18 +7,17 @@ import { v4 as uuidv4 } from "uuid";
 import { Link } from "react-router-dom";
 import { AuthorWorkDetail } from "./AuthorWorkDetail";
 
+/// @startFresh stop appending and create new element list
 interface WorkElementsProps {
   works: WorkWithAuthor[] | null;
-  refresh: boolean; // reset all data, do not append
   readOnly?: boolean;
   showAuthor?: boolean;
   showContent?: boolean;
   columnCount?: number;
 }
 
-export function WorkElements({
+function WorkElementsComponent({
   works,
-  refresh,
   readOnly,
   showAuthor = true,
   showContent = true,
@@ -27,7 +26,7 @@ export function WorkElements({
   const [workElements, setWorkElements] = useState<JSX.Element[]>([]);
 
   useEffect(() => {
-    if (!works) {
+    if (!works || works.length === 0) {
       return undefined;
     }
 
@@ -37,6 +36,7 @@ export function WorkElements({
     } else if (columnCount === 3) {
       itemWidth = "33%";
     }
+
     const localWorkElements: JSX.Element[] = [];
     for (let i = 0; i < works.length; i++) {
       localWorkElements.push(
@@ -79,14 +79,7 @@ export function WorkElements({
         </li>
       );
     }
-
-    if (!refresh) {
-      setWorkElements([...workElements, ...localWorkElements]);
-      console.log("append works", works);
-    } else {
-      setWorkElements(localWorkElements);
-      console.log("refresh works", works);
-    }
+    setWorkElements(localWorkElements);
   }, [works]);
 
   return (
@@ -97,3 +90,5 @@ export function WorkElements({
     </>
   );
 }
+
+export const WorkElements = memo(WorkElementsComponent);

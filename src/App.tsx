@@ -39,18 +39,12 @@ const router = createBrowserRouter([
     ],
   },
   {
-    path: "/read",
-    element: <Read />,
-    children: [
-      {
-        path: "followed",
-        element: <ReadFollowed />,
-      },
-      {
-        path: ":work_id",
-        element: <ReadStory />,
-      },
-    ],
+    path: "/read/followed",
+    element: <ReadFollowed />,
+  },
+  {
+    path: "/read/:work_id",
+    element: <ReadStory />,
   },
   {
     path: "/explorer/:topic_id?",

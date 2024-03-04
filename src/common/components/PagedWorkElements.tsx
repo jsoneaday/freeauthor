@@ -1,26 +1,30 @@
-import { CSSProperties, useEffect, useRef } from "react";
+import { CSSProperties, memo, useEffect, useRef, useState } from "react";
 import { WorkElements } from "./WorkElements";
 import { Spinner } from "./Spinner";
 import { WorkWithAuthor } from "./models/UIModels";
+import { PAGE_SIZE } from "../utils/StandardValues";
+
+export enum PagingState {
+  Start = "Start",
+  Continue = "Continue",
+  Finish = "Finish",
+}
 
 interface PagedWorkElementsProps {
-  getData: (refreshWorksList: boolean) => void;
-  refreshWorksList: boolean;
-  works: WorkWithAuthor[] | null;
+  getNextData: (priorKeyset: number) => Promise<WorkWithAuthor[] | null>;
+  refreshWorksData: boolean;
+  setRefreshWorksData: React.Dispatch<React.SetStateAction<boolean>>;
   showContent: boolean;
   showAuthor: boolean;
   readOnly: boolean;
   columnCount: number;
   style?: CSSProperties;
-  /// setRefreshWorksList means to reset or start paging from beginning, this function should also reset the priorKeyset
-  setRefreshWorksList?: (refresh: boolean) => void;
 }
 
-export function PagedWorkElements({
-  getData,
-  refreshWorksList,
-  setRefreshWorksList,
-  works,
+function PagedWorkElementsComponent({
+  getNextData,
+  refreshWorksData,
+  setRefreshWorksData,
   showContent,
   showAuthor,
   readOnly,
@@ -29,6 +33,19 @@ export function PagedWorkElements({
 }: PagedWorkElementsProps) {
   const targetRef = useRef<HTMLDivElement>(null);
   const readWorkListRef = useRef<HTMLDivElement>(null);
+  const [priorKeyset, setPriorKeyset] = useState(0);
+  const [currentPagingState, setCurrentPagingState] = useState(
+    PagingState.Start
+  );
+  const [pagedWorks, setPagedWorks] = useState<WorkWithAuthor[] | null>([]);
+
+  useEffect(() => {
+    if (refreshWorksData) {
+      setPriorKeyset(0);
+      setCurrentPagingState(PagingState.Start);
+      setData(0, PagingState.Start);
+    }
+  }, [refreshWorksData]);
 
   useEffect(() => {
     readWorkListRef.current?.addEventListener("scroll", scrollEventHandler);
@@ -39,29 +56,65 @@ export function PagedWorkElements({
         scrollEventHandler
       );
     };
-  }, [targetRef.current, readWorkListRef.current, works, refreshWorksList]);
+  }, [
+    readWorkListRef.current,
+    targetRef.current,
+    priorKeyset,
+    currentPagingState,
+  ]);
 
-  const scrollEventHandler = () => {
+  const scrollEventHandler = async () => {
+    console.log("Scroll, current PagingState", currentPagingState);
+    if (currentPagingState === PagingState.Finish) return;
+
     const targetBounds = targetRef.current?.getBoundingClientRect();
     const readWorkListBounds = readWorkListRef.current?.getBoundingClientRect();
 
     const inView =
       Math.floor(targetBounds?.bottom || 0) ===
-      Math.floor(readWorkListBounds?.bottom || 0);
+      Math.floor(readWorkListBounds?.bottom || 0) - 1;
 
     if (inView) {
-      setRefreshWorksList && setRefreshWorksList(false);
-      getData(false);
-
       console.log("scrolling");
+      setData(priorKeyset, currentPagingState);
     }
+  };
+
+  const setData = async (priorKeyset: number, pagingState: PagingState) => {
+    const works = await getNextData(priorKeyset);
+    // use current paging state to determine whether to append or start fresh
+    if (pagingState === PagingState.Start) {
+      const worksNotNull = works || [];
+      setPagedWorks(worksNotNull);
+    } else {
+      const pagedWorksNotNull = pagedWorks || [];
+      const worksNotNull = works || [];
+      setPagedWorks([...pagedWorksNotNull, ...worksNotNull]);
+    }
+
+    // once data is set reset the paging state to correct new value
+    if (!works || works.length === 0) {
+      console.log("no more works data, state Finished");
+      setCurrentPagingState(PagingState.Finish);
+    } else if (works.length < PAGE_SIZE) {
+      console.log("works length less than page size, state Finished");
+      setCurrentPagingState(PagingState.Finish);
+    } else {
+      console.log("more works found, state Continue");
+      setCurrentPagingState(PagingState.Continue);
+    }
+
+    if (works && works.length > 0) {
+      setPriorKeyset(works[works.length - 1].id);
+    }
+
+    setRefreshWorksData(false);
   };
 
   return (
     <div ref={readWorkListRef} className="read-work-list" style={{ ...style }}>
       <WorkElements
-        works={works}
-        refresh={refreshWorksList}
+        works={pagedWorks}
         readOnly={readOnly}
         showContent={showContent}
         showAuthor={showAuthor}
@@ -76,8 +129,10 @@ export function PagedWorkElements({
           alignItems: "center",
         }}
       >
-        {works && works.length > 0 ? <Spinner size={15} /> : null}
+        {pagedWorks && pagedWorks.length > 0 ? <Spinner size={15} /> : null}
       </div>
     </div>
   );
 }
+
+export const PagedWorkElements = memo(PagedWorkElementsComponent);

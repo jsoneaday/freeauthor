@@ -1,99 +1,79 @@
 import { useEffect, useState } from "react";
 import { kwilApi } from "../../common/api/KwilApiInstance";
 import { PAGE_SIZE } from "../../common/utils/StandardValues";
-import {
-  WorkWithAuthor,
-  getWorkWithAuthor,
-} from "../../common/components/models/UIModels";
+import { getWorkWithAuthor } from "../../common/components/models/UIModels";
 import { useProfile } from "../../common/zustand/Store";
-import { Work } from "../../common/api/ApiModels";
-import { useOutletContext } from "react-router-dom";
-import { ReadOutletType } from "./Read";
 import { PagedWorkElements } from "../../common/components/PagedWorkElements";
+import { Layout } from "../../common/components/Layout";
+import { FollowedList } from "../../common/components/FollowedList";
 
 export function ReadFollowed() {
-  const [works, setWorks] = useState<WorkWithAuthor[] | null>(null);
   const profile = useProfile((state) => state.profile);
-  const {
-    currentFollowedId,
-    priorKeysetState: [priorKeyset, setPriorKeyset],
-    refreshWorksListState: [refreshWorksList, setRefreshWorksList],
-    setShowFollowedList,
-  } = useOutletContext<ReadOutletType>();
+  const [currentFollowedId, setCurrentFollowedId] = useState(0); // 0 means all
+  const [refreshWorksData, setRefreshWorksData] = useState(false);
 
   useEffect(() => {
-    setShowFollowedList(true);
-  }, [setShowFollowedList]);
-
-  useEffect(() => {
-    if (profile) getData(refreshWorksList);
+    console.log("profile, currentFollowedId, priorKeyset updated, run getData");
+    setRefreshWorksData(true);
   }, [profile, currentFollowedId]);
 
-  const setNextPriorKeyset = (works: Work[]) => {
-    setPriorKeyset(works[works.length - 1].id);
+  const getCurrentSelectedFollowedId = (id: number) => {
+    console.log("getCurrentSelectedFollowedId", id);
+    setCurrentFollowedId(id);
   };
 
-  const getData = (refreshWorksList: boolean) => {
-    if (!profile) return;
-
-    if (!refreshWorksList && priorKeyset === 0) {
-      return; // if priorKeyset to PAGE_SIZE range is 0 or less there is no more data to get
-    }
+  const getData = async (priorKeyset: number) => {
+    console.log("begin getData", currentFollowedId);
+    if (!profile) return null;
 
     // todo: need to test these calls each
-    setRefreshWorksList(refreshWorksList);
     if (currentFollowedId === 0) {
-      kwilApi
-        .getWorksByAllFollowed(profile.id, priorKeyset, PAGE_SIZE)
-        .then((works) => {
-          if (!works) {
-            setWorks(null);
-            return;
-          }
+      const works = await kwilApi.getWorksByAllFollowed(
+        profile.id,
+        priorKeyset,
+        PAGE_SIZE
+      );
+      if (!works || works.length === 0) {
+        return null;
+      }
 
-          if (works.length > 0) {
-            setNextPriorKeyset(works);
-          }
-          getWorkWithAuthor(works)
-            .then((works) => {
-              setWorks(works);
-            })
-            .catch((e) => console.log(e));
-        })
-        .catch((e) => console.log(e));
+      const worksWithAuthor = await getWorkWithAuthor(works);
+      console.log("works", works);
+      return worksWithAuthor;
     } else {
-      kwilApi
-        .getWorksByOneFollowed(currentFollowedId, priorKeyset, PAGE_SIZE)
-        .then((works) => {
-          if (!works) {
-            setWorks(null);
-            return;
-          }
+      const works = await kwilApi.getWorksByOneFollowed(
+        currentFollowedId,
+        priorKeyset,
+        PAGE_SIZE
+      );
+      if (!works || works.length === 0) {
+        return null;
+      }
 
-          if (works.length > 0) {
-            setNextPriorKeyset(works);
-          }
-          getWorkWithAuthor(works)
-            .then((works) => {
-              setWorks(works);
-              console.log("works", works);
-            })
-            .catch((e) => console.log(e));
-        })
-        .catch((e) => console.log(e));
+      const worksWithAuthor = await getWorkWithAuthor(works);
+      console.log("works", works);
+      return worksWithAuthor;
     }
   };
 
   return (
-    <PagedWorkElements
-      getData={getData}
-      refreshWorksList={refreshWorksList}
-      setRefreshWorksList={setRefreshWorksList}
-      works={works}
-      showContent={false}
-      showAuthor={true}
-      readOnly={true}
-      columnCount={2}
-    />
+    <Layout>
+      <div className="home-single">
+        <div style={{ marginBottom: "2em", width: "100%" }}>
+          <FollowedList
+            getCurrentSelectedFollowedId={getCurrentSelectedFollowedId}
+          />
+        </div>
+        <PagedWorkElements
+          getNextData={getData}
+          refreshWorksData={refreshWorksData}
+          setRefreshWorksData={setRefreshWorksData}
+          showContent={false}
+          showAuthor={true}
+          readOnly={true}
+          columnCount={2}
+        />
+      </div>
+    </Layout>
   );
 }
