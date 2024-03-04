@@ -3,38 +3,28 @@ import { Layout } from "../../common/components/Layout";
 import { kwilApi } from "../../common/api/KwilApiInstance";
 import { TopicElement } from "../../common/components/TopicElement";
 import searchIcon from "../../theme/assets/app-icons/search1.png";
-import {
-  WorkWithAuthor,
-  getWorkWithAuthor,
-} from "../../common/components/models/UIModels";
+import { getWorkWithAuthor } from "../../common/components/models/UIModels";
 import { PAGE_SIZE } from "../../common/utils/StandardValues";
 import { useParams } from "react-router-dom";
 import { upperCaseFirstLetterOfWords } from "../../common/utils/CharacterUtils";
-import {
-  PagedWorkElements,
-  PagingState,
-} from "../../common/components/PagedWorkElements";
+import { PagedWorkElements } from "../../common/components/PagedWorkElements";
 import { Topic } from "../../common/api/ApiModels";
 
 export function Explorer() {
   const [searchTxt, setSearchTxt] = useState("");
   const [topicElements, setTopicElements] = useState<JSX.Element[]>([]);
   const [topics, setTopics] = useState<Topic[] | null>(null);
-  const [priorKeyset, setPriorKeyset] = useState(0);
   const [topicName, setTopicName] = useState("");
   const { topic_id } = useParams<{ topic_id: string | undefined }>();
-  const [pagingState, setPagingState] = useState(PagingState.Start);
-  const [works, setWorks] = useState<WorkWithAuthor[] | null>(null);
+  const [refreshWorksData, setRefreshWorksData] = useState(false);
 
   const onChangeSearch = (e: ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
-
     setSearchTxt(e.target.value);
   };
 
   const resetPagingState = () => {
-    setPagingState(PagingState.Start);
-    setPriorKeyset(0);
+    setRefreshWorksData(true);
   };
 
   useEffect(() => {
@@ -72,34 +62,27 @@ export function Explorer() {
     }
 
     setTopicElements(topicItems);
-    getData();
+    setRefreshWorksData(true);
   }, [topic_id, topics]);
 
-  const getData = async () => {
+  const getData = async (priorKeyset: number) => {
     let topicId = 1;
     if (topic_id) {
       topicId = Number(topic_id);
     }
-
-    console.log("priorKeyset", priorKeyset);
 
     const works = await kwilApi.getWorksByTopic(
       topicId,
       priorKeyset,
       PAGE_SIZE
     );
-    if (!works) {
-      setPriorKeyset(0);
-      return;
+    if (!works || works.length === 0) {
+      return null;
     }
 
     const worksWithAuthor = await getWorkWithAuthor(works);
-    setPriorKeyset(works.length === 0 ? 0 : works[works.length - 1].id);
-    console.log("updated topics works", worksWithAuthor);
-    setWorks(worksWithAuthor);
-    if (works.length < PAGE_SIZE) {
-      setPagingState(PagingState.Finish);
-    }
+    console.log("works", worksWithAuthor);
+    return worksWithAuthor;
   };
 
   return (
@@ -128,8 +111,8 @@ export function Explorer() {
 
           <PagedWorkElements
             getNextData={getData}
-            works={works}
-            pagingState={pagingState}
+            refreshWorksData={refreshWorksData}
+            setRefreshWorksData={setRefreshWorksData}
             readOnly={true}
             showContent={false}
             showAuthor={true}

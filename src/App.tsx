@@ -12,7 +12,6 @@ import { ManageStories } from "./pages/write/ManageStories";
 import { Write } from "./pages/write/Write";
 import { ReadFollowed } from "./pages/read/ReadFollowed";
 import { ReadStory } from "./pages/read/ReadStory";
-import { Read } from "./pages/read/Read";
 import { Profile } from "./pages/Profile";
 
 const router = createBrowserRouter([
