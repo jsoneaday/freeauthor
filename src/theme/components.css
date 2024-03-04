@@ -532,6 +532,7 @@ select {
   align-items: center;
   justify-content: flex-start;
   padding: 0.5em;
+  margin-left: 1em;
   margin-bottom: 0.5em;
 }
 
@@ -539,4 +540,8 @@ select {
   height: 1em;
   border-left: solid 2px var(--secondary-cl);
   margin-right: 0.45em;
+}
+
+.tab-header-text {
+  font-size: 1.2em;
 }

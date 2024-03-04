@@ -49,7 +49,12 @@ export function Profile() {
       <div className="home-single">
         <div className="profile-edit-section">
           <RandomImg
-            style={{ width: "5em", height: "5em", marginRight: "4em" }}
+            style={{
+              width: "6.5em",
+              height: "6.5em",
+              marginLeft: "2em",
+              marginRight: "4em",
+            }}
           />
           <ProfileForm
             profileCreatedCallback={profileCreatedCallback}

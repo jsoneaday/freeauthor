@@ -350,7 +350,7 @@ export function ProfileForm({
         </span>
 
         <PrimaryButton
-          label="Create"
+          label={pageState === PageState.Create ? "Create" : "Edit"}
           isDisabled={submitProfileBtnDisabled}
           style={{
             marginTop: "1em",
