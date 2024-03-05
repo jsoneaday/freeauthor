@@ -52,7 +52,7 @@ export function Profile() {
             style={{
               width: "6.5em",
               height: "6.5em",
-              marginLeft: "2em",
+              marginLeft: "1em",
               marginRight: "4em",
             }}
           />
@@ -72,7 +72,7 @@ export function Profile() {
             showContent={false}
             showAuthor={true}
             columnCount={2}
-            style={{ height: "70vh" }}
+            style={{ height: "52vh" }}
           />
         </div>
       </div>
