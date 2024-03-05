@@ -1,33 +1,34 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { PagedWorkElements } from "../common/components/PagedWorkElements";
 import { ProfileForm } from "../common/components/ProfileForm";
 import { Layout } from "../common/components/Layout";
 import { RandomImg } from "../common/components/RandomImage";
-import { TabHeader } from "../common/components/TabHeader";
 import { useParams } from "react-router-dom";
 import { kwilApi } from "../common/api/KwilApiInstance";
 import { PAGE_SIZE } from "../common/utils/StandardValues";
-import { getWorkWithAuthor } from "../common/components/models/UIModels";
+import {
+  getResponseWithResponder,
+  getWorkWithAuthor,
+} from "../common/components/models/UIModels";
 import { WorkElements } from "../common/components/WorkElements";
-
-enum PageSections {
-  Stories = "Profile Stories",
-  Responses = "Profile Responses",
-  Following = "Following",
-  Followers = "Followers",
-}
+import { useProfile } from "../common/zustand/Store";
+import { TabBar } from "../common/components/TabBar";
+import { ResponseElements } from "../common/components/ResponseElements";
 
 /// Register by creating a profile with optional avatar/image
 export function Profile() {
-  const [sectionName, setSectionName] = useState(PageSections.Stories);
+  const [selectedSection, setSelectedSection] = useState(TabHeaders[0]);
   const [refreshWorksData, setRefreshWorksData] = useState(true);
   const { profile_id } = useParams<{ profile_id: string }>();
+  const profile = useProfile((state) => state.profile);
 
   const profileCreatedCallback = () => {};
 
   const getData = async (priorKeyset: number) => {
-    if (sectionName === PageSections.Stories) {
+    if (selectedSection.name === PageSections.Stories) {
       return await getStories(priorKeyset);
+    } else if (selectedSection.name === PageSections.Responses) {
+      return await getResponses(priorKeyset);
     }
     return null;
   };
@@ -45,6 +46,38 @@ export function Profile() {
     return worksWithAuthor;
   };
 
+  const getResponses = async (priorKeyset: number) => {
+    const workResponses = await kwilApi.getWorkResponsesByProfile(
+      Number(profile_id || 0),
+      priorKeyset,
+      PAGE_SIZE
+    );
+    if (!workResponses || workResponses.length === 0) return null;
+
+    const responsesWithResponder = await getResponseWithResponder(
+      workResponses
+    );
+    console.log("responses", responsesWithResponder);
+    return responsesWithResponder;
+  };
+
+  const selectElementsToDisplay = () => {
+    if (selectedSection.name === PageSections.Stories) {
+      return <WorkElements works={[]} />;
+    } else if (selectedSection.name === PageSections.Responses) {
+      return <ResponseElements works={[]} />;
+    }
+    return null;
+  };
+
+  const onHeaderSelected = (id: number) => {
+    const section = TabHeaders.find((header) => header.id === id);
+    if (section) {
+      setSelectedSection(section);
+      setRefreshWorksData(true);
+    }
+  };
+
   return (
     <Layout>
       <div className="home-single">
@@ -60,27 +93,65 @@ export function Profile() {
           <ProfileForm
             profileCreatedCallback={profileCreatedCallback}
             profileId={profile_id ? Number(profile_id) : undefined}
+            readOnly={profile ? false : true}
           />
         </div>
         <div className="profile-stories">
-          <TabHeader headerName={sectionName} />
+          <TabBar
+            headers={TabHeaders}
+            selectedHeaderId={selectedSection.id}
+            headerSelected={onHeaderSelected}
+            style={{ marginLeft: "1.5em" }}
+          />
 
           <PagedWorkElements
             getNextData={getData}
             refreshWorksData={refreshWorksData}
             setRefreshWorksData={setRefreshWorksData}
-            payload={{
-              readOnly: true,
-              showContent: false,
-              showAuthor: true,
-              columnCount: 2,
-            }}
-            style={{ height: "52vh" }}
+            payload={selectedSection.payload}
+            style={{ height: profile ? "52vh" : "60vh" }}
           >
-            <WorkElements works={[]} />
+            {selectElementsToDisplay()}
           </PagedWorkElements>
         </div>
       </div>
     </Layout>
   );
 }
+
+enum PageSections {
+  Stories = "Stories",
+  Responses = "Responses",
+  Following = "Following",
+  Followers = "Followers",
+}
+
+const TabHeaders: { id: number; name: PageSections; payload: Object }[] = [
+  {
+    id: 1,
+    name: PageSections.Stories,
+    payload: {
+      readOnly: true,
+      showContent: false,
+      showAuthor: true,
+      columnCount: 2,
+    },
+  },
+  {
+    id: 2,
+    name: PageSections.Responses,
+    payload: {
+      showAuthor: false,
+    },
+  },
+  {
+    id: 3,
+    name: PageSections.Following,
+    payload: {},
+  },
+  {
+    id: 4,
+    name: PageSections.Followers,
+    payload: {},
+  },
+];

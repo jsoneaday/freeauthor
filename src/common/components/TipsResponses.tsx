@@ -16,14 +16,14 @@ export function TipsResponses({ workId }: TipsAndResponsesProps) {
 
   useEffect(() => {
     kwilApi
-      .getWorksLikeCount(workId)
+      .getWorkLikeCount(workId)
       .then((count) => {
         setLikeCount(count);
       })
       .catch((e) => console.log(e));
 
     kwilApi
-      .getWorksResponseCount(workId)
+      .getWorkResponseCount(workId)
       .then((count) => {
         setResponseCount(count);
       })

@@ -1,9 +1,8 @@
 import { memo, useEffect, useState } from "react";
-import { ResponseWithResponder } from "./models/UIModels";
 /// @ts-ignore
 import { v4 as uuidv4 } from "uuid";
 import { ResponseResponderDetail } from "./ResponseResponderDetail";
-import { TabHeader } from "./TabHeader";
+import { ResponseWithResponder } from "./models/UIModels";
 
 /// @works is named such do to sharing with PagedWorkElements component
 interface ResponseElementsProps {
@@ -38,28 +37,20 @@ function ResponseElementsComponent({
         >
           <ResponseResponderDetail
             showAuthor={showAuthor}
+            workTitle={works[i].workTitle}
             responderId={works[i].responderId}
             responseUpdatedAt={works[i].updatedAt}
-            userName={works[i].responderUserName}
-            fullName={works[i].responderFullName}
+            userName={works[i].userName}
+            fullName={works[i].fullName}
           />
-          <span>{works[i].content}</span>
+          <span>{works[i].responseContent}</span>
         </li>
       );
     }
     setWorkElements(localWorkElements);
   }, [works]);
 
-  return (
-    <>
-      <div style={{ display: "flex", flexDirection: "column" }}>
-        <TabHeader headerName="Responses" />
-        <ul className="stories-list" style={{ marginTop: "1.5em" }}>
-          {workElements}
-        </ul>
-      </div>
-    </>
-  );
+  return <ul className="stories-list">{workElements}</ul>;
 }
 
 export const ResponseElements = memo(ResponseElementsComponent);

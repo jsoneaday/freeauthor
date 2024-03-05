@@ -12,6 +12,7 @@ import { Layout } from "../../common/components/Layout";
 import { ResponseElements } from "../../common/components/ResponseElements";
 import { PagedWorkElements } from "../../common/components/PagedWorkElements";
 import { PAGE_SIZE } from "../../common/utils/StandardValues";
+import { TabHeader } from "../../common/components/TabHeader";
 
 export function ReadStory() {
   const [title, setTitle] = useState("");
@@ -84,14 +85,17 @@ export function ReadStory() {
           {work ? (
             <MarkdownEditor readOnly={true} markdown={work.content} />
           ) : null}
-          <PagedWorkElements
-            getNextData={getData}
-            refreshWorksData={refreshWorksData}
-            setRefreshWorksData={setRefreshWorksData}
-            payload={{}}
-          >
-            <ResponseElements works={[]} />
-          </PagedWorkElements>
+          <div style={{ display: "flex", flexDirection: "column" }}>
+            <TabHeader headerName="Responses" />
+            <PagedWorkElements
+              getNextData={getData}
+              refreshWorksData={refreshWorksData}
+              setRefreshWorksData={setRefreshWorksData}
+              payload={{}}
+            >
+              <ResponseElements works={[]} />
+            </PagedWorkElements>
+          </div>
         </div>
       </div>
     </Layout>

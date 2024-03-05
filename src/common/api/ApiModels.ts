@@ -97,3 +97,15 @@ export class WorkResponse implements Entity {
   id: number;
   updated_at: string;
 }
+
+export class WorkResponseModel implements Entity {
+  constructor(
+    public id: number,
+    public updated_at: string,
+    public work_title: string,
+    public response_content: string,
+    public responder_id: number,
+    public username: string,
+    public fullname: string
+  ) {}
+}

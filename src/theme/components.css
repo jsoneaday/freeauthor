@@ -533,6 +533,7 @@ select {
   align-items: center;
   justify-content: flex-start;
   margin-bottom: 0.5em;
+  cursor: pointer;
 }
 
 .tab-header {
@@ -543,4 +544,8 @@ select {
 
 .tab-header-text {
   font-size: 1.2em;
+}
+
+.header-tab {
+  display: flex;
 }

@@ -7,6 +7,7 @@ import {
   Work,
   WorkLike,
   WorkResponse,
+  WorkResponseModel,
   WorkTopic,
 } from "./ApiModels";
 import { faker } from "@faker-js/faker";
@@ -274,15 +275,15 @@ export class FakeKwilApi implements IKwilApi {
       .slice(0, pageSize);
   }
 
-  async getWorksLikeCount(_workId: number): Promise<number> {
-    return faker.number.int({ min: 2589, max: 19892 });
+  async getWorkLikeCount(workId: number): Promise<number> {
+    return workLikes.filter((like) => like.work_id === workId)?.length || 0;
   }
 
   async getWorkResponses(
     workId: number,
     lastKeyset: number,
     pageSize: number
-  ): Promise<WorkResponse[] | null> {
+  ): Promise<WorkResponseModel[] | null> {
     let filteredResponses: WorkResponse[];
     if (lastKeyset === 0) {
       filteredResponses = workResponses.filter(
@@ -291,21 +292,75 @@ export class FakeKwilApi implements IKwilApi {
     } else {
       filteredResponses = workResponses.filter(
         (workResponse) =>
-          workResponse.work_id === workId && workResponse.work_id < lastKeyset
+          workResponse.work_id === workId && workResponse.id < lastKeyset
       );
     }
 
-    return filteredResponses
+    const responses = filteredResponses
       .sort((a, b) => {
         if (a.id > b.id) return -1;
         if (a.id < b.id) return 1;
         return 0;
       })
       .slice(0, pageSize);
+
+    return this.#convertWorkResponse(responses);
   }
 
-  async getWorksResponseCount(_workId: number): Promise<number> {
-    return faker.number.int({ min: 2589, max: 19892 });
+  async getWorkResponsesByProfile(
+    profileId: number,
+    lastKeyset: number,
+    pageSize: number
+  ): Promise<WorkResponseModel[] | null> {
+    let filteredResponses: WorkResponse[];
+    if (lastKeyset === 0) {
+      filteredResponses = workResponses.filter(
+        (workResponse) => workResponse.responder_id === profileId
+      );
+    } else {
+      filteredResponses = workResponses.filter(
+        (workResponse) =>
+          workResponse.responder_id === profileId &&
+          workResponse.id < lastKeyset
+      );
+    }
+
+    const responses = filteredResponses
+      .sort((a, b) => {
+        if (a.id > b.id) return -1;
+        if (a.id < b.id) return 1;
+        return 0;
+      })
+      .slice(0, pageSize);
+
+    return this.#convertWorkResponse(responses);
+  }
+
+  async #convertWorkResponse(responses: WorkResponse[]) {
+    let models: WorkResponseModel[] = [];
+    for (let i = 0; i < responses.length; i++) {
+      const profile = profiles.find(
+        (profile) => profile.id === responses[i].responder_id
+      );
+      const work = works.find((work) => work.id === responses[i].work_id);
+      models.push({
+        id: responses[i].id,
+        updated_at: responses[i].updated_at,
+        work_title: work?.title || "",
+        response_content: responses[i].content,
+        responder_id: profile?.id || 0,
+        username: profile?.username || "",
+        fullname: profile?.fullname || "",
+      });
+    }
+    return models;
+  }
+
+  async getWorkResponseCount(workId: number): Promise<number> {
+    return (
+      workResponses.filter((response) => response.work_id === workId)?.length ||
+      0
+    );
   }
 
   async getAllTopics(): Promise<Topic[]> {

@@ -400,7 +400,7 @@ export class KwilApi implements IKwilApi {
     throw new Error("Not implemented yet");
   }
 
-  async getWorksLikeCount(workId: number): Promise<number> {
+  async getWorkLikeCount(workId: number): Promise<number> {
     const actionBody = {
       dbid: this.#dbid,
       action: "get_work_likes_count",
@@ -434,7 +434,27 @@ export class KwilApi implements IKwilApi {
     throw new Error("Not implemented yet");
   }
 
-  async getWorksResponseCount(workId: number): Promise<number> {
+  async getWorkResponsesByProfile(
+    profileId: number,
+    lastKeyset: number,
+    pageSize: number
+  ): Promise<WorkResponse[] | null> {
+    const actionBody = {
+      dbid: this.#dbid,
+      action: "get_work_responses_by_profile",
+      inputs: [
+        {
+          $profile_id: profileId,
+          $last_keyset: lastKeyset,
+          $page_size: pageSize,
+        },
+      ],
+    };
+
+    throw new Error("Not implemented yet");
+  }
+
+  async getWorkResponseCount(workId: number): Promise<number> {
     const actionBody = {
       dbid: this.#dbid,
       action: "get_work_response_count",

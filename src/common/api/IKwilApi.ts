@@ -1,4 +1,4 @@
-import { ProfileModel, Topic, Work, WorkResponse } from "./ApiModels";
+import { ProfileModel, Topic, Work, WorkResponseModel } from "./ApiModels";
 
 export type TxHashPromise = Promise<string | null | undefined>;
 
@@ -67,13 +67,18 @@ export interface IKwilApi {
     lastKeyset: number,
     pageSize: number
   ): Promise<Work[] | null>;
-  getWorksLikeCount(workId: number): Promise<number>;
+  getWorkLikeCount(workId: number): Promise<number>;
   getWorkResponses(
     workId: number,
     lastKeyset: number,
     pageSize: number
-  ): Promise<WorkResponse[] | null>;
-  getWorksResponseCount(workId: number): Promise<number>;
+  ): Promise<WorkResponseModel[] | null>;
+  getWorkResponsesByProfile(
+    profileId: number,
+    lastKeyset: number,
+    pageSize: number
+  ): Promise<WorkResponseModel[] | null>;
+  getWorkResponseCount(workId: number): Promise<number>;
   getAllTopics(): Promise<Topic[]>;
   getWorksByTopic(
     topicId: number,

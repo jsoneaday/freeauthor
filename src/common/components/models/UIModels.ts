@@ -1,4 +1,4 @@
-import { ProfileModel, Work, WorkResponse } from "../../api/ApiModels";
+import { ProfileModel, Work, WorkResponseModel } from "../../api/ApiModels";
 import { kwilApi } from "../../api/KwilApiInstance";
 
 export interface UiEntity {
@@ -23,42 +23,26 @@ export class ResponseWithResponder implements UiEntity {
   constructor(
     public id: number,
     public updatedAt: string,
-    public content: string,
-    public workId: number,
+    public workTitle: string,
+    public responseContent: string,
     public responderId: number,
-    public responderFullName: string,
-    public responderUserName: string
+    public userName: string,
+    public fullName: string
   ) {}
 }
 
-export async function getResponseWithResponder(responses: WorkResponse[]) {
-  const responderIds = responses.map((response) => response.responder_id);
-  const uniqueResponderIds = [...new Set(responderIds)];
-  const responderProfiles: ProfileModel[] = [];
-  for (let i = 0; i < uniqueResponderIds.length; i++) {
-    const profile = await kwilApi.getProfile(uniqueResponderIds[i]);
-    if (profile) {
-      responderProfiles.push(profile);
-    }
-  }
-
+export async function getResponseWithResponder(responses: WorkResponseModel[]) {
   const responsesWithResponder: ResponseWithResponder[] = [];
   for (let i = 0; i < responses.length; i++) {
-    const responder = responderProfiles.find(
-      (profile) => profile.id === responses[i].responder_id
-    );
-
-    if (responder) {
-      responsesWithResponder.push({
-        id: responses[i].id,
-        updatedAt: responses[i].updated_at,
-        content: responses[i].content,
-        workId: responses[i].work_id,
-        responderId: responder.id,
-        responderFullName: responder.fullname,
-        responderUserName: responder.username,
-      });
-    }
+    responsesWithResponder.push({
+      id: responses[i].id,
+      updatedAt: responses[i].updated_at,
+      workTitle: responses[i].work_title,
+      responseContent: responses[i].response_content,
+      responderId: responses[i].id,
+      fullName: responses[i].fullname,
+      userName: responses[i].username,
+    });
   }
   return responsesWithResponder;
 }

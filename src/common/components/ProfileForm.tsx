@@ -26,11 +26,13 @@ enum PageState {
 export interface ProfileFormProps {
   profileCreatedCallback: () => void;
   profileId?: number;
+  readOnly?: boolean;
 }
 
 export function ProfileForm({
   profileCreatedCallback,
   profileId,
+  readOnly = false,
 }: ProfileFormProps) {
   const [pageState, setPageState] = useState(PageState.Create);
   const [validationMsg, setValidationMsg] = useState("");
@@ -349,17 +351,21 @@ export function ProfileForm({
           />
         </span>
 
-        <PrimaryButton
-          label={pageState === PageState.Create ? "Create" : "Edit"}
-          isDisabled={submitProfileBtnDisabled}
-          style={{
-            marginTop: "1em",
-            color: submitProfileBtnDisabled
-              ? "var(--tertiary-cl)"
-              : "var(--primary-cl)",
-          }}
-          onClick={pageState === PageState.Create ? createProfile : editProfile}
-        />
+        {!readOnly ? (
+          <PrimaryButton
+            label={pageState === PageState.Create ? "Create" : "Edit"}
+            isDisabled={submitProfileBtnDisabled}
+            style={{
+              marginTop: "1em",
+              color: submitProfileBtnDisabled
+                ? "var(--tertiary-cl)"
+                : "var(--primary-cl)",
+            }}
+            onClick={
+              pageState === PageState.Create ? createProfile : editProfile
+            }
+          />
+        ) : null}
       </section>
     </form>
   );

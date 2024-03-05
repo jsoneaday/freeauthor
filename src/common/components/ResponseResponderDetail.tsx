@@ -4,6 +4,7 @@ import { FollowTooltip } from "./modals/FollowTooltip";
 
 interface ResponseResponderDetailProps {
   showAuthor: boolean;
+  workTitle: string;
   responderId: number;
   responseUpdatedAt: string;
   userName: string;
@@ -12,6 +13,7 @@ interface ResponseResponderDetailProps {
 
 export function ResponseResponderDetail({
   showAuthor,
+  workTitle,
   responderId,
   responseUpdatedAt,
   userName,
@@ -61,7 +63,11 @@ export function ResponseResponderDetail({
         topPosition={followTooltipTop}
         leftPosition={followTooltipLeft}
       />
-      <div className="story-detail-top">
+      <div
+        className="story-detail-top"
+        style={{ display: "flex", flexDirection: "column" }}
+      >
+        <h2>{workTitle}</h2>
         {showAuthor ? (
           <>
             <span
