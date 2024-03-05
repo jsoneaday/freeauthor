@@ -6,6 +6,7 @@ import { useProfile } from "../../common/zustand/Store";
 import { PagedWorkElements } from "../../common/components/PagedWorkElements";
 import { Layout } from "../../common/components/Layout";
 import { FollowedList } from "../../common/components/FollowedList";
+import { WorkElements } from "../../common/components/WorkElements";
 
 export function ReadFollowed() {
   const profile = useProfile((state) => state.profile);
@@ -68,11 +69,15 @@ export function ReadFollowed() {
           getNextData={getData}
           refreshWorksData={refreshWorksData}
           setRefreshWorksData={setRefreshWorksData}
-          showContent={false}
-          showAuthor={true}
-          readOnly={true}
-          columnCount={2}
-        />
+          payload={{
+            showContent: false,
+            showAuthor: true,
+            readOnly: true,
+            columnCount: 2,
+          }}
+        >
+          <WorkElements works={[]} />
+        </PagedWorkElements>
       </div>
     </Layout>
   );

@@ -278,6 +278,32 @@ export class FakeKwilApi implements IKwilApi {
     return faker.number.int({ min: 2589, max: 19892 });
   }
 
+  async getWorkResponses(
+    workId: number,
+    lastKeyset: number,
+    pageSize: number
+  ): Promise<WorkResponse[] | null> {
+    let filteredResponses: WorkResponse[];
+    if (lastKeyset === 0) {
+      filteredResponses = workResponses.filter(
+        (workResponse) => workResponse.work_id === workId
+      );
+    } else {
+      filteredResponses = workResponses.filter(
+        (workResponse) =>
+          workResponse.work_id === workId && workResponse.work_id < lastKeyset
+      );
+    }
+
+    return filteredResponses
+      .sort((a, b) => {
+        if (a.id > b.id) return -1;
+        if (a.id < b.id) return 1;
+        return 0;
+      })
+      .slice(0, pageSize);
+  }
+
   async getWorksResponseCount(_workId: number): Promise<number> {
     return faker.number.int({ min: 2589, max: 19892 });
   }
@@ -446,7 +472,7 @@ export class FakeKwilApi implements IKwilApi {
       };
     }
 
-    for (let i = 0; i < 30; i++) {
+    for (let i = 0; i < 1000; i++) {
       workResponses.push({
         id: i + 1,
         updated_at: formattedNow(),

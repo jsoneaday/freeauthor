@@ -1,8 +1,16 @@
-import { CSSProperties, memo, useEffect, useRef, useState } from "react";
-import { WorkElements } from "./WorkElements";
+import {
+  CSSProperties,
+  Children,
+  ReactNode,
+  cloneElement,
+  memo,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { Spinner } from "./Spinner";
-import { WorkWithAuthor } from "./models/UIModels";
 import { PAGE_SIZE } from "../utils/StandardValues";
+import { UiEntity } from "./models/UIModels";
 
 export enum PagingState {
   Start = "Start",
@@ -10,34 +18,38 @@ export enum PagingState {
   Finish = "Finish",
 }
 
-interface PagedWorkElementsProps {
-  getNextData: (priorKeyset: number) => Promise<WorkWithAuthor[] | null>;
-  refreshWorksData: boolean;
-  setRefreshWorksData: React.Dispatch<React.SetStateAction<boolean>>;
+/*
+WorkElements params
   showContent: boolean;
   showAuthor: boolean;
   readOnly: boolean;
   columnCount: number;
+*/
+
+interface PagedWorkElementsProps<T extends Object, E extends UiEntity> {
+  getNextData: (priorKeyset: number) => Promise<E[] | null>;
+  refreshWorksData: boolean;
+  setRefreshWorksData: React.Dispatch<React.SetStateAction<boolean>>;
+  payload: T;
+  children: ReactNode;
   style?: CSSProperties;
 }
 
-function PagedWorkElementsComponent({
+function PagedWorkElementsComponent<T extends Object, E extends UiEntity>({
   getNextData,
   refreshWorksData,
   setRefreshWorksData,
-  showContent,
-  showAuthor,
-  readOnly,
-  columnCount,
+  payload,
+  children,
   style,
-}: PagedWorkElementsProps) {
+}: PagedWorkElementsProps<T, E>) {
   const targetRef = useRef<HTMLDivElement>(null);
   const readWorkListRef = useRef<HTMLDivElement>(null);
   const [priorKeyset, setPriorKeyset] = useState(0);
   const [currentPagingState, setCurrentPagingState] = useState(
     PagingState.Start
   );
-  const [pagedWorks, setPagedWorks] = useState<WorkWithAuthor[] | null>([]);
+  const [pagedWorks, setPagedWorks] = useState<E[] | null>([]);
 
   useEffect(() => {
     if (refreshWorksData) {
@@ -111,15 +123,18 @@ function PagedWorkElementsComponent({
     setRefreshWorksData(false);
   };
 
+  const renderChildren = () => {
+    return Children.map(children, (child) => {
+      return cloneElement(child as JSX.Element, {
+        works: pagedWorks,
+        ...payload,
+      });
+    });
+  };
+
   return (
     <div ref={readWorkListRef} className="read-work-list" style={{ ...style }}>
-      <WorkElements
-        works={pagedWorks}
-        readOnly={readOnly}
-        showContent={showContent}
-        showAuthor={showAuthor}
-        columnCount={columnCount}
-      />
+      {renderChildren()}
       <div
         ref={targetRef}
         style={{

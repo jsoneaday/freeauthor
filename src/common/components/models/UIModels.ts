@@ -1,7 +1,12 @@
-import { ProfileModel, Work } from "../../api/ApiModels";
+import { ProfileModel, Work, WorkResponse } from "../../api/ApiModels";
 import { kwilApi } from "../../api/KwilApiInstance";
 
-export class WorkWithAuthor {
+export interface UiEntity {
+  id: number;
+  updatedAt: string;
+}
+
+export class WorkWithAuthor implements UiEntity {
   constructor(
     public id: number,
     public updatedAt: string,
@@ -12,6 +17,50 @@ export class WorkWithAuthor {
     public fullName: string,
     public userName: string
   ) {}
+}
+
+export class ResponseWithResponder implements UiEntity {
+  constructor(
+    public id: number,
+    public updatedAt: string,
+    public content: string,
+    public workId: number,
+    public responderId: number,
+    public responderFullName: string,
+    public responderUserName: string
+  ) {}
+}
+
+export async function getResponseWithResponder(responses: WorkResponse[]) {
+  const responderIds = responses.map((response) => response.responder_id);
+  const uniqueResponderIds = [...new Set(responderIds)];
+  const responderProfiles: ProfileModel[] = [];
+  for (let i = 0; i < uniqueResponderIds.length; i++) {
+    const profile = await kwilApi.getProfile(uniqueResponderIds[i]);
+    if (profile) {
+      responderProfiles.push(profile);
+    }
+  }
+
+  const responsesWithResponder: ResponseWithResponder[] = [];
+  for (let i = 0; i < responses.length; i++) {
+    const responder = responderProfiles.find(
+      (profile) => profile.id === responses[i].responder_id
+    );
+
+    if (responder) {
+      responsesWithResponder.push({
+        id: responses[i].id,
+        updatedAt: responses[i].updated_at,
+        content: responses[i].content,
+        workId: responses[i].work_id,
+        responderId: responder.id,
+        responderFullName: responder.fullname,
+        responderUserName: responder.username,
+      });
+    }
+  }
+  return responsesWithResponder;
 }
 
 export async function getWorkWithAuthor(works: Work[]) {

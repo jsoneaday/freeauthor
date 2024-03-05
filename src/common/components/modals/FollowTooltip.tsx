@@ -1,11 +1,12 @@
-import { ProfileModel } from "../../api/ApiModels";
 import { MouseEvent, useEffect, useState } from "react";
 import { RandomImg } from "../RandomImage";
 import { kwilApi } from "../../api/KwilApiInstance";
 import { useProfile } from "../../zustand/Store";
 
 interface FollowModalProps {
-  followed: ProfileModel;
+  followedId: number;
+  followedUsername: string;
+  followedFullname: string;
   isOpen: boolean;
   toggleIsOpen: () => void;
   topPosition: number;
@@ -13,7 +14,9 @@ interface FollowModalProps {
 }
 
 export function FollowTooltip({
-  followed,
+  followedId,
+  followedUsername,
+  followedFullname,
   isOpen,
   toggleIsOpen,
   topPosition,
@@ -42,7 +45,7 @@ export function FollowTooltip({
             e.preventDefault();
 
             if (profile) {
-              const tx = await kwilApi.addFollow(profile.id || 0, followed.id);
+              const tx = await kwilApi.addFollow(profile.id || 0, followedId);
               await kwilApi.testWaitAndGetId(tx, "follows");
               await confirmFollowed();
             } else {
@@ -58,10 +61,11 @@ export function FollowTooltip({
 
   const confirmFollowed = async () => {
     if (profile) {
+      // todo: consider replacing with direct check call
       const follows = await kwilApi.getFollwedProfiles(profile.id || 0);
 
       if (follows) {
-        if (follows.find((follow) => follow.id === followed.id)) {
+        if (follows.find((follow) => follow.id === followedId)) {
           setIsAlreadyFollowing(true);
         } else {
           setIsAlreadyFollowing(false);
@@ -113,8 +117,8 @@ export function FollowTooltip({
             style={{ width: "4em", height: "4em", marginRight: "1.5em" }}
           />
           <div className="follow-tooltip-names">
-            <span>{followed.fullname}</span>
-            <span>{`@${followed.username}`}</span>
+            <span>{followedFullname}</span>
+            <span>{`@${followedUsername}`}</span>
           </div>
         </div>
         <div className="follow-tooltip-item" style={{ marginLeft: ".5em" }}>

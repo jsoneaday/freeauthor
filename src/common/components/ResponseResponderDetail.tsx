@@ -1,25 +1,22 @@
 import { MouseEvent, useState, useRef } from "react";
 import { RandomImg } from "./RandomImage";
-import { TipsResponses } from "./TipsResponses";
 import { FollowTooltip } from "./modals/FollowTooltip";
 
-interface AuthorWorkDetailProps {
+interface ResponseResponderDetailProps {
   showAuthor: boolean;
-  workId: number;
-  authorId: number;
-  workUpdatedAt: string;
+  responderId: number;
+  responseUpdatedAt: string;
   userName: string;
   fullName: string;
 }
 
-export function AuthorWorkDetail({
+export function ResponseResponderDetail({
   showAuthor,
-  workId,
-  authorId,
-  workUpdatedAt,
+  responderId,
+  responseUpdatedAt,
   userName,
   fullName,
-}: AuthorWorkDetailProps) {
+}: ResponseResponderDetailProps) {
   const [showFollowTooltip, setShowFollowTooltip] = useState(false);
   const [followTooltipTop, setFollowTooltipTop] = useState(0);
   const [followTooltipLeft, setFollowTooltipLeft] = useState(0);
@@ -56,7 +53,7 @@ export function AuthorWorkDetail({
   return (
     <>
       <FollowTooltip
-        followedId={authorId}
+        followedId={responderId}
         followedUsername={userName}
         followedFullname={fullName}
         isOpen={showFollowTooltip}
@@ -95,10 +92,9 @@ export function AuthorWorkDetail({
           </>
         ) : null}
         <span style={{ fontSize: ".75em", color: "var(--tertiary-cl)" }}>
-          {workUpdatedAt}
+          {responseUpdatedAt}
         </span>
       </div>
-      <TipsResponses workId={workId || 0} />
     </>
   );
 }

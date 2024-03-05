@@ -4,6 +4,7 @@ import { useProfile } from "../../common/zustand/Store";
 import { PAGE_SIZE } from "../../common/utils/StandardValues";
 import { getWorkWithAuthor } from "../../common/components/models/UIModels";
 import { PagedWorkElements } from "../../common/components/PagedWorkElements";
+import { WorkElements } from "../../common/components/WorkElements";
 
 export function ManageStories() {
   const profile = useProfile((state) => state.profile);
@@ -41,11 +42,15 @@ export function ManageStories() {
       getNextData={getData}
       refreshWorksData={refreshWorksData}
       setRefreshWorksData={setRefreshWorksData}
-      showAuthor={false}
-      showContent={false}
-      readOnly={false}
-      columnCount={1}
+      payload={{
+        showAuthor: false,
+        showContent: false,
+        readOnly: false,
+        columnCount: 1,
+      }}
       style={{ marginTop: "1.5em", height: "85vh", paddingBottom: 0 }}
-    />
+    >
+      <WorkElements works={[]} />
+    </PagedWorkElements>
   );
 }

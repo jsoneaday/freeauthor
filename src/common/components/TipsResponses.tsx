@@ -8,6 +8,8 @@ interface TipsAndResponsesProps {
   workId: number;
 }
 
+/// Shows Tip and Response counts
+/// todo: consider perf tuning, maybe single network call?
 export function TipsResponses({ workId }: TipsAndResponsesProps) {
   const [likeCount, setLikeCount] = useState(0);
   const [responseCount, setResponseCount] = useState(0);

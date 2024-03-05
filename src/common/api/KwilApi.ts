@@ -4,7 +4,7 @@ import { formattedNow } from "../utils/DateTimeUtils";
 import { GenericResponse } from "@kwilteam/kwil-js/dist/core/resreq";
 import { TxReceipt } from "@kwilteam/kwil-js/dist/core/tx";
 import { JsonRpcSigner } from "ethers";
-import { ProfileModel, Topic, Work } from "./ApiModels";
+import { ProfileModel, Topic, Work, WorkResponse } from "./ApiModels";
 import { MsgReceipt } from "@kwilteam/kwil-js/dist/core/message";
 import { IKwilApi } from "./IKwilApi";
 
@@ -407,6 +407,26 @@ export class KwilApi implements IKwilApi {
       inputs: [
         {
           $work_id: workId,
+        },
+      ],
+    };
+
+    throw new Error("Not implemented yet");
+  }
+
+  async getWorkResponses(
+    workId: number,
+    lastKeyset: number,
+    pageSize: number
+  ): Promise<WorkResponse[] | null> {
+    const actionBody = {
+      dbid: this.#dbid,
+      action: "get_work_responses",
+      inputs: [
+        {
+          $work_id: workId,
+          $last_keyset: lastKeyset,
+          $page_size: pageSize,
         },
       ],
     };

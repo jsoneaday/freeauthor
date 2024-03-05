@@ -8,6 +8,7 @@ import { useParams } from "react-router-dom";
 import { kwilApi } from "../common/api/KwilApiInstance";
 import { PAGE_SIZE } from "../common/utils/StandardValues";
 import { getWorkWithAuthor } from "../common/components/models/UIModels";
+import { WorkElements } from "../common/components/WorkElements";
 
 enum PageSections {
   Stories = "Profile Stories",
@@ -68,12 +69,16 @@ export function Profile() {
             getNextData={getData}
             refreshWorksData={refreshWorksData}
             setRefreshWorksData={setRefreshWorksData}
-            readOnly={true}
-            showContent={false}
-            showAuthor={true}
-            columnCount={2}
+            payload={{
+              readOnly: true,
+              showContent: false,
+              showAuthor: true,
+              columnCount: 2,
+            }}
             style={{ height: "52vh" }}
-          />
+          >
+            <WorkElements works={[]} />
+          </PagedWorkElements>
         </div>
       </div>
     </Layout>

@@ -532,8 +532,6 @@ select {
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  padding: 0.5em;
-  margin-left: 1em;
   margin-bottom: 0.5em;
 }
 

@@ -68,7 +68,14 @@ function WorkElementsComponent({
             >
               {works[i].description}
             </span>
-            <AuthorWorkDetail showAuthor={showAuthor} work={works[i]} />
+            <AuthorWorkDetail
+              showAuthor={showAuthor}
+              workId={works[i].id}
+              authorId={works[i].authorId}
+              workUpdatedAt={works[i].updatedAt}
+              userName={works[i].userName}
+              fullName={works[i].fullName}
+            />
             {showContent ? (
               <MarkdownEditor
                 readOnly={true}

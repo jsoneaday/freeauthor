@@ -10,6 +10,7 @@ import { upperCaseFirstLetterOfWords } from "../../common/utils/CharacterUtils";
 import { PagedWorkElements } from "../../common/components/PagedWorkElements";
 import { Topic } from "../../common/api/ApiModels";
 import { TabHeader } from "../../common/components/TabHeader";
+import { WorkElements } from "../../common/components/WorkElements";
 
 export function Explorer() {
   const [searchTxt, setSearchTxt] = useState("");
@@ -114,12 +115,16 @@ export function Explorer() {
             getNextData={getData}
             refreshWorksData={refreshWorksData}
             setRefreshWorksData={setRefreshWorksData}
-            readOnly={true}
-            showContent={false}
-            showAuthor={true}
-            columnCount={2}
+            payload={{
+              readOnly: true,
+              showContent: false,
+              showAuthor: true,
+              columnCount: 2,
+            }}
             style={{ height: "70vh" }}
-          />
+          >
+            <WorkElements works={[]} />
+          </PagedWorkElements>
         </div>
       </div>
     </Layout>
