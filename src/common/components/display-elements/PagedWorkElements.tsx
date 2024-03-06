@@ -97,8 +97,10 @@ function PagedWorkElementsComponent<T extends Object, E extends UiEntity>({
     // use current paging state to determine whether to append or start fresh
     if (pagingState === PagingState.Start) {
       const worksNotNull = works || [];
+      console.log("start", worksNotNull);
       setPagedWorks(worksNotNull);
     } else {
+      console.log("append");
       const pagedWorksNotNull = pagedWorks || [];
       const worksNotNull = works || [];
       setPagedWorks([...pagedWorksNotNull, ...worksNotNull]);

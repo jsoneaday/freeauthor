@@ -52,6 +52,8 @@ export function Explorer() {
   };
 
   const resetPagingState = () => {
+    setSearchTxt("");
+    setValidationMsg(ValidationStates.FieldIsValid);
     setRefreshWorksData(true);
   };
 
@@ -137,13 +139,14 @@ export function Explorer() {
     e.preventDefault();
 
     if (e.key === "Enter") {
+      setTopicName("Search");
       setRefreshWorksData(true);
     }
   };
 
   const onClickSearchBtn = (e: MouseEvent<HTMLImageElement>) => {
     e.preventDefault();
-
+    setTopicName("Search");
     setRefreshWorksData(true);
   };
 
@@ -186,7 +189,10 @@ export function Explorer() {
         <div className="topic-item-list">{topicElements}</div>
 
         <div className="explorer-container">
-          <TabHeader headerName={topicName} />
+          <TabHeader
+            headerName={topicName}
+            style={{ alignSelf: "flex-start" }}
+          />
 
           <PagedWorkElements
             getNextData={getData}

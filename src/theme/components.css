@@ -507,6 +507,7 @@ select {
   align-items: flex-start;
   justify-content: flex-start;
   margin-bottom: 2em;
+  width: 100%;
 }
 
 .profile-stories {

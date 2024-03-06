@@ -27,7 +27,8 @@ function WorkElementsComponent({
 
   useEffect(() => {
     if (!works || works.length === 0) {
-      return undefined;
+      setWorkElements([]);
+      return;
     }
 
     let itemWidth = "100%";
