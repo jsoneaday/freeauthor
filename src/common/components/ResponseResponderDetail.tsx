@@ -38,7 +38,7 @@ export function ResponseResponderDetail({
       .catch((e) => console.log(e));
   }, [work]);
 
-  const onMouseEnterFullname = (e: MouseEvent<HTMLSpanElement>) => {
+  const onMouseEnter = (e: MouseEvent<HTMLSpanElement>) => {
     e.preventDefault();
     if (!showFollowTooltip) {
       setShowFollowTooltip(true);
@@ -50,43 +50,27 @@ export function ResponseResponderDetail({
     }
   };
 
-  const onMouseEnterUsername = (e: MouseEvent<HTMLSpanElement>) => {
+  const onMouseLeave = (e: MouseEvent<HTMLSpanElement>) => {
     e.preventDefault();
-    if (!showFollowTooltip) {
-      setShowFollowTooltip(true);
-    }
-
-    if (spanRef.current) {
-      setFollowTooltipLeft(e.clientX + 16);
-      setFollowTooltipTop(e.clientY);
-    }
+    setShowFollowTooltip(!showFollowTooltip);
   };
 
   return (
     <>
-      <FollowTooltip
-        followedId={work.responderId}
-        followedUsername={work.userName}
-        followedFullname={work.fullName}
-        followedDesc={work.profileDesc}
-        followingCount={followingCount}
-        followerCount={followerCount}
-        isOpen={showFollowTooltip}
-        topPosition={followTooltipTop}
-        leftPosition={followTooltipLeft}
-      />
       <div
         className="story-detail-top"
         style={{ display: "flex", flexDirection: "column" }}
       >
         {showWorkTitle ? (
-          <Link to={`/read/${work.id}`}>
+          <Link to={`/read/${work.workId}`}>
             <h2>{work.workTitle}</h2>
           </Link>
         ) : null}
         {showAuthor ? (
           <>
             <span
+              onMouseEnter={onMouseEnter}
+              onMouseLeave={onMouseLeave}
               ref={spanRef}
               style={{
                 display: "flex",
@@ -95,6 +79,17 @@ export function ResponseResponderDetail({
                 marginBottom: ".5em",
               }}
             >
+              <FollowTooltip
+                followedId={work.responderId}
+                followedUsername={work.userName}
+                followedFullname={work.fullName}
+                followedDesc={work.profileDesc}
+                followingCount={followingCount}
+                followerCount={followerCount}
+                isOpen={showFollowTooltip}
+                topPosition={followTooltipTop}
+                leftPosition={followTooltipLeft}
+              />
               <RandomImg
                 style={{
                   width: "1.5em",
@@ -103,12 +98,10 @@ export function ResponseResponderDetail({
                 }}
               />
               <div className="story-title-item">
-                <span onMouseEnter={onMouseEnterFullname}>
+                <span>
                   <b>{work.fullName}</b>
                 </span>{" "}
-                <span
-                  onMouseEnter={onMouseEnterUsername}
-                >{`@${work.userName}`}</span>
+                <span>{`@${work.userName}`}</span>
               </div>
             </span>
           </>

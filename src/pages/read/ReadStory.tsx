@@ -9,8 +9,8 @@ import { useParams } from "react-router-dom";
 import { kwilApi } from "../../common/api/KwilApiInstance";
 import { AuthorWorkDetail } from "../../common/components/AuthorWorkDetail";
 import { Layout } from "../../common/components/Layout";
-import { ResponseElements } from "../../common/components/DisplayElements/ResponseElements";
-import { PagedWorkElements } from "../../common/components/DisplayElements/PagedWorkElements";
+import { ResponseElements } from "../../common/components/display-elements/ResponseElements";
+import { PagedWorkElements } from "../../common/components/display-elements/PagedWorkElements";
 import { PAGE_SIZE } from "../../common/utils/StandardValues";
 import { TabHeader } from "../../common/components/TabHeader";
 import { ReturnEnabledInput } from "../../common/components/ReturnEnabledInput";
@@ -41,6 +41,7 @@ export function ReadStory() {
   }, [work]);
 
   useEffect(() => {
+    console.log("work_id", work_id);
     kwilApi
       .getWork(Number(work_id))
       .then((work) => {

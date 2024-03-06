@@ -7,10 +7,10 @@ import { getWorkWithAuthor } from "../../common/components/models/UIModels";
 import { PAGE_SIZE } from "../../common/utils/StandardValues";
 import { useParams } from "react-router-dom";
 import { upperCaseFirstLetterOfWords } from "../../common/utils/CharacterUtils";
-import { PagedWorkElements } from "../../common/components/DisplayElements/PagedWorkElements";
+import { PagedWorkElements } from "../../common/components/display-elements/PagedWorkElements";
 import { Topic } from "../../common/api/ApiModels";
 import { TabHeader } from "../../common/components/TabHeader";
-import { WorkElements } from "../../common/components/DisplayElements/WorkElements";
+import { WorkElements } from "../../common/components/display-elements/WorkElements";
 
 export function Explorer() {
   const [searchTxt, setSearchTxt] = useState("");

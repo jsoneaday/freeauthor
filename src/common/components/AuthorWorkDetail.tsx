@@ -45,13 +45,9 @@ export function AuthorWorkDetail({ showAuthor, work }: AuthorWorkDetailProps) {
     }
   };
 
-  const toggleShowFollowTooltip = () => {
-    setShowFollowTooltip(!showFollowTooltip);
-  };
-
   const onMouseLeave = (e: MouseEvent<HTMLSpanElement>) => {
     e.preventDefault();
-    toggleShowFollowTooltip();
+    setShowFollowTooltip(!showFollowTooltip);
   };
 
   return (

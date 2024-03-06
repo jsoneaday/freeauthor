@@ -3,8 +3,8 @@ import { kwilApi } from "../../common/api/KwilApiInstance";
 import { useProfile } from "../../common/zustand/Store";
 import { PAGE_SIZE } from "../../common/utils/StandardValues";
 import { getWorkWithAuthor } from "../../common/components/models/UIModels";
-import { PagedWorkElements } from "../../common/components/DisplayElements/PagedWorkElements";
-import { WorkElements } from "../../common/components/DisplayElements/WorkElements";
+import { PagedWorkElements } from "../../common/components/display-elements/PagedWorkElements";
+import { WorkElements } from "../../common/components/display-elements/WorkElements";
 
 export function ManageStories() {
   const profile = useProfile((state) => state.profile);
