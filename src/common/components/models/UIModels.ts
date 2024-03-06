@@ -1,4 +1,8 @@
-import { WorkResponseModel, WorkWithAuthorModel } from "../../api/ApiModels";
+import {
+  ProfileModel,
+  WorkResponseModel,
+  WorkWithAuthorModel,
+} from "../../api/ApiModels";
 
 export interface UiEntity {
   id: number;
@@ -30,6 +34,19 @@ export class ResponseWithResponder implements UiEntity {
     public userName: string,
     public fullName: string,
     public profileDesc: string
+  ) {}
+}
+
+export class Profile implements UiEntity {
+  constructor(
+    public id: number,
+    public updatedAt: string,
+    public userName: string,
+    public fullName: string,
+    public description: string,
+    public ownerAddress: string,
+    public socialLinkPrimary: string | undefined,
+    public socialLinkSecond: string | undefined
   ) {}
 }
 
@@ -67,4 +84,21 @@ export async function getWorkWithAuthor(works: WorkWithAuthorModel[]) {
     });
   }
   return worksWithAuthor;
+}
+
+export async function getProfile(profileModels: ProfileModel[]) {
+  const profiles: Profile[] = [];
+  for (let i = 0; i < profileModels.length; i++) {
+    profiles.push({
+      id: profileModels[i].id,
+      updatedAt: profileModels[i].updated_at,
+      fullName: profileModels[i].fullname,
+      userName: profileModels[i].username,
+      description: profileModels[i].description,
+      ownerAddress: profileModels[i].owner_address,
+      socialLinkPrimary: profileModels[i].social_link_primary,
+      socialLinkSecond: profileModels[i].social_link_second,
+    });
+  }
+  return profiles;
 }

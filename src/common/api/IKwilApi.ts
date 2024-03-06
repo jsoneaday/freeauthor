@@ -56,7 +56,9 @@ export interface IKwilApi {
 
   getProfile(profileId: number): Promise<ProfileModel | null>;
   getOwnersProfile(): Promise<ProfileModel | null>;
-  getFollwedProfiles(profileId: number): Promise<ProfileModel[] | null>;
+
+  getFollowedProfiles(profileId: number): Promise<ProfileModel[] | null>;
+  getFollowerProfiles(profileId: number): Promise<ProfileModel[] | null>;
 
   getWork(workId: number): Promise<WorkWithAuthorModel | null>;
 

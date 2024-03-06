@@ -5,18 +5,18 @@ import { kwilApi } from "../api/KwilApiInstance";
 import { PrimaryButton } from "./Buttons";
 
 interface ProfileConcentractedDescProps {
-  followedId: number;
+  profileId: number;
   fullName: string;
   userName: string;
   profileDesc: string;
-  followingCount: number;
-  followerCount: number;
+  followingCount?: number;
+  followerCount?: number;
   style?: CSSProperties;
 }
 
 /// A concentrated description of most relevant profile info
 export function ProfileConcentractedDesc({
-  followedId,
+  profileId,
   fullName,
   userName,
   profileDesc,
@@ -50,7 +50,7 @@ export function ProfileConcentractedDesc({
             e.preventDefault();
 
             if (profile) {
-              const tx = await kwilApi.addFollow(profile.id || 0, followedId);
+              const tx = await kwilApi.addFollow(profile.id || 0, profileId);
               await kwilApi.testWaitAndGetId(tx, "follows");
               await confirmFollowed();
             } else {
@@ -63,7 +63,7 @@ export function ProfileConcentractedDesc({
   }, [isAlreadyFollowing, profile]);
 
   useEffect(() => {
-    if (followingCount === 0) {
+    if (!followingCount || followingCount === 0) {
       setFollowingBtn(<span>Following</span>);
     } else {
       setFollowingBtn(
@@ -73,7 +73,7 @@ export function ProfileConcentractedDesc({
           onClick={async (e: MouseEvent<HTMLButtonElement>) => {
             e.preventDefault();
 
-            // todo:
+            // todo: go to list of following
           }}
         />
       );
@@ -81,7 +81,7 @@ export function ProfileConcentractedDesc({
   }, [followingCount]);
 
   useEffect(() => {
-    if (followingCount === 0) {
+    if (!followerCount || followerCount === 0) {
       setFollowerBtn(<span>Follower</span>);
     } else {
       setFollowerBtn(
@@ -91,7 +91,7 @@ export function ProfileConcentractedDesc({
           onClick={async (e: MouseEvent<HTMLButtonElement>) => {
             e.preventDefault();
 
-            // todo:
+            // todo: go to list of followers
           }}
         />
       );
@@ -101,10 +101,10 @@ export function ProfileConcentractedDesc({
   const confirmFollowed = async () => {
     if (profile) {
       // todo: consider replacing with direct check call
-      const follows = await kwilApi.getFollwedProfiles(profile.id || 0);
+      const follows = await kwilApi.getFollowedProfiles(profile.id || 0);
 
       if (follows) {
-        if (follows.find((follow) => follow.id === followedId)) {
+        if (follows.find((follow) => follow.id === profileId)) {
           setIsAlreadyFollowing(true);
         } else {
           setIsAlreadyFollowing(false);
@@ -138,12 +138,16 @@ export function ProfileConcentractedDesc({
         <span>{profileDesc}</span>
       </div>
       <div className="profile-concentrated-follow">
-        <span>
-          {followingBtn} {followingCount}
-        </span>
-        <span>
-          {followerBtn} {followerCount}
-        </span>
+        {followingCount ? (
+          <span>
+            {followingBtn} {followingCount}
+          </span>
+        ) : null}
+        {followerCount ? (
+          <span>
+            {followerBtn} {followerCount}
+          </span>
+        ) : null}
       </div>
     </div>
   );

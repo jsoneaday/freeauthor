@@ -39,12 +39,13 @@ export function FollowTooltip({
         }}
       >
         <ProfileConcentractedDesc
-          followedId={followedId}
+          profileId={followedId}
           fullName={followedFullname}
           userName={followedUsername}
           profileDesc={followedDesc}
           followingCount={followingCount}
           followerCount={followerCount}
+          style={{ width: "280px" }}
         />
       </div>
     );

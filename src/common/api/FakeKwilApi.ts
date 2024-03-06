@@ -190,10 +190,21 @@ export class FakeKwilApi implements IKwilApi {
     );
   }
 
-  async getFollwedProfiles(followerId: number): Promise<ProfileModel[] | null> {
+  async getFollowedProfiles(
+    followerId: number
+  ): Promise<ProfileModel[] | null> {
     const followedIds = follows
       .filter((follow) => follow.follower_id === followerId)
       .map((follow) => follow.followed_id);
+    return profiles.filter((profile) => followedIds.includes(profile.id));
+  }
+
+  async getFollowerProfiles(
+    followedId: number
+  ): Promise<ProfileModel[] | null> {
+    const followedIds = follows
+      .filter((follow) => follow.followed_id === followedId)
+      .map((follow) => follow.follower_id);
     return profiles.filter((profile) => followedIds.includes(profile.id));
   }
 

@@ -36,8 +36,8 @@ export class ProfileModel implements Entity {
     public fullname: string,
     public description: string,
     public owner_address: string,
-    public social_link_primary: string,
-    public social_link_second: string
+    public social_link_primary: string | undefined,
+    public social_link_second: string | undefined
   ) {}
 }
 

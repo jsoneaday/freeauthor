@@ -7,6 +7,7 @@ import { useParams } from "react-router-dom";
 import { kwilApi } from "../common/api/KwilApiInstance";
 import { PAGE_SIZE } from "../common/utils/StandardValues";
 import {
+  getProfile,
   getResponseWithResponder,
   getWorkWithAuthor,
 } from "../common/components/models/UIModels";
@@ -14,6 +15,7 @@ import { WorkElements } from "../common/components/DisplayElements/WorkElements"
 import { useProfile } from "../common/zustand/Store";
 import { TabBar } from "../common/components/TabBar";
 import { ResponseElements } from "../common/components/DisplayElements/ResponseElements";
+import { FollowElements } from "../common/components/DisplayElements/FollowElements";
 
 /// Register by creating a profile with optional avatar/image
 export function Profile() {
@@ -29,6 +31,10 @@ export function Profile() {
       return await getStories(priorKeyset);
     } else if (selectedSection.name === PageSections.Responses) {
       return await getResponses(priorKeyset);
+    } else if (selectedSection.name === PageSections.Following) {
+      return await getFollowing();
+    } else if (selectedSection.name === PageSections.Followers) {
+      return await getFollower();
     }
     return null;
   };
@@ -61,11 +67,35 @@ export function Profile() {
     return responsesWithResponder;
   };
 
+  const getFollowing = async () => {
+    const following = await kwilApi.getFollowedProfiles(
+      Number(profile_id || 0)
+    );
+    if (!following || following.length === 0) return null;
+
+    const followingConverted = await getProfile(following);
+    console.log("following", followingConverted);
+    return followingConverted;
+  };
+
+  const getFollower = async () => {
+    const follower = await kwilApi.getFollowerProfiles(Number(profile_id || 0));
+    if (!follower || follower.length === 0) return null;
+
+    const followerConverted = await getProfile(follower);
+    console.log("follower", followerConverted);
+    return followerConverted;
+  };
+
   const selectElementsToDisplay = () => {
     if (selectedSection.name === PageSections.Stories) {
       return <WorkElements works={[]} />;
     } else if (selectedSection.name === PageSections.Responses) {
       return <ResponseElements works={[]} />;
+    } else if (selectedSection.name === PageSections.Following) {
+      return <FollowElements works={[]} />;
+    } else if (selectedSection.name === PageSections.Followers) {
+      return <FollowElements works={[]} />;
     }
     return null;
   };

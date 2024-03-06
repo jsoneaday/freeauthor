@@ -374,13 +374,29 @@ export class KwilApi implements IKwilApi {
     return this.#getFirstItem(profiles);
   }
 
-  async getFollwedProfiles(profileId: number) {
+  async getFollowedProfiles(profileId: number) {
     const actionBody = {
       dbid: this.#dbid,
       action: "get_followed_profiles",
       inputs: [
         {
           $follower_id: profileId,
+        },
+      ],
+    };
+
+    return this.#convertToProfiles(
+      await this.#kwil!.call(actionBody, this.#kwilSigner)
+    );
+  }
+
+  async getFollowerProfiles(profileId: number) {
+    const actionBody = {
+      dbid: this.#dbid,
+      action: "get_follower_profiles",
+      inputs: [
+        {
+          $followed_id: profileId,
         },
       ],
     };
