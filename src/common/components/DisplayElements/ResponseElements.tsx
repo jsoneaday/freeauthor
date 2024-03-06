@@ -1,8 +1,8 @@
 import { memo, useEffect, useState } from "react";
 /// @ts-ignore
 import { v4 as uuidv4 } from "uuid";
-import { ResponseResponderDetail } from "./ResponseResponderDetail";
-import { ResponseWithResponder } from "./models/UIModels";
+import { ResponseResponderDetail } from "../ResponseResponderDetail";
+import { ResponseWithResponder } from "../models/UIModels";
 
 /// @works is named such do to sharing with PagedWorkElements component
 interface ResponseElementsProps {

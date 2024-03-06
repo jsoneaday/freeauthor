@@ -1,11 +1,11 @@
 import { memo, useEffect, useState } from "react";
-import { MarkdownEditor } from "./MarkdownEditor";
-import { WorkWithAuthor } from "./models/UIModels";
-import { RandomImg } from "./RandomImage";
+import { MarkdownEditor } from "../MarkdownEditor";
+import { WorkWithAuthor } from "../models/UIModels";
+import { RandomImg } from "../RandomImage";
 /// @ts-ignore
 import { v4 as uuidv4 } from "uuid";
 import { Link } from "react-router-dom";
-import { AuthorWorkDetail } from "./AuthorWorkDetail";
+import { AuthorWorkDetail } from "../AuthorWorkDetail";
 
 /// @startFresh stop appending and create new element list
 interface WorkElementsProps {

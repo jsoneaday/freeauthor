@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { PagedWorkElements } from "../common/components/PagedWorkElements";
+import { PagedWorkElements } from "../common/components/DisplayElements/PagedWorkElements";
 import { ProfileForm } from "../common/components/ProfileForm";
 import { Layout } from "../common/components/Layout";
 import { RandomImg } from "../common/components/RandomImage";
@@ -10,10 +10,10 @@ import {
   getResponseWithResponder,
   getWorkWithAuthor,
 } from "../common/components/models/UIModels";
-import { WorkElements } from "../common/components/WorkElements";
+import { WorkElements } from "../common/components/DisplayElements/WorkElements";
 import { useProfile } from "../common/zustand/Store";
 import { TabBar } from "../common/components/TabBar";
-import { ResponseElements } from "../common/components/ResponseElements";
+import { ResponseElements } from "../common/components/DisplayElements/ResponseElements";
 
 /// Register by creating a profile with optional avatar/image
 export function Profile() {

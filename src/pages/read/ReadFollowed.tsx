@@ -3,10 +3,10 @@ import { kwilApi } from "../../common/api/KwilApiInstance";
 import { PAGE_SIZE } from "../../common/utils/StandardValues";
 import { getWorkWithAuthor } from "../../common/components/models/UIModels";
 import { useProfile } from "../../common/zustand/Store";
-import { PagedWorkElements } from "../../common/components/PagedWorkElements";
+import { PagedWorkElements } from "../../common/components/DisplayElements/PagedWorkElements";
 import { Layout } from "../../common/components/Layout";
 import { FollowedList } from "../../common/components/FollowedList";
-import { WorkElements } from "../../common/components/WorkElements";
+import { WorkElements } from "../../common/components/DisplayElements/WorkElements";
 
 export function ReadFollowed() {
   const profile = useProfile((state) => state.profile);
