@@ -1,6 +1,6 @@
-import { MouseEvent, useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect } from "react";
 import { RandomImg } from "./RandomImage";
-import { FollowTooltip } from "./modals/FollowTooltip";
+import { FollowTooltip, useFollowTooltip } from "./modals/FollowTooltip";
 import { Link } from "react-router-dom";
 import { ResponseWithResponder } from "./models/UIModels";
 import { kwilApi } from "../api/KwilApiInstance";
@@ -16,12 +16,16 @@ export function ResponseResponderDetail({
   work,
   showWorkTitle = true,
 }: ResponseResponderDetailProps) {
-  const [showFollowTooltip, setShowFollowTooltip] = useState(false);
-  const [followTooltipTop, setFollowTooltipTop] = useState(0);
-  const [followTooltipLeft, setFollowTooltipLeft] = useState(0);
   const [followingCount, setFollowingCount] = useState(0);
   const [followerCount, setFollowerCount] = useState(0);
   const spanRef = useRef<HTMLSpanElement | null>(null);
+  const {
+    showFollowTooltip,
+    followTooltipTop,
+    followTooltipLeft,
+    onMouseEnter,
+    onMouseLeave,
+  } = useFollowTooltip(spanRef);
 
   useEffect(() => {
     kwilApi
@@ -37,23 +41,6 @@ export function ResponseResponderDetail({
       })
       .catch((e) => console.log(e));
   }, [work]);
-
-  const onMouseEnter = (e: MouseEvent<HTMLSpanElement>) => {
-    e.preventDefault();
-    if (!showFollowTooltip) {
-      setShowFollowTooltip(true);
-    }
-
-    if (spanRef.current) {
-      setFollowTooltipLeft(e.clientX + 16);
-      setFollowTooltipTop(e.clientY);
-    }
-  };
-
-  const onMouseLeave = (e: MouseEvent<HTMLSpanElement>) => {
-    e.preventDefault();
-    setShowFollowTooltip(!showFollowTooltip);
-  };
 
   return (
     <>

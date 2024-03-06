@@ -1,7 +1,7 @@
-import { MouseEvent, useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect } from "react";
 import { RandomImg } from "./RandomImage";
 import { TipsResponses } from "./TipsResponses";
-import { FollowTooltip } from "./modals/FollowTooltip";
+import { FollowTooltip, useFollowTooltip } from "./modals/FollowTooltip";
 import { WorkWithAuthor } from "./models/UIModels";
 import { kwilApi } from "../api/KwilApiInstance";
 
@@ -11,12 +11,16 @@ interface AuthorWorkDetailProps {
 }
 
 export function AuthorWorkDetail({ showAuthor, work }: AuthorWorkDetailProps) {
-  const [showFollowTooltip, setShowFollowTooltip] = useState(false);
-  const [followTooltipTop, setFollowTooltipTop] = useState(0);
-  const [followTooltipLeft, setFollowTooltipLeft] = useState(0);
   const [followingCount, setFollowingCount] = useState(0);
   const [followerCount, setFollowerCount] = useState(0);
   const spanRef = useRef<HTMLSpanElement | null>(null);
+  const {
+    showFollowTooltip,
+    followTooltipTop,
+    followTooltipLeft,
+    onMouseEnter,
+    onMouseLeave,
+  } = useFollowTooltip(spanRef);
 
   useEffect(() => {
     kwilApi
@@ -32,23 +36,6 @@ export function AuthorWorkDetail({ showAuthor, work }: AuthorWorkDetailProps) {
       })
       .catch((e) => console.log(e));
   }, [work]);
-
-  const onMouseEnter = (e: MouseEvent<HTMLSpanElement>) => {
-    e.preventDefault();
-    if (!showFollowTooltip) {
-      setShowFollowTooltip(true);
-    }
-
-    if (spanRef.current) {
-      setFollowTooltipLeft(e.clientX);
-      setFollowTooltipTop(e.clientY);
-    }
-  };
-
-  const onMouseLeave = (e: MouseEvent<HTMLSpanElement>) => {
-    e.preventDefault();
-    setShowFollowTooltip(!showFollowTooltip);
-  };
 
   return (
     <>
