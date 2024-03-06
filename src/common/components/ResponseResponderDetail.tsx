@@ -11,6 +11,7 @@ interface ResponseResponderDetailProps {
   responseUpdatedAt: string;
   userName: string;
   fullName: string;
+  showWorkTitle?: boolean;
 }
 
 export function ResponseResponderDetail({
@@ -21,6 +22,7 @@ export function ResponseResponderDetail({
   responseUpdatedAt,
   userName,
   fullName,
+  showWorkTitle = true,
 }: ResponseResponderDetailProps) {
   const [showFollowTooltip, setShowFollowTooltip] = useState(false);
   const [followTooltipTop, setFollowTooltipTop] = useState(0);
@@ -70,9 +72,11 @@ export function ResponseResponderDetail({
         className="story-detail-top"
         style={{ display: "flex", flexDirection: "column" }}
       >
-        <Link to={`/read/${workId}`}>
-          <h2>{workTitle}</h2>
-        </Link>
+        {showWorkTitle ? (
+          <Link to={`/read/${workId}`}>
+            <h2>{workTitle}</h2>
+          </Link>
+        ) : null}
         {showAuthor ? (
           <>
             <span

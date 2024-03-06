@@ -124,7 +124,7 @@ export class FakeKwilApi implements IKwilApi {
     return faker.number.binary();
   }
 
-  async addWorkResponses(content: string, workId: number, responderId: number) {
+  async addWorkResponse(content: string, workId: number, responderId: number) {
     const id = getLastestEntityId(workResponses);
     workResponses.push({
       id: id + 1,

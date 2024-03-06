@@ -30,7 +30,7 @@ export interface IKwilApi {
   addTopic(name: string): TxHashPromise;
   addWorkTopic(topicId: number, workId: number): TxHashPromise;
   addWorkLikes(workId: number, likerId: number): TxHashPromise;
-  addWorkResponses(
+  addWorkResponse(
     content: string,
     workId: number,
     responderId: number

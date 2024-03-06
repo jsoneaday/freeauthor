@@ -198,12 +198,12 @@ export class KwilApi implements IKwilApi {
     );
   }
 
-  async addWorkResponses(content: string, workId: number, responderId: number) {
+  async addWorkResponse(content: string, workId: number, responderId: number) {
     let id = await this.#getLastId("get_last_response_id");
 
     const actionBody = {
       dbid: this.#dbid,
-      action: "add_work_responses",
+      action: "add_work_response",
       inputs: [
         {
           $work_response_id: id + 1,

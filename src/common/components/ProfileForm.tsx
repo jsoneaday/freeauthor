@@ -4,7 +4,7 @@ import { useProfile } from "../zustand/Store";
 import { PrimaryButton } from "./Buttons";
 import { ValidationAndProgressMsg } from "./ValidationProgressMsg";
 
-enum InputValidationState {
+enum ValidationStates {
   UsernameTooLong = "Username cannot be greater than 50 characters",
   UsernameHasNoValue = "Username must have a value",
   FullnameTooLong = "Fullname cannot be greater than 100 characters",
@@ -70,7 +70,7 @@ export function ProfileForm({
     const validation = validateUsername(e.target.value);
 
     setSubmitCreateProfileBtnDisabled(
-      validation === InputValidationState.FieldIsValid ? false : true
+      validation === ValidationStates.FieldIsValid ? false : true
     );
 
     setUsername(e.target.value);
@@ -80,7 +80,7 @@ export function ProfileForm({
     const validation = validateFullname(e.target.value);
 
     setSubmitCreateProfileBtnDisabled(
-      validation === InputValidationState.FieldIsValid ? false : true
+      validation === ValidationStates.FieldIsValid ? false : true
     );
 
     setFullname(e.target.value);
@@ -90,7 +90,7 @@ export function ProfileForm({
     const validation = validateDescription(e.target.value);
 
     setSubmitCreateProfileBtnDisabled(
-      validation === InputValidationState.FieldIsValid ? false : true
+      validation === ValidationStates.FieldIsValid ? false : true
     );
 
     setDescription(e.target.value);
@@ -119,43 +119,43 @@ export function ProfileForm({
     }
   };
 
-  const validateUsername = (strInput: string): InputValidationState => {
+  const validateUsername = (strInput: string): ValidationStates => {
     if (strInput.length > 50) {
-      return InputValidationState.UsernameTooLong;
+      return ValidationStates.UsernameTooLong;
     } else if (!strInput) {
-      return InputValidationState.UsernameHasNoValue;
+      return ValidationStates.UsernameHasNoValue;
     } else {
-      return InputValidationState.FieldIsValid;
+      return ValidationStates.FieldIsValid;
     }
   };
-  const validateFullname = (strInput: string): InputValidationState => {
+  const validateFullname = (strInput: string): ValidationStates => {
     if (strInput.length > 100) {
-      return InputValidationState.FullnameTooLong;
+      return ValidationStates.FullnameTooLong;
     } else if (!strInput) {
-      return InputValidationState.FullnameHasNoValue;
+      return ValidationStates.FullnameHasNoValue;
     } else {
-      return InputValidationState.FieldIsValid;
+      return ValidationStates.FieldIsValid;
     }
   };
-  const validateDescription = (strInput: string): InputValidationState => {
+  const validateDescription = (strInput: string): ValidationStates => {
     if (strInput.length > 100) {
-      return InputValidationState.DescriptionTooLong;
+      return ValidationStates.DescriptionTooLong;
     } else {
-      return InputValidationState.FieldIsValid;
+      return ValidationStates.FieldIsValid;
     }
   };
-  const validatePrimarySocial = (strInput: string): InputValidationState => {
+  const validatePrimarySocial = (strInput: string): ValidationStates => {
     if (strInput.length > 100) {
-      return InputValidationState.PrimarySocialTooLong;
+      return ValidationStates.PrimarySocialTooLong;
     } else {
-      return InputValidationState.FieldIsValid;
+      return ValidationStates.FieldIsValid;
     }
   };
-  const validateSecondarySocial = (strInput: string): InputValidationState => {
+  const validateSecondarySocial = (strInput: string): ValidationStates => {
     if (strInput.length > 100) {
-      return InputValidationState.SecondarySocialTooLong;
+      return ValidationStates.SecondarySocialTooLong;
     } else {
-      return InputValidationState.FieldIsValid;
+      return ValidationStates.FieldIsValid;
     }
   };
 
@@ -173,21 +173,19 @@ export function ProfileForm({
       socialPrimaryValidation,
       socialSecondaryValidation
     );
-    if (usernameValidation !== InputValidationState.FieldIsValid) {
+    if (usernameValidation !== ValidationStates.FieldIsValid) {
       setValidationMsg(usernameValidation);
       return false;
-    } else if (fullnameValidation !== InputValidationState.FieldIsValid) {
+    } else if (fullnameValidation !== ValidationStates.FieldIsValid) {
       setValidationMsg(fullnameValidation);
       return false;
-    } else if (descValidation !== InputValidationState.FieldIsValid) {
+    } else if (descValidation !== ValidationStates.FieldIsValid) {
       setValidationMsg(descValidation);
       return false;
-    } else if (socialPrimaryValidation !== InputValidationState.FieldIsValid) {
+    } else if (socialPrimaryValidation !== ValidationStates.FieldIsValid) {
       setValidationMsg(socialPrimaryValidation);
       return false;
-    } else if (
-      socialSecondaryValidation !== InputValidationState.FieldIsValid
-    ) {
+    } else if (socialSecondaryValidation !== ValidationStates.FieldIsValid) {
       setValidationMsg(socialSecondaryValidation);
       return false;
     } else {

@@ -8,11 +8,13 @@ import { ResponseWithResponder } from "./models/UIModels";
 interface ResponseElementsProps {
   works: ResponseWithResponder[] | null;
   showAuthor?: boolean;
+  showWorkTitle?: boolean;
 }
 
 function ResponseElementsComponent({
   works,
   showAuthor = true,
+  showWorkTitle = true,
 }: ResponseElementsProps) {
   const [workElements, setWorkElements] = useState<JSX.Element[]>([]);
 
@@ -43,6 +45,7 @@ function ResponseElementsComponent({
             responseUpdatedAt={works[i].updatedAt}
             userName={works[i].userName}
             fullName={works[i].fullName}
+            showWorkTitle={showWorkTitle}
           />
           <span>{works[i].responseContent}</span>
         </li>
