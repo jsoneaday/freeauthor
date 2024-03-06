@@ -474,6 +474,14 @@ export class KwilApi implements IKwilApi {
     throw new Error("Not implemented yet");
   }
 
+  async getFollowedCount(profileId: number): Promise<number> {
+    throw new Error("Not implemented yet");
+  }
+
+  async getFollowerCount(profileId: number): Promise<number> {
+    throw new Error("Not implemented yet");
+  }
+
   /// Waits for tx to finish and gets id
   async waitAndGetId(tx: string | null | undefined) {
     let id = 0;

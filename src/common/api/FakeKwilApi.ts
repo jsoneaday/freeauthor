@@ -200,7 +200,7 @@ export class FakeKwilApi implements IKwilApi {
   async getWork(workId: number): Promise<WorkWithAuthorModel | null> {
     const work = works.find((work) => work.id === workId) || null;
     if (work) {
-      return this.#getWorkWithAuthorModel(work);
+      return this.#convertWorkWithAuthorModel(work);
     }
     return null;
   }
@@ -227,7 +227,7 @@ export class FakeKwilApi implements IKwilApi {
       })
       .slice(0, pageSize);
 
-    return pagedWorks.map((work) => this.#getWorkWithAuthorModel(work));
+    return pagedWorks.map((work) => this.#convertWorkWithAuthorModel(work));
   }
 
   async getWorksByTopic(
@@ -256,7 +256,7 @@ export class FakeKwilApi implements IKwilApi {
       })
       .slice(0, pageSize);
 
-    return pagedWorks.map((work) => this.#getWorkWithAuthorModel(work));
+    return pagedWorks.map((work) => this.#convertWorkWithAuthorModel(work));
   }
 
   async getWorksByAllFollowed(
@@ -287,7 +287,7 @@ export class FakeKwilApi implements IKwilApi {
       })
       .slice(0, pageSize);
 
-    return pagedWorks.map((work) => this.#getWorkWithAuthorModel(work));
+    return pagedWorks.map((work) => this.#convertWorkWithAuthorModel(work));
   }
 
   async getWorksByOneFollowed(
@@ -312,7 +312,7 @@ export class FakeKwilApi implements IKwilApi {
       })
       .slice(0, pageSize);
 
-    return pagedWorks.map((work) => this.#getWorkWithAuthorModel(work));
+    return pagedWorks.map((work) => this.#convertWorkWithAuthorModel(work));
   }
 
   async getWorkLikeCount(workId: number): Promise<number> {
@@ -376,7 +376,7 @@ export class FakeKwilApi implements IKwilApi {
     return this.#convertWorkResponse(responses);
   }
 
-  #getWorkWithAuthorModel(work: Work) {
+  #convertWorkWithAuthorModel(work: Work) {
     const profile = profiles.find((profile) => profile.id === work.author_id);
 
     return {
@@ -388,6 +388,7 @@ export class FakeKwilApi implements IKwilApi {
       author_id: work.author_id,
       fullname: profile?.fullname || "",
       username: profile?.username || "",
+      profileDesc: profile?.description,
     } as WorkWithAuthorModel;
   }
 
@@ -398,6 +399,7 @@ export class FakeKwilApi implements IKwilApi {
         (profile) => profile.id === responses[i].responder_id
       );
       const work = works.find((work) => work.id === responses[i].work_id);
+
       models.push({
         id: responses[i].id,
         updated_at: responses[i].updated_at,
@@ -407,6 +409,7 @@ export class FakeKwilApi implements IKwilApi {
         responder_id: profile?.id || 0,
         username: profile?.username || "",
         fullname: profile?.fullname || "",
+        profileDesc: profile?.description || "",
       });
     }
     return models;
@@ -416,6 +419,18 @@ export class FakeKwilApi implements IKwilApi {
     return (
       workResponses.filter((response) => response.work_id === workId)?.length ||
       0
+    );
+  }
+
+  async getFollowedCount(profileId: number): Promise<number> {
+    return (
+      follows.filter((follow) => follow.follower_id === profileId)?.length || 0
+    );
+  }
+
+  async getFollowerCount(profileId: number): Promise<number> {
+    return (
+      follows.filter((follow) => follow.followed_id === profileId)?.length || 0
     );
   }
 
@@ -453,7 +468,7 @@ export class FakeKwilApi implements IKwilApi {
       updated_at: formattedNow(),
       username: faker.internet.userName(),
       fullname: faker.internet.displayName(),
-      description: faker.lorem.sentence({ min: 1, max: 2 }),
+      description: faker.lorem.sentences({ min: 3, max: 5 }),
       owner_address: this.#address,
       social_link_primary: faker.internet.url(),
       social_link_second: faker.internet.url(),
@@ -465,7 +480,7 @@ export class FakeKwilApi implements IKwilApi {
         updated_at: formattedNow(),
         username: faker.internet.userName(),
         fullname: faker.person.fullName(),
-        description: faker.lorem.sentence({ min: 1, max: 2 }),
+        description: faker.lorem.sentences({ min: 3, max: 5 }),
         owner_address: faker.commerce.isbn(),
         social_link_primary: faker.internet.url(),
         social_link_second: faker.internet.url(),
@@ -483,8 +498,8 @@ export class FakeKwilApi implements IKwilApi {
       });
     }
 
-    for (let i = 0; i < 40; i++) {
-      let follower_id = getRandomEntityId(profiles, "profiles", 1); // for testing I want only my test account following
+    for (let i = 0; i < 200; i++) {
+      let follower_id = getRandomEntityId(profiles, "profiles");
       let followed_id = getRandomEntityId(profiles, "profiles");
       if (follower_id === followed_id) {
         followed_id =

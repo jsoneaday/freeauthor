@@ -14,7 +14,8 @@ export class WorkWithAuthor implements UiEntity {
     public description: string | undefined,
     public authorId: number,
     public fullName: string,
-    public userName: string
+    public userName: string,
+    public profileDesc: string
   ) {}
 }
 
@@ -27,7 +28,8 @@ export class ResponseWithResponder implements UiEntity {
     public responseContent: string,
     public responderId: number,
     public userName: string,
-    public fullName: string
+    public fullName: string,
+    public profileDesc: string
   ) {}
 }
 
@@ -43,6 +45,7 @@ export async function getResponseWithResponder(responses: WorkResponseModel[]) {
       responderId: responses[i].id,
       fullName: responses[i].fullname,
       userName: responses[i].username,
+      profileDesc: responses[i].profileDesc,
     });
   }
   return responsesWithResponder;
@@ -60,6 +63,7 @@ export async function getWorkWithAuthor(works: WorkWithAuthorModel[]) {
       authorId: works[i].author_id,
       fullName: works[i].fullname,
       userName: works[i].username,
+      profileDesc: works[i].profileDesc,
     });
   }
   return worksWithAuthor;

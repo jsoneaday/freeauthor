@@ -1,9 +1,10 @@
 import { MouseEvent, CSSProperties } from "react";
+import { NON_SELECTED_COLOR, SELECTED_COLOR } from "../utils/ThemeVariables";
 
 export interface PrimaryButtonProps {
   label: string;
   onClick: (e: MouseEvent<HTMLButtonElement>) => void;
-  style: CSSProperties;
+  style?: CSSProperties;
   isDisabled?: boolean;
 }
 
@@ -17,7 +18,11 @@ export function PrimaryButton({
     <button
       disabled={isDisabled}
       className="primary-btn"
-      style={{ ...style, cursor: isDisabled ? "not-allowed" : "pointer" }}
+      style={{
+        ...style,
+        color: isDisabled ? NON_SELECTED_COLOR : SELECTED_COLOR,
+        cursor: isDisabled ? "not-allowed" : "pointer",
+      }}
       onClick={onClick}
     >
       {label}

@@ -23,7 +23,8 @@ export class WorkWithAuthorModel implements Entity {
     public description: string | undefined,
     public author_id: number,
     public username: string,
-    public fullname: string
+    public fullname: string,
+    public profileDesc: string
   ) {}
 }
 
@@ -40,6 +41,7 @@ export class ProfileModel implements Entity {
   ) {}
 }
 
+// todo: refactor
 export class Follow implements Entity {
   constructor(
     id: number,
@@ -55,6 +57,7 @@ export class Follow implements Entity {
   updated_at: string;
 }
 
+// todo: refactor
 export class Topic implements Entity {
   constructor(id: number, updated_at: string, public name: string) {
     this.id = id;
@@ -65,6 +68,7 @@ export class Topic implements Entity {
   updated_at: string;
 }
 
+// todo: refactor
 export class WorkTopic implements Entity {
   constructor(
     id: number,
@@ -80,6 +84,7 @@ export class WorkTopic implements Entity {
   updated_at: string;
 }
 
+// todo: refactor
 export class WorkLike implements Entity {
   constructor(
     id: number,
@@ -95,6 +100,7 @@ export class WorkLike implements Entity {
   updated_at: string;
 }
 
+// todo: refactor
 export class WorkResponse implements Entity {
   constructor(
     id: number,
@@ -120,6 +126,7 @@ export class WorkResponseModel implements Entity {
     public response_content: string,
     public responder_id: number,
     public username: string,
-    public fullname: string
+    public fullname: string,
+    public profileDesc: string
   ) {}
 }

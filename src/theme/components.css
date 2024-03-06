@@ -269,7 +269,6 @@ select {
   position: fixed;
   background-color: var(--bg-cl);
   z-index: 1;
-  width: 300px;
   border: solid 1px var(--border-cl);
   padding: 1em;
   padding-bottom: 1.25em;
@@ -550,10 +549,19 @@ select {
   display: flex;
 }
 
+.profile-concentrated-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: space-between;
+  background-color: var(--bg-cl);
+  font-size: 0.9em;
+}
+
 .profile-concentrated-item {
   display: flex;
   flex-direction: row;
-  align-items: center;
+  align-items: flex-start;
   justify-content: flex-start;
   width: 100%;
   background-color: var(--bg-cl);
@@ -564,5 +572,18 @@ select {
   flex-direction: column;
   align-items: flex-start;
   justify-content: space-between;
+  background-color: var(--bg-cl);
+}
+
+.profile-concentrated-desc {
+  width: 280px;
+}
+
+.profile-concentrated-follow {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
   background-color: var(--bg-cl);
 }

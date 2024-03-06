@@ -85,17 +85,24 @@ export interface IKwilApi {
   ): Promise<WorkWithAuthorModel[] | null>;
 
   getWorkLikeCount(workId: number): Promise<number>;
+
   getWorkResponses(
     workId: number,
     lastKeyset: number,
     pageSize: number
   ): Promise<WorkResponseModel[] | null>;
+
   getWorkResponsesByProfile(
     profileId: number,
     lastKeyset: number,
     pageSize: number
   ): Promise<WorkResponseModel[] | null>;
+
   getWorkResponseCount(workId: number): Promise<number>;
+
+  getFollowedCount(profileId: number): Promise<number>;
+  getFollowerCount(profileId: number): Promise<number>;
+
   getAllTopics(): Promise<Topic[]>;
 
   waitAndGetId(tx: string | null | undefined): Promise<number>;

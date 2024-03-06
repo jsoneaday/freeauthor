@@ -106,7 +106,7 @@ export function ReadStory() {
     setRefreshWorksData(true);
   };
 
-  const onBlurResponseInput = async (e: FocusEvent<HTMLInputElement>) => {
+  const onBlurResponseInput = async (_e: FocusEvent<HTMLInputElement>) => {
     setValidationMsg(ValidationStates.FieldIsValid);
   };
 
@@ -121,16 +121,7 @@ export function ReadStory() {
             {description}
           </h2>
           <div className="story-detail">
-            {work ? (
-              <AuthorWorkDetail
-                showAuthor={true}
-                workId={work.id}
-                authorId={work.authorId}
-                workUpdatedAt={work.updatedAt}
-                userName={work.userName}
-                fullName={work.fullName}
-              />
-            ) : null}
+            {work ? <AuthorWorkDetail showAuthor={true} work={work} /> : null}
           </div>
           {work ? (
             <MarkdownEditor readOnly={true} markdown={work.content} />

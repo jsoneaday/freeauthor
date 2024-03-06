@@ -1,33 +1,42 @@
-import { MouseEvent, useState, useRef } from "react";
+import { MouseEvent, useState, useRef, useEffect } from "react";
 import { RandomImg } from "./RandomImage";
 import { FollowTooltip } from "./modals/FollowTooltip";
 import { Link } from "react-router-dom";
+import { ResponseWithResponder } from "./models/UIModels";
+import { kwilApi } from "../api/KwilApiInstance";
 
 interface ResponseResponderDetailProps {
   showAuthor: boolean;
-  workId: number;
-  workTitle: string;
-  responderId: number;
-  responseUpdatedAt: string;
-  userName: string;
-  fullName: string;
+  work: ResponseWithResponder;
   showWorkTitle?: boolean;
 }
 
 export function ResponseResponderDetail({
   showAuthor,
-  workId,
-  workTitle,
-  responderId,
-  responseUpdatedAt,
-  userName,
-  fullName,
+  work,
   showWorkTitle = true,
 }: ResponseResponderDetailProps) {
   const [showFollowTooltip, setShowFollowTooltip] = useState(false);
   const [followTooltipTop, setFollowTooltipTop] = useState(0);
   const [followTooltipLeft, setFollowTooltipLeft] = useState(0);
+  const [followingCount, setFollowingCount] = useState(0);
+  const [followerCount, setFollowerCount] = useState(0);
   const spanRef = useRef<HTMLSpanElement | null>(null);
+
+  useEffect(() => {
+    kwilApi
+      .getFollowedCount(work.responderId)
+      .then((followingCount) => {
+        kwilApi
+          .getFollowerCount(work.responderId)
+          .then((followerCount) => {
+            setFollowingCount(followingCount);
+            setFollowerCount(followerCount);
+          })
+          .catch((e) => console.log(e));
+      })
+      .catch((e) => console.log(e));
+  }, [work]);
 
   const onMouseEnterFullname = (e: MouseEvent<HTMLSpanElement>) => {
     e.preventDefault();
@@ -53,18 +62,16 @@ export function ResponseResponderDetail({
     }
   };
 
-  const toggleShowFollowTooltip = () => {
-    setShowFollowTooltip(!showFollowTooltip);
-  };
-
   return (
     <>
       <FollowTooltip
-        followedId={responderId}
-        followedUsername={userName}
-        followedFullname={fullName}
+        followedId={work.responderId}
+        followedUsername={work.userName}
+        followedFullname={work.fullName}
+        followedDesc={work.profileDesc}
+        followingCount={followingCount}
+        followerCount={followerCount}
         isOpen={showFollowTooltip}
-        toggleIsOpen={toggleShowFollowTooltip}
         topPosition={followTooltipTop}
         leftPosition={followTooltipLeft}
       />
@@ -73,8 +80,8 @@ export function ResponseResponderDetail({
         style={{ display: "flex", flexDirection: "column" }}
       >
         {showWorkTitle ? (
-          <Link to={`/read/${workId}`}>
-            <h2>{workTitle}</h2>
+          <Link to={`/read/${work.id}`}>
+            <h2>{work.workTitle}</h2>
           </Link>
         ) : null}
         {showAuthor ? (
@@ -97,17 +104,17 @@ export function ResponseResponderDetail({
               />
               <div className="story-title-item">
                 <span onMouseEnter={onMouseEnterFullname}>
-                  <b>{fullName}</b>
+                  <b>{work.fullName}</b>
                 </span>{" "}
                 <span
                   onMouseEnter={onMouseEnterUsername}
-                >{`@${userName}`}</span>
+                >{`@${work.userName}`}</span>
               </div>
             </span>
           </>
         ) : null}
         <span style={{ fontSize: ".75em", color: "var(--tertiary-cl)" }}>
-          {responseUpdatedAt}
+          {work.updatedAt}
         </span>
       </div>
     </>

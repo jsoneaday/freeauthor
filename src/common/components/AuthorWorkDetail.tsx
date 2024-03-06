@@ -1,29 +1,37 @@
-import { MouseEvent, useState, useRef } from "react";
+import { MouseEvent, useState, useRef, useEffect } from "react";
 import { RandomImg } from "./RandomImage";
 import { TipsResponses } from "./TipsResponses";
 import { FollowTooltip } from "./modals/FollowTooltip";
+import { WorkWithAuthor } from "./models/UIModels";
+import { kwilApi } from "../api/KwilApiInstance";
 
 interface AuthorWorkDetailProps {
   showAuthor: boolean;
-  workId: number;
-  authorId: number;
-  workUpdatedAt: string;
-  userName: string;
-  fullName: string;
+  work: WorkWithAuthor;
 }
 
-export function AuthorWorkDetail({
-  showAuthor,
-  workId,
-  authorId,
-  workUpdatedAt,
-  userName,
-  fullName,
-}: AuthorWorkDetailProps) {
+export function AuthorWorkDetail({ showAuthor, work }: AuthorWorkDetailProps) {
   const [showFollowTooltip, setShowFollowTooltip] = useState(false);
   const [followTooltipTop, setFollowTooltipTop] = useState(0);
   const [followTooltipLeft, setFollowTooltipLeft] = useState(0);
+  const [followingCount, setFollowingCount] = useState(0);
+  const [followerCount, setFollowerCount] = useState(0);
   const spanRef = useRef<HTMLSpanElement | null>(null);
+
+  useEffect(() => {
+    kwilApi
+      .getFollowedCount(work.authorId)
+      .then((followingCount) => {
+        kwilApi
+          .getFollowerCount(work.authorId)
+          .then((followerCount) => {
+            setFollowingCount(followingCount);
+            setFollowerCount(followerCount);
+          })
+          .catch((e) => console.log(e));
+      })
+      .catch((e) => console.log(e));
+  }, [work]);
 
   const onMouseEnter = (e: MouseEvent<HTMLSpanElement>) => {
     e.preventDefault();
@@ -63,11 +71,13 @@ export function AuthorWorkDetail({
               }}
             >
               <FollowTooltip
-                followedId={authorId}
-                followedUsername={userName}
-                followedFullname={fullName}
+                followedId={work.authorId}
+                followedUsername={work.userName}
+                followedFullname={work.fullName}
+                followedDesc={work.profileDesc}
+                followingCount={followingCount}
+                followerCount={followerCount}
                 isOpen={showFollowTooltip}
-                toggleIsOpen={toggleShowFollowTooltip}
                 topPosition={followTooltipTop}
                 leftPosition={followTooltipLeft}
               />
@@ -80,18 +90,18 @@ export function AuthorWorkDetail({
               />
               <div className="story-title-item">
                 <span>
-                  <b>{fullName}</b>
+                  <b>{work.fullName}</b>
                 </span>{" "}
-                <span>{`@${userName}`}</span>
+                <span>{`@${work.userName}`}</span>
               </div>
             </span>
           </>
         ) : null}
         <span style={{ fontSize: ".75em", color: "var(--tertiary-cl)" }}>
-          {workUpdatedAt}
+          {work.updatedAt}
         </span>
       </div>
-      <TipsResponses workId={workId || 0} />
+      <TipsResponses workId={work.id || 0} />
     </>
   );
 }
