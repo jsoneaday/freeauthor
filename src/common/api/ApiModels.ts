@@ -14,6 +14,19 @@ export class Work implements Entity {
   ) {}
 }
 
+export class WorkWithAuthorModel implements Entity {
+  constructor(
+    public id: number,
+    public updated_at: string,
+    public title: string,
+    public content: string,
+    public description: string | undefined,
+    public author_id: number,
+    public username: string,
+    public fullname: string
+  ) {}
+}
+
 export class ProfileModel implements Entity {
   constructor(
     public id: number,
@@ -102,6 +115,7 @@ export class WorkResponseModel implements Entity {
   constructor(
     public id: number,
     public updated_at: string,
+    public work_id: number,
     public work_title: string,
     public response_content: string,
     public responder_id: number,

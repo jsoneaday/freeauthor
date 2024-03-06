@@ -1,4 +1,10 @@
-import { ProfileModel, Topic, Work, WorkResponseModel } from "./ApiModels";
+import {
+  ProfileModel,
+  Topic,
+  Work,
+  WorkResponseModel,
+  WorkWithAuthorModel,
+} from "./ApiModels";
 
 export type TxHashPromise = Promise<string | null | undefined>;
 
@@ -37,6 +43,7 @@ export interface IKwilApi {
     content: string,
     authorId: number
   ): TxHashPromise;
+
   updateProfile(
     profileId: number,
     userName: string,
@@ -51,22 +58,33 @@ export interface IKwilApi {
   getProfile(profileId: number): Promise<ProfileModel | null>;
   getOwnersProfile(): Promise<ProfileModel | null>;
   getFollwedProfiles(profileId: number): Promise<ProfileModel[] | null>;
-  getWork(workId: number): Promise<Work | null>;
-  getAuthorWorks(
-    authorId: number,
-    lastKeyset: number,
-    pageSize: number
-  ): Promise<Work[] | null>;
+
+  getWork(workId: number): Promise<WorkWithAuthorModel | null>;
+
   getWorksByAllFollowed(
     followerId: number,
     lastKeyset: number,
     pageSize: number
-  ): Promise<Work[] | null>;
+  ): Promise<WorkWithAuthorModel[] | null>;
+
   getWorksByOneFollowed(
     followedId: number,
     lastKeyset: number,
     pageSize: number
+  ): Promise<WorkWithAuthorModel[] | null>;
+
+  getAuthorWorks(
+    authorId: number,
+    lastKeyset: number,
+    pageSize: number
+  ): Promise<WorkWithAuthorModel[] | null>;
+
+  getWorksByTopic(
+    topicId: number,
+    lastKeyset: number,
+    pageSize: number
   ): Promise<Work[] | null>;
+
   getWorkLikeCount(workId: number): Promise<number>;
   getWorkResponses(
     workId: number,
@@ -80,11 +98,6 @@ export interface IKwilApi {
   ): Promise<WorkResponseModel[] | null>;
   getWorkResponseCount(workId: number): Promise<number>;
   getAllTopics(): Promise<Topic[]>;
-  getWorksByTopic(
-    topicId: number,
-    lastKeyset: number,
-    pageSize: number
-  ): Promise<Work[] | null>;
 
   waitAndGetId(tx: string | null | undefined): Promise<number>;
   testWaitAndGetId(

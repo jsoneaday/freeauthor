@@ -37,6 +37,7 @@ function ResponseElementsComponent({
         >
           <ResponseResponderDetail
             showAuthor={showAuthor}
+            workId={works[i].workId}
             workTitle={works[i].workTitle}
             responderId={works[i].responderId}
             responseUpdatedAt={works[i].updatedAt}

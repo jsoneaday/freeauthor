@@ -1,9 +1,11 @@
 import { MouseEvent, useState, useRef } from "react";
 import { RandomImg } from "./RandomImage";
 import { FollowTooltip } from "./modals/FollowTooltip";
+import { Link } from "react-router-dom";
 
 interface ResponseResponderDetailProps {
   showAuthor: boolean;
+  workId: number;
   workTitle: string;
   responderId: number;
   responseUpdatedAt: string;
@@ -13,6 +15,7 @@ interface ResponseResponderDetailProps {
 
 export function ResponseResponderDetail({
   showAuthor,
+  workId,
   workTitle,
   responderId,
   responseUpdatedAt,
@@ -67,7 +70,9 @@ export function ResponseResponderDetail({
         className="story-detail-top"
         style={{ display: "flex", flexDirection: "column" }}
       >
-        <h2>{workTitle}</h2>
+        <Link to={`/read/${workId}`}>
+          <h2>{workTitle}</h2>
+        </Link>
         {showAuthor ? (
           <>
             <span

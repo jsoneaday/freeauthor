@@ -4,9 +4,15 @@ import { formattedNow } from "../utils/DateTimeUtils";
 import { GenericResponse } from "@kwilteam/kwil-js/dist/core/resreq";
 import { TxReceipt } from "@kwilteam/kwil-js/dist/core/tx";
 import { JsonRpcSigner } from "ethers";
-import { ProfileModel, Topic, Work, WorkResponse } from "./ApiModels";
+import {
+  ProfileModel,
+  Topic,
+  Work,
+  WorkResponseModel,
+  WorkWithAuthorModel,
+} from "./ApiModels";
 import { MsgReceipt } from "@kwilteam/kwil-js/dist/core/message";
-import { IKwilApi } from "./IKwilApi";
+import { IKwilApi, TxHashPromise } from "./IKwilApi";
 
 const ADD_WORK: string = "add_work";
 const GET_AUTHOR_WORKS: string = "get_author_works";
@@ -248,7 +254,7 @@ export class KwilApi implements IKwilApi {
     description: string,
     socialLinkPrimary: string,
     socialLinkSecond: string
-  ) {
+  ): TxHashPromise {
     throw new Error("Not implemented");
   }
 
@@ -287,7 +293,7 @@ export class KwilApi implements IKwilApi {
     followerId: number,
     lastKeyset: number,
     pageSize: number
-  ): Promise<Work[] | null> {
+  ): Promise<WorkWithAuthorModel[] | null> {
     const actionBody = {
       dbid: this.#dbid,
       action: "get_works_by_all_followed",
@@ -306,7 +312,7 @@ export class KwilApi implements IKwilApi {
     followedId: number,
     lastKeyset: number,
     pageSize: number
-  ): Promise<Work[] | null> {
+  ): Promise<WorkWithAuthorModel[] | null> {
     const actionBody = {
       dbid: this.#dbid,
       action: "get_works_by_all_followed",
@@ -418,7 +424,7 @@ export class KwilApi implements IKwilApi {
     workId: number,
     lastKeyset: number,
     pageSize: number
-  ): Promise<WorkResponse[] | null> {
+  ): Promise<WorkResponseModel[] | null> {
     const actionBody = {
       dbid: this.#dbid,
       action: "get_work_responses",
@@ -438,7 +444,7 @@ export class KwilApi implements IKwilApi {
     profileId: number,
     lastKeyset: number,
     pageSize: number
-  ): Promise<WorkResponse[] | null> {
+  ): Promise<WorkResponseModel[] | null> {
     const actionBody = {
       dbid: this.#dbid,
       action: "get_work_responses_by_profile",
@@ -538,14 +544,17 @@ export class KwilApi implements IKwilApi {
   #convertToWorks(res: GenericResponse<MsgReceipt>) {
     if (res.status == 200) {
       if (Array.isArray(res.data?.result)) {
-        return res.data.result.map((works: Work) => {
+        return res.data.result.map((work: WorkWithAuthorModel) => {
           return {
-            id: works.id,
-            updated_at: works.updated_at,
-            title: works.title,
-            content: works.content,
-            author_id: works.author_id,
-          } as Work;
+            id: work.id,
+            updated_at: work.updated_at,
+            title: work.title,
+            content: work.content,
+            description: work.description,
+            author_id: work.author_id,
+            fullname: work.fullname,
+            username: work.username,
+          } as WorkWithAuthorModel;
         });
       }
     }

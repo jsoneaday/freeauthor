@@ -1,5 +1,4 @@
-import { ProfileModel, Work, WorkResponseModel } from "../../api/ApiModels";
-import { kwilApi } from "../../api/KwilApiInstance";
+import { WorkResponseModel, WorkWithAuthorModel } from "../../api/ApiModels";
 
 export interface UiEntity {
   id: number;
@@ -23,6 +22,7 @@ export class ResponseWithResponder implements UiEntity {
   constructor(
     public id: number,
     public updatedAt: string,
+    public workId: number,
     public workTitle: string,
     public responseContent: string,
     public responderId: number,
@@ -37,6 +37,7 @@ export async function getResponseWithResponder(responses: WorkResponseModel[]) {
     responsesWithResponder.push({
       id: responses[i].id,
       updatedAt: responses[i].updated_at,
+      workId: responses[i].work_id,
       workTitle: responses[i].work_title,
       responseContent: responses[i].response_content,
       responderId: responses[i].id,
@@ -47,36 +48,19 @@ export async function getResponseWithResponder(responses: WorkResponseModel[]) {
   return responsesWithResponder;
 }
 
-export async function getWorkWithAuthor(works: Work[]) {
-  const profileIds = works.map((work) => work.author_id);
-  const uniqueProfileIds = [...new Set(profileIds)];
-  const profiles: ProfileModel[] = [];
-  for (let i = 0; i < uniqueProfileIds.length; i++) {
-    const profile = await kwilApi.getProfile(uniqueProfileIds[i]);
-    if (profile) {
-      profiles.push(profile);
-    }
-  }
-
+export async function getWorkWithAuthor(works: WorkWithAuthorModel[]) {
   const worksWithAuthor: WorkWithAuthor[] = [];
   for (let i = 0; i < works.length; i++) {
-    const profile = profiles.find(
-      (profile) => profile.id === works[i].author_id
-    );
-
-    const work = works[i];
-    if (profile) {
-      worksWithAuthor.push({
-        id: work.id,
-        updatedAt: work.updated_at,
-        title: work.title,
-        description: work.description,
-        content: work.content,
-        authorId: work.author_id,
-        fullName: profile.fullname,
-        userName: profile.username,
-      });
-    }
+    worksWithAuthor.push({
+      id: works[i].id,
+      updatedAt: works[i].updated_at,
+      title: works[i].title,
+      description: works[i].description,
+      content: works[i].content,
+      authorId: works[i].author_id,
+      fullName: works[i].fullname,
+      userName: works[i].username,
+    });
   }
   return worksWithAuthor;
 }
