@@ -4,6 +4,7 @@ import {
   useState,
   KeyboardEvent,
   FocusEvent,
+  MouseEvent,
 } from "react";
 import { Layout } from "../../common/components/Layout";
 import { kwilApi } from "../../common/api/KwilApiInstance";
@@ -42,7 +43,7 @@ export function Explorer() {
   };
 
   const validateSearchTxt = (searchTxt: string) => {
-    if (!searchTxt || searchTxt.length <= 3) {
+    if (!searchTxt || searchTxt.length < 3) {
       return ValidationStates.SearchTxtTooShort;
     } else if (searchTxt.length > 250) {
       return ValidationStates.SearchTxtTooShort;
@@ -136,10 +137,14 @@ export function Explorer() {
     e.preventDefault();
 
     if (e.key === "Enter") {
-      setSearchTxt("");
-      setValidationMsg(ValidationStates.FieldIsValid);
       setRefreshWorksData(true);
     }
+  };
+
+  const onClickSearchBtn = (e: MouseEvent<HTMLImageElement>) => {
+    e.preventDefault();
+
+    setRefreshWorksData(true);
   };
 
   const onBlurSearchInput = async (_e: FocusEvent<HTMLInputElement>) => {
@@ -164,12 +169,13 @@ export function Explorer() {
           />
           <img
             src={searchIcon}
-            style={{ width: "1.5em", zIndex: "10", marginLeft: "-2em" }}
+            style={{ width: "1.5em", zIndex: "10", marginLeft: "-4em" }}
+            onClick={onClickSearchBtn}
           />
         </div>
         <span
           style={{
-            marginBottom: "2em",
+            marginBottom: "1.5em",
             alignSelf: "flex-start",
             color: "var(--warning-cl)",
           }}
