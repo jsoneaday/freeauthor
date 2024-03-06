@@ -1,7 +1,6 @@
 import {
   ProfileModel,
   Topic,
-  Work,
   WorkResponseModel,
   WorkWithAuthorModel,
 } from "./ApiModels";
@@ -83,7 +82,7 @@ export interface IKwilApi {
     topicId: number,
     lastKeyset: number,
     pageSize: number
-  ): Promise<Work[] | null>;
+  ): Promise<WorkWithAuthorModel[] | null>;
 
   getWorkLikeCount(workId: number): Promise<number>;
   getWorkResponses(

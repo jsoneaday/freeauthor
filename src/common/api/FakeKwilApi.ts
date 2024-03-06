@@ -227,23 +227,36 @@ export class FakeKwilApi implements IKwilApi {
       })
       .slice(0, pageSize);
 
-    const t = pagedWorks.map((work) => this.#getWorkWithAuthorModel(work));
-    return t;
+    return pagedWorks.map((work) => this.#getWorkWithAuthorModel(work));
   }
 
-  #getWorkWithAuthorModel(work: Work) {
-    const profile = profiles.find((profile) => profile.id === work.author_id);
+  async getWorksByTopic(
+    topicId: number,
+    lastKeyset: number,
+    pageSize: number
+  ): Promise<WorkWithAuthorModel[] | null> {
+    const workIds = workTopics
+      .filter((wt) => wt.topic_id === topicId)
+      .map((work) => work.id);
 
-    return {
-      id: work.id,
-      updated_at: work.updated_at,
-      title: work.title,
-      description: work.description,
-      content: work.content,
-      author_id: work.author_id,
-      fullname: profile?.fullname || "",
-      username: profile?.username || "",
-    } as WorkWithAuthorModel;
+    let filteredWorks: Work[];
+    if (lastKeyset === 0) {
+      filteredWorks = works.filter((work) => workIds.includes(work.id));
+    } else {
+      filteredWorks = works.filter(
+        (work) => workIds.includes(work.id) && work.id < lastKeyset
+      );
+    }
+
+    const pagedWorks = filteredWorks
+      .sort((a, b) => {
+        if (a.id > b.id) return -1;
+        if (a.id < b.id) return 1;
+        return 0;
+      })
+      .slice(0, pageSize);
+
+    return pagedWorks.map((work) => this.#getWorkWithAuthorModel(work));
   }
 
   async getWorksByAllFollowed(
@@ -363,6 +376,21 @@ export class FakeKwilApi implements IKwilApi {
     return this.#convertWorkResponse(responses);
   }
 
+  #getWorkWithAuthorModel(work: Work) {
+    const profile = profiles.find((profile) => profile.id === work.author_id);
+
+    return {
+      id: work.id,
+      updated_at: work.updated_at,
+      title: work.title,
+      description: work.description,
+      content: work.content,
+      author_id: work.author_id,
+      fullname: profile?.fullname || "",
+      username: profile?.username || "",
+    } as WorkWithAuthorModel;
+  }
+
   async #convertWorkResponse(responses: WorkResponse[]) {
     let models: WorkResponseModel[] = [];
     for (let i = 0; i < responses.length; i++) {
@@ -393,33 +421,6 @@ export class FakeKwilApi implements IKwilApi {
 
   async getAllTopics(): Promise<Topic[]> {
     return topics;
-  }
-
-  async getWorksByTopic(
-    topicId: number,
-    lastKeyset: number,
-    pageSize: number
-  ): Promise<Work[] | null> {
-    const workIds = workTopics
-      .filter((wt) => wt.topic_id === topicId)
-      .map((work) => work.id);
-
-    let filteredWorks: Work[];
-    if (lastKeyset === 0) {
-      filteredWorks = works.filter((work) => workIds.includes(work.id));
-    } else {
-      filteredWorks = works.filter(
-        (work) => workIds.includes(work.id) && work.id < lastKeyset
-      );
-    }
-
-    return filteredWorks
-      .sort((a, b) => {
-        if (a.id > b.id) return -1;
-        if (a.id < b.id) return 1;
-        return 0;
-      })
-      .slice(0, pageSize);
   }
 
   async waitAndGetId(_tx: string | null | undefined): Promise<number> {

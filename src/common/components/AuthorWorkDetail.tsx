@@ -25,26 +25,14 @@ export function AuthorWorkDetail({
   const [followTooltipLeft, setFollowTooltipLeft] = useState(0);
   const spanRef = useRef<HTMLSpanElement | null>(null);
 
-  const onMouseEnterFullname = (e: MouseEvent<HTMLSpanElement>) => {
+  const onMouseEnter = (e: MouseEvent<HTMLSpanElement>) => {
     e.preventDefault();
     if (!showFollowTooltip) {
       setShowFollowTooltip(true);
     }
 
     if (spanRef.current) {
-      setFollowTooltipLeft(e.clientX + 16);
-      setFollowTooltipTop(e.clientY);
-    }
-  };
-
-  const onMouseEnterUsername = (e: MouseEvent<HTMLSpanElement>) => {
-    e.preventDefault();
-    if (!showFollowTooltip) {
-      setShowFollowTooltip(true);
-    }
-
-    if (spanRef.current) {
-      setFollowTooltipLeft(e.clientX + 16);
+      setFollowTooltipLeft(e.clientX);
       setFollowTooltipTop(e.clientY);
     }
   };
@@ -53,21 +41,19 @@ export function AuthorWorkDetail({
     setShowFollowTooltip(!showFollowTooltip);
   };
 
+  const onMouseLeave = (e: MouseEvent<HTMLSpanElement>) => {
+    e.preventDefault();
+    toggleShowFollowTooltip();
+  };
+
   return (
     <>
-      <FollowTooltip
-        followedId={authorId}
-        followedUsername={userName}
-        followedFullname={fullName}
-        isOpen={showFollowTooltip}
-        toggleIsOpen={toggleShowFollowTooltip}
-        topPosition={followTooltipTop}
-        leftPosition={followTooltipLeft}
-      />
       <div className="story-detail-top">
         {showAuthor ? (
           <>
             <span
+              onMouseEnter={onMouseEnter}
+              onMouseLeave={onMouseLeave}
               ref={spanRef}
               style={{
                 display: "flex",
@@ -76,6 +62,15 @@ export function AuthorWorkDetail({
                 marginBottom: ".5em",
               }}
             >
+              <FollowTooltip
+                followedId={authorId}
+                followedUsername={userName}
+                followedFullname={fullName}
+                isOpen={showFollowTooltip}
+                toggleIsOpen={toggleShowFollowTooltip}
+                topPosition={followTooltipTop}
+                leftPosition={followTooltipLeft}
+              />
               <RandomImg
                 style={{
                   width: "1.5em",
@@ -84,12 +79,10 @@ export function AuthorWorkDetail({
                 }}
               />
               <div className="story-title-item">
-                <span onMouseEnter={onMouseEnterFullname}>
+                <span>
                   <b>{fullName}</b>
                 </span>{" "}
-                <span
-                  onMouseEnter={onMouseEnterUsername}
-                >{`@${userName}`}</span>
+                <span>{`@${userName}`}</span>
               </div>
             </span>
           </>

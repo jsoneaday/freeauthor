@@ -1,7 +1,7 @@
 import { MouseEvent, useEffect, useState } from "react";
-import { RandomImg } from "../RandomImage";
 import { kwilApi } from "../../api/KwilApiInstance";
 import { useProfile } from "../../zustand/Store";
+import { ProfileConcentractedDesc } from "../ProfileConcentratedDesc";
 
 interface FollowModalProps {
   followedId: number;
@@ -76,11 +76,6 @@ export function FollowTooltip({
     }
   };
 
-  const onMouseLeave = (e: MouseEvent<HTMLSpanElement>) => {
-    e.preventDefault();
-    toggleIsOpen();
-  };
-
   const onExitClick = (e: MouseEvent<HTMLDivElement>) => {
     e.preventDefault();
     toggleIsOpen();
@@ -93,7 +88,6 @@ export function FollowTooltip({
   if (isOpen) {
     return (
       <div
-        onMouseLeave={onMouseLeave}
         onClick={onRootClick}
         className="follow-tooltip"
         style={{
@@ -112,15 +106,11 @@ export function FollowTooltip({
         >
           x
         </div>
-        <div className="follow-tooltip-item" style={{ marginBottom: "1em" }}>
-          <RandomImg
-            style={{ width: "4em", height: "4em", marginRight: "1.5em" }}
-          />
-          <div className="follow-tooltip-names">
-            <span>{followedFullname}</span>
-            <span>{`@${followedUsername}`}</span>
-          </div>
-        </div>
+        <ProfileConcentractedDesc
+          fullName={followedFullname}
+          userName={followedUsername}
+          style={{ marginBottom: "1em" }}
+        />
         <div className="follow-tooltip-item" style={{ marginLeft: ".5em" }}>
           {profile ? (
             followBtn

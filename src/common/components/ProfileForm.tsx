@@ -73,7 +73,7 @@ export function ProfileForm({
       validation === ValidationStates.FieldIsValid ? false : true
     );
 
-    setUsername(e.target.value);
+    setUsername(e.target.value.replace("@", ""));
     setValidationMsg(validation);
   };
   const onChangeFullname = (e: ChangeEvent<HTMLInputElement>) => {

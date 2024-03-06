@@ -402,7 +402,7 @@ export class KwilApi implements IKwilApi {
     topicId: number,
     lastKeyset: number,
     pageSize: number
-  ): Promise<Work[] | null> {
+  ): Promise<WorkWithAuthorModel[] | null> {
     throw new Error("Not implemented yet");
   }
 
