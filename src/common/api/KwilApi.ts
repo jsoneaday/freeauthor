@@ -289,6 +289,27 @@ export class KwilApi implements IKwilApi {
     return this.#convertToWorks(await this.#kwil!.call(actionBody));
   }
 
+  async searchWorks(
+    searchTxt: string,
+    lastKeyset: number,
+    pageSize: number
+  ): Promise<WorkWithAuthorModel[] | null> {
+    // todo: when implement must pass searchTxt to backend as `%${searchTxt}%`
+    const actionBody = {
+      dbid: this.#dbid,
+      action: "get_works_by_all_followed",
+      inputs: [
+        {
+          $search_txt: `%${searchTxt}%`,
+          $last_keyset: lastKeyset,
+          $page_size: pageSize,
+        },
+      ],
+    };
+
+    throw new Error("not implemented yet");
+  }
+
   async getWorksByAllFollowed(
     followerId: number,
     lastKeyset: number,

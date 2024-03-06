@@ -270,6 +270,38 @@ export class FakeKwilApi implements IKwilApi {
     return pagedWorks.map((work) => this.#convertWorkWithAuthorModel(work));
   }
 
+  async searchWorks(
+    searchTxt: string,
+    lastKeyset: number,
+    pageSize: number
+  ): Promise<WorkWithAuthorModel[] | null> {
+    let filteredWorks: Work[];
+    if (lastKeyset === 0) {
+      filteredWorks = works.filter(
+        (work) =>
+          work.title.includes(searchTxt) ||
+          work.description?.includes(searchTxt)
+      );
+    } else {
+      filteredWorks = works.filter(
+        (work) =>
+          (work.title.includes(searchTxt) ||
+            work.description?.includes(searchTxt)) &&
+          work.id < lastKeyset
+      );
+    }
+
+    const pagedWorks = filteredWorks
+      .sort((a, b) => {
+        if (a.id > b.id) return -1;
+        if (a.id < b.id) return 1;
+        return 0;
+      })
+      .slice(0, pageSize);
+
+    return pagedWorks.map((work) => this.#convertWorkWithAuthorModel(work));
+  }
+
   async getWorksByAllFollowed(
     followerId: number,
     lastKeyset: number,

@@ -58,8 +58,8 @@ export function ProfileForm({
           setUsername(profile.username);
           setFullname(profile.fullname);
           setDescription(profile.description);
-          setSocialPrimary(profile.social_link_primary);
-          setSocialSecondary(profile.social_link_second);
+          setSocialPrimary(profile.social_link_primary || "");
+          setSocialSecondary(profile.social_link_second || "");
           setValidationMsg("");
         })
         .catch((e) => console.log(e));
@@ -229,8 +229,8 @@ export function ProfileForm({
       fullname: profile.fullname,
       description: profile.description,
       ownerAddress: profile.owner_address,
-      socialLinkPrimary: profile.social_link_primary,
-      socialLinkSecond: profile.social_link_second,
+      socialLinkPrimary: profile.social_link_primary || "",
+      socialLinkSecond: profile.social_link_second || "",
     });
     profileCreatedCallback();
     setValidationMsg("");
@@ -275,8 +275,8 @@ export function ProfileForm({
       fullname: profile.fullname,
       description: profile.description,
       ownerAddress: profile.owner_address,
-      socialLinkPrimary: profile.social_link_primary,
-      socialLinkSecond: profile.social_link_second,
+      socialLinkPrimary: profile.social_link_primary || "",
+      socialLinkSecond: profile.social_link_second || "",
     });
     profileCreatedCallback();
     setValidationMsg("");

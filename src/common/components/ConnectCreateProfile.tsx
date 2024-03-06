@@ -49,8 +49,8 @@ export function ConnectCreateProfile({
           fullname: ownersProfile.fullname,
           description: ownersProfile.description,
           ownerAddress: ownersProfile.owner_address,
-          socialLinkPrimary: ownersProfile.social_link_primary,
-          socialLinkSecond: ownersProfile.social_link_second,
+          socialLinkPrimary: ownersProfile.social_link_primary || "",
+          socialLinkSecond: ownersProfile.social_link_second || "",
         });
         setShowProfileForm(false);
         setNotificationHeight(SMALL_NOTIFICATION_HEIGHT);

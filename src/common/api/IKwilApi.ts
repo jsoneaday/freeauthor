@@ -62,6 +62,12 @@ export interface IKwilApi {
 
   getWork(workId: number): Promise<WorkWithAuthorModel | null>;
 
+  searchWorks(
+    searchTxt: string,
+    lastKeyset: number,
+    pageSize: number
+  ): Promise<WorkWithAuthorModel[] | null>;
+
   getWorksByAllFollowed(
     followerId: number,
     lastKeyset: number,
