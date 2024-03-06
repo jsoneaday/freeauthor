@@ -25,6 +25,7 @@ export function ReturnEnabledInput({
   };
 
   const onClick = async (e: MouseEvent<HTMLImageElement>) => {
+    e.preventDefault();
     submit && (await submit(value));
   };
 
