@@ -30,8 +30,10 @@ export function Profile() {
   useEffect(() => {
     if (page_sec_id) {
       headerSelected(Number(page_sec_id));
+    } else {
+      headerSelected(Number(1));
     }
-  }, [page_sec_id]);
+  }, [profile_id, page_sec_id]);
 
   const profileCreatedCallback = () => {};
 

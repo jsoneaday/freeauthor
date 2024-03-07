@@ -70,13 +70,7 @@ export function ProfileConcentractedDesc({
     } else {
       setFollowingBtn(
         <Link to={`/profile/${profileId}/${TabHeaders[2].id}`}>
-          <PrimaryButton
-            label="Following"
-            isDisabled={false}
-            onClick={async (e: MouseEvent<HTMLButtonElement>) => {
-              //e.preventDefault();
-            }}
-          />
+          <PrimaryButton label="Following" isDisabled={false} />
         </Link>
       );
     }
@@ -88,13 +82,7 @@ export function ProfileConcentractedDesc({
     } else {
       setFollowerBtn(
         <Link to={`/profile/${profileId}/${TabHeaders[3].id}`}>
-          <PrimaryButton
-            label="Follower"
-            isDisabled={false}
-            onClick={async (e: MouseEvent<HTMLButtonElement>) => {
-              //e.preventDefault();
-            }}
-          />
+          <PrimaryButton label="Follower" isDisabled={false} />
         </Link>
       );
     }

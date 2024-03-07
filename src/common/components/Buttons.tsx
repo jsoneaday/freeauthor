@@ -3,7 +3,7 @@ import { NON_SELECTED_COLOR, SELECTED_COLOR } from "../utils/ThemeVariables";
 
 export interface PrimaryButtonProps {
   label: string;
-  onClick: (e: MouseEvent<HTMLButtonElement>) => void;
+  onClick?: (e: MouseEvent<HTMLButtonElement>) => void;
   style?: CSSProperties;
   isDisabled?: boolean;
 }
