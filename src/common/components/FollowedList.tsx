@@ -65,7 +65,7 @@ export function FollowedList({
   useEffect(() => {
     if (profile) {
       kwilApi
-        .getFollwedProfiles(profile.id)
+        .getFollowedProfiles(profile.id)
         .then((profiles) => {
           if (!profiles || profiles.length === 0) {
             setFollowedProfiles([
