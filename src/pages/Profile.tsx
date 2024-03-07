@@ -132,7 +132,9 @@ export function Profile() {
           <ProfileForm
             profileCreatedCallback={profileCreatedCallback}
             profileId={profile_id ? Number(profile_id) : undefined}
-            readOnly={profile ? false : true}
+            readOnly={
+              profile && profile.id === Number(profile_id || 0) ? false : true
+            }
           />
         </div>
         <div className="profile-stories">
