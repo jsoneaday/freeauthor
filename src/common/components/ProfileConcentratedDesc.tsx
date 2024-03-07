@@ -125,10 +125,12 @@ export function ProfileConcentractedDesc({
         <RandomImg
           style={{ width: "4em", height: "4em", marginRight: "1em" }}
         />
-        <div className="profile-concentrated-names">
-          <span>{fullName}</span>
-          <span>{`@${userName}`}</span>
-        </div>
+        <Link to={`/profile/${profileId}`}>
+          <div className="profile-concentrated-names">
+            <span>{fullName}</span>
+            <span>{`@${userName}`}</span>
+          </div>
+        </Link>
         <div className="follow-tooltip-item" style={{ marginLeft: "1.25em" }}>
           {followBtn}
         </div>
