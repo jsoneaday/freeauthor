@@ -50,7 +50,7 @@ const router = createBrowserRouter([
     element: <Explorer />,
   },
   {
-    path: "/profile/:profile_id",
+    path: "/profile/:profile_id/:page_sec_id?",
     element: <Profile />,
   },
 ]);

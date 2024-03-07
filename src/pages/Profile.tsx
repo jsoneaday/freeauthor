@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { PagedWorkElements } from "../common/components/display-elements/PagedWorkElements";
 import { ProfileForm } from "../common/components/ProfileForm";
 import { Layout } from "../common/components/Layout";
@@ -21,8 +21,17 @@ import { FollowElements } from "../common/components/display-elements/FollowElem
 export function Profile() {
   const [selectedSection, setSelectedSection] = useState(TabHeaders[0]);
   const [refreshWorksData, setRefreshWorksData] = useState(true);
-  const { profile_id } = useParams<{ profile_id: string }>();
+  const { profile_id, page_sec_id } = useParams<{
+    profile_id: string;
+    page_sec_id: string | undefined;
+  }>();
   const profile = useProfile((state) => state.profile);
+
+  useEffect(() => {
+    if (page_sec_id) {
+      headerSelected(Number(page_sec_id));
+    }
+  }, [page_sec_id]);
 
   const profileCreatedCallback = () => {};
 
@@ -100,7 +109,7 @@ export function Profile() {
     return null;
   };
 
-  const onHeaderSelected = (id: number) => {
+  const headerSelected = (id: number) => {
     const section = TabHeaders.find((header) => header.id === id);
     if (section) {
       setSelectedSection(section);
@@ -130,7 +139,7 @@ export function Profile() {
           <TabBar
             headers={TabHeaders}
             selectedHeaderId={selectedSection.id}
-            headerSelected={onHeaderSelected}
+            headerSelected={headerSelected}
             style={{ marginLeft: "1.5em" }}
           />
 
@@ -156,32 +165,33 @@ enum PageSections {
   Followers = "Followers",
 }
 
-const TabHeaders: { id: number; name: PageSections; payload: Object }[] = [
-  {
-    id: 1,
-    name: PageSections.Stories,
-    payload: {
-      readOnly: true,
-      showContent: false,
-      showAuthor: true,
-      columnCount: 2,
+export const TabHeaders: { id: number; name: PageSections; payload: Object }[] =
+  [
+    {
+      id: 1,
+      name: PageSections.Stories,
+      payload: {
+        readOnly: true,
+        showContent: false,
+        showAuthor: true,
+        columnCount: 2,
+      },
     },
-  },
-  {
-    id: 2,
-    name: PageSections.Responses,
-    payload: {
-      showAuthor: false,
+    {
+      id: 2,
+      name: PageSections.Responses,
+      payload: {
+        showAuthor: false,
+      },
     },
-  },
-  {
-    id: 3,
-    name: PageSections.Following,
-    payload: {},
-  },
-  {
-    id: 4,
-    name: PageSections.Followers,
-    payload: {},
-  },
-];
+    {
+      id: 3,
+      name: PageSections.Following,
+      payload: {},
+    },
+    {
+      id: 4,
+      name: PageSections.Followers,
+      payload: {},
+    },
+  ];

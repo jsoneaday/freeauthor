@@ -3,6 +3,8 @@ import { RandomImg } from "./RandomImage";
 import { useProfile } from "../zustand/Store";
 import { kwilApi } from "../api/KwilApiInstance";
 import { PrimaryButton } from "./Buttons";
+import { Link } from "react-router-dom";
+import { TabHeaders } from "../../pages/Profile";
 
 interface ProfileConcentractedDescProps {
   profileId: number;
@@ -67,15 +69,15 @@ export function ProfileConcentractedDesc({
       setFollowingBtn(<span>Following</span>);
     } else {
       setFollowingBtn(
-        <PrimaryButton
-          label="Following"
-          isDisabled={profile ? false : true}
-          onClick={async (e: MouseEvent<HTMLButtonElement>) => {
-            e.preventDefault();
-
-            // todo: go to list of following
-          }}
-        />
+        <Link to={`/profile/${profileId}/${TabHeaders[2].id}`}>
+          <PrimaryButton
+            label="Following"
+            isDisabled={false}
+            onClick={async (e: MouseEvent<HTMLButtonElement>) => {
+              //e.preventDefault();
+            }}
+          />
+        </Link>
       );
     }
   }, [followingCount]);
@@ -85,15 +87,15 @@ export function ProfileConcentractedDesc({
       setFollowerBtn(<span>Follower</span>);
     } else {
       setFollowerBtn(
-        <PrimaryButton
-          label="Following"
-          isDisabled={profile ? false : true}
-          onClick={async (e: MouseEvent<HTMLButtonElement>) => {
-            e.preventDefault();
-
-            // todo: go to list of followers
-          }}
-        />
+        <Link to={`/profile/${profileId}/${TabHeaders[3].id}`}>
+          <PrimaryButton
+            label="Follower"
+            isDisabled={false}
+            onClick={async (e: MouseEvent<HTMLButtonElement>) => {
+              //e.preventDefault();
+            }}
+          />
+        </Link>
       );
     }
   }, [followerCount]);
