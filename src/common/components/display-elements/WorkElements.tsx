@@ -1,6 +1,6 @@
 import { memo, useEffect, useState } from "react";
 import { MarkdownEditor } from "../MarkdownEditor";
-import { WorkWithAuthor } from "../models/UIModels";
+import { WorkWithAuthor } from "../../ui-api/UIModels";
 import { RandomImg } from "../RandomImage";
 /// @ts-ignore
 import { v4 as uuidv4 } from "uuid";
@@ -49,26 +49,29 @@ function WorkElementsComponent({
             isProfile={false}
             style={{ height: "6em", marginRight: "1em" }}
           />
-          <Link
-            to={
-              !readOnly ? `/write/edit/${works[i].id}` : `/read/${works[i].id}`
-            }
-            className="stories-list-item"
-          >
-            <span
-              className={`story-title ${
-                columnCount > 1 ? "story-title-small" : ""
-              }`}
+          <div className="stories-list-item">
+            <Link
+              to={
+                !readOnly
+                  ? `/write/edit/${works[i].id}`
+                  : `/read/${works[i].id}`
+              }
             >
-              {works[i].title}
-            </span>
-            <span
-              className={`story-desc ${
-                columnCount > 1 ? "story-desc-small" : ""
-              }`}
-            >
-              {works[i].description}
-            </span>
+              <div
+                className={`story-title ${
+                  columnCount > 1 ? "story-title-small" : ""
+                }`}
+              >
+                {works[i].title}
+              </div>
+              <div
+                className={`story-desc ${
+                  columnCount > 1 ? "story-desc-small" : ""
+                }`}
+              >
+                {works[i].description}
+              </div>
+            </Link>
             <AuthorWorkDetail showAuthor={showAuthor} work={works[i]} />
             {showContent ? (
               <MarkdownEditor
@@ -76,7 +79,7 @@ function WorkElementsComponent({
                 markdown={works[i].content.substring(0, 500)}
               />
             ) : null}
-          </Link>
+          </div>
         </li>
       );
     }

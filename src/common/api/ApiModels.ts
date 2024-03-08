@@ -57,15 +57,12 @@ export class Follow implements Entity {
   updated_at: string;
 }
 
-// todo: refactor
-export class Topic implements Entity {
-  constructor(id: number, updated_at: string, public name: string) {
-    this.id = id;
-    this.updated_at = updated_at;
-  }
-
-  id: number;
-  updated_at: string;
+export class TopicModel implements Entity {
+  constructor(
+    public id: number,
+    public updated_at: string,
+    public name: string
+  ) {}
 }
 
 // todo: refactor

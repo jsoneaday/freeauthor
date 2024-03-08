@@ -2,9 +2,10 @@ import { useEffect, useState } from "react";
 import { kwilApi } from "../../common/api/KwilApiInstance";
 import { useProfile } from "../../common/zustand/Store";
 import { PAGE_SIZE } from "../../common/utils/StandardValues";
-import { getWorkWithAuthor } from "../../common/components/models/UIModels";
+import { getWorkWithAuthor } from "../../common/ui-api/UIModels";
 import { PagedWorkElements } from "../../common/components/display-elements/PagedWorkElements";
 import { WorkElements } from "../../common/components/display-elements/WorkElements";
+import { WorkWithAuthorModel } from "../../common/api/ApiModels";
 
 export function ManageStories() {
   const profile = useProfile((state) => state.profile);
@@ -17,23 +18,21 @@ export function ManageStories() {
   const getData = async (priorKeyset: number) => {
     if (!profile) return null;
 
-    let count = 0;
-    // todo: remove get total count for testing
-    kwilApi.getAuthorWorks(profile.id, priorKeyset, 500).then((works) => {
-      count = works?.length || 0;
-    });
+    console.log("getAuthorWorks", profile.id, priorKeyset, PAGE_SIZE);
 
-    const works = await kwilApi.getAuthorWorks(
-      profile.id,
-      priorKeyset,
-      PAGE_SIZE
-    );
+    let works: WorkWithAuthorModel[] | null;
+    if (priorKeyset === 0) {
+      works = await kwilApi.getAuthorWorksTop(profile.id, PAGE_SIZE);
+    } else {
+      works = await kwilApi.getAuthorWorks(profile.id, priorKeyset, PAGE_SIZE);
+    }
     if (!works) {
       return null;
     }
-
+    const work = await kwilApi.getWork(1);
+    console.log("check if work exists", work);
     const worksWithAuthor = getWorkWithAuthor(works);
-    console.log("WorksWithAuthors and total", worksWithAuthor, count);
+
     return worksWithAuthor || null;
   };
 

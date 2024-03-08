@@ -6,23 +6,18 @@ import { TxReceipt } from "@kwilteam/kwil-js/dist/core/tx";
 import { JsonRpcSigner } from "ethers";
 import {
   ProfileModel,
-  Topic,
-  Work,
+  TopicModel,
   WorkResponseModel,
   WorkWithAuthorModel,
 } from "./ApiModels";
 import { MsgReceipt } from "@kwilteam/kwil-js/dist/core/message";
 import { IKwilApi, TxHashPromise } from "./IKwilApi";
 
-const ADD_WORK: string = "add_work";
-const GET_AUTHOR_WORKS: string = "get_author_works";
-const ADD_PROFILE: string = "add_profile";
-
 export class KwilApi implements IKwilApi {
   #provider: BrowserProvider | undefined;
   #signer: JsonRpcSigner | undefined;
   #address: string | undefined;
-  public get Address() {
+  get Address() {
     if (!this.#address) throw new Error("#address is not set yet!");
 
     return this.#address;
@@ -62,7 +57,7 @@ export class KwilApi implements IKwilApi {
     console.log("Send addWork authorId:", authorId);
     const actionBody = {
       dbid: this.#dbid,
-      action: ADD_WORK,
+      action: "add_work",
       inputs: [
         {
           $work_id: id + 1,
@@ -95,7 +90,7 @@ export class KwilApi implements IKwilApi {
     console.log("Send addProfile owner_address:", this.#address);
     const actionBody = {
       dbid: this.#dbid,
-      action: ADD_PROFILE,
+      action: "add_profile",
       inputs: [
         {
           $profile_id: profileId + 1,
@@ -220,6 +215,7 @@ export class KwilApi implements IKwilApi {
     );
   }
 
+  // todo: needs testing
   async updateWork(
     workId: number,
     title: string,
@@ -255,7 +251,25 @@ export class KwilApi implements IKwilApi {
     socialLinkPrimary: string,
     socialLinkSecond: string
   ): TxHashPromise {
-    throw new Error("Not implemented");
+    const actionBody = {
+      dbid: this.#dbid,
+      action: "update_profile",
+      inputs: [
+        {
+          $profile_id: profileId,
+          $updated_at: formattedNow(),
+          $username: userName,
+          $fullname: fullName,
+          $description: description,
+          $social_link_primary: socialLinkPrimary,
+          $social_link_second: socialLinkSecond,
+        },
+      ],
+    };
+
+    return this.#getResultHash(
+      await this.#kwil!.execute(actionBody, this.#kwilSigner!)
+    );
   }
 
   async cleanDb() {
@@ -277,7 +291,7 @@ export class KwilApi implements IKwilApi {
   async getAuthorWorks(authorId: number, lastKeyset: number, pageSize: number) {
     const actionBody = {
       dbid: this.#dbid,
-      action: GET_AUTHOR_WORKS,
+      action: "get_author_works",
       inputs: [
         {
           $author_id: authorId,
@@ -286,18 +300,37 @@ export class KwilApi implements IKwilApi {
         },
       ],
     };
-    return this.#convertToWorks(await this.#kwil!.call(actionBody));
+    const worksResult = await this.#kwil!.call(actionBody);
+    console.log("worksResult", worksResult);
+    return this.#convertToWorks(worksResult);
   }
 
+  async getAuthorWorksTop(authorId: number, pageSize: number) {
+    const actionBody = {
+      dbid: this.#dbid,
+      action: "get_author_works_top",
+      inputs: [
+        {
+          $author_id: authorId,
+          $page_size: pageSize,
+        },
+      ],
+    };
+    const worksResult = await this.#kwil!.call(actionBody);
+    console.log("worksResult", worksResult);
+    return this.#convertToWorks(worksResult);
+  }
+
+  // todo: needs testing
+  /// When implement must pass searchTxt to backend as `%${searchTxt}%`
   async searchWorks(
     searchTxt: string,
     lastKeyset: number,
     pageSize: number
   ): Promise<WorkWithAuthorModel[] | null> {
-    // todo: when implement must pass searchTxt to backend as `%${searchTxt}%`
     const actionBody = {
       dbid: this.#dbid,
-      action: "get_works_by_all_followed",
+      action: "search_works",
       inputs: [
         {
           $search_txt: `%${searchTxt}%`,
@@ -307,7 +340,25 @@ export class KwilApi implements IKwilApi {
       ],
     };
 
-    throw new Error("not implemented yet");
+    return this.#convertToWorks(await this.#kwil!.call(actionBody));
+  }
+
+  async searchWorksTop(
+    searchTxt: string,
+    pageSize: number
+  ): Promise<WorkWithAuthorModel[] | null> {
+    const actionBody = {
+      dbid: this.#dbid,
+      action: "search_works_top",
+      inputs: [
+        {
+          $search_txt: `%${searchTxt}%`,
+          $page_size: pageSize,
+        },
+      ],
+    };
+
+    return this.#convertToWorks(await this.#kwil!.call(actionBody));
   }
 
   async getWorksByAllFollowed(
@@ -329,6 +380,23 @@ export class KwilApi implements IKwilApi {
     return this.#convertToWorks(await this.#kwil!.call(actionBody));
   }
 
+  async getWorksByAllFollowedTop(
+    followerId: number,
+    pageSize: number
+  ): Promise<WorkWithAuthorModel[] | null> {
+    const actionBody = {
+      dbid: this.#dbid,
+      action: "get_works_by_all_followed_top",
+      inputs: [
+        {
+          $follower_id: followerId,
+          $page_size: pageSize,
+        },
+      ],
+    };
+    return this.#convertToWorks(await this.#kwil!.call(actionBody));
+  }
+
   async getWorksByOneFollowed(
     followedId: number,
     lastKeyset: number,
@@ -341,6 +409,23 @@ export class KwilApi implements IKwilApi {
         {
           $followed_id: followedId,
           $last_keyset: lastKeyset,
+          $page_size: pageSize,
+        },
+      ],
+    };
+    return this.#convertToWorks(await this.#kwil!.call(actionBody));
+  }
+
+  async getWorksByOneFollowedTop(
+    followedId: number,
+    pageSize: number
+  ): Promise<WorkWithAuthorModel[] | null> {
+    const actionBody = {
+      dbid: this.#dbid,
+      action: "get_works_by_all_followed_top",
+      inputs: [
+        {
+          $followed_id: followedId,
           $page_size: pageSize,
         },
       ],
@@ -431,22 +516,67 @@ export class KwilApi implements IKwilApi {
   //   return await this.#kwil!.txInfo(tx);
   // }
 
-  async getAllTopics(): Promise<Topic[]> {
-    throw new Error("Not implemented yet");
+  // todo: needs testing
+  async getAllTopics(): Promise<TopicModel[] | null> {
+    const actionBody = {
+      dbid: this.#dbid,
+      action: "get_all_topics",
+      inputs: [],
+    };
+
+    return this.#convertToTopics(
+      await this.#kwil!.call(actionBody, this.#kwilSigner)
+    );
   }
 
+  // todo: needs testing
   async getWorksByTopic(
     topicId: number,
     lastKeyset: number,
     pageSize: number
   ): Promise<WorkWithAuthorModel[] | null> {
-    throw new Error("Not implemented yet");
+    const actionBody = {
+      dbid: this.#dbid,
+      action: "get_works_by_topic",
+      inputs: [
+        {
+          $topic_id: topicId,
+          $last_keyset: lastKeyset,
+          $page_size: pageSize,
+        },
+      ],
+    };
+
+    return this.#convertToWorks(
+      await this.#kwil!.call(actionBody, this.#kwilSigner)
+    );
   }
 
+  async getWorksByTopicTop(
+    topicId: number,
+    pageSize: number
+  ): Promise<WorkWithAuthorModel[] | null> {
+    const actionBody = {
+      dbid: this.#dbid,
+      action: "get_works_by_topic_top",
+      inputs: [
+        {
+          $topic_id: topicId,
+          $page_size: pageSize,
+        },
+      ],
+    };
+
+    return this.#convertToWorks(
+      await this.#kwil!.call(actionBody, this.#kwilSigner)
+    );
+  }
+
+  // todo: need to look at result and shape to type
   async getWorkLikeCount(workId: number): Promise<number> {
     const actionBody = {
       dbid: this.#dbid,
-      action: "get_work_likes_count",
+      action: "get_work_like_count",
       inputs: [
         {
           $work_id: workId,
@@ -454,9 +584,12 @@ export class KwilApi implements IKwilApi {
       ],
     };
 
-    throw new Error("Not implemented yet");
+    const result = await this.#kwil!.call(actionBody);
+    console.log("getWorkLikeCount result", result);
+    return 0;
   }
 
+  // todo: needs testing
   async getWorkResponses(
     workId: number,
     lastKeyset: number,
@@ -474,9 +607,28 @@ export class KwilApi implements IKwilApi {
       ],
     };
 
-    throw new Error("Not implemented yet");
+    return this.#convertToWorkResponses(await this.#kwil!.call(actionBody));
   }
 
+  async getWorkResponsesTop(
+    workId: number,
+    pageSize: number
+  ): Promise<WorkResponseModel[] | null> {
+    const actionBody = {
+      dbid: this.#dbid,
+      action: "get_work_responses_top",
+      inputs: [
+        {
+          $work_id: workId,
+          $page_size: pageSize,
+        },
+      ],
+    };
+
+    return this.#convertToWorkResponses(await this.#kwil!.call(actionBody));
+  }
+
+  // todo: needs testing
   async getWorkResponsesByProfile(
     profileId: number,
     lastKeyset: number,
@@ -494,9 +646,28 @@ export class KwilApi implements IKwilApi {
       ],
     };
 
-    throw new Error("Not implemented yet");
+    return this.#convertToWorkResponses(await this.#kwil!.call(actionBody));
   }
 
+  async getWorkResponsesByProfileTop(
+    profileId: number,
+    pageSize: number
+  ): Promise<WorkResponseModel[] | null> {
+    const actionBody = {
+      dbid: this.#dbid,
+      action: "get_work_responses_by_profile_top",
+      inputs: [
+        {
+          $profile_id: profileId,
+          $page_size: pageSize,
+        },
+      ],
+    };
+
+    return this.#convertToWorkResponses(await this.#kwil!.call(actionBody));
+  }
+
+  // todo: need to check response and set to count
   async getWorkResponseCount(workId: number): Promise<number> {
     const actionBody = {
       dbid: this.#dbid,
@@ -508,19 +679,47 @@ export class KwilApi implements IKwilApi {
       ],
     };
 
-    throw new Error("Not implemented yet");
+    const result = await this.#kwil!.call(actionBody);
+    console.log("getWorkResponseCount result", result);
+    return 0;
   }
 
+  // todo: need to check response and set to count
   async getFollowedCount(profileId: number): Promise<number> {
-    throw new Error("Not implemented yet");
+    const actionBody = {
+      dbid: this.#dbid,
+      action: "get_followed_count",
+      inputs: [
+        {
+          $profile_id: profileId,
+        },
+      ],
+    };
+
+    const result = await this.#kwil!.call(actionBody);
+    console.log("getFollowedCount result", result);
+    return 0;
   }
 
+  // todo: need to check response and set to count
   async getFollowerCount(profileId: number): Promise<number> {
-    throw new Error("Not implemented yet");
+    const actionBody = {
+      dbid: this.#dbid,
+      action: "get_follower_count",
+      inputs: [
+        {
+          $profile_id: profileId,
+        },
+      ],
+    };
+
+    const result = await this.#kwil!.call(actionBody);
+    console.log("getFollowerCount result", result);
+    return 0;
   }
 
   /// Waits for tx to finish and gets id
-  async waitAndGetId(tx: string | null | undefined) {
+  async waitAndGetId(tx: string | null | undefined, _entityType?: string) {
     let id = 0;
     let iterations = 0;
     while (id === 0) {
@@ -534,13 +733,6 @@ export class KwilApi implements IKwilApi {
     }
 
     return id;
-  }
-
-  async testWaitAndGetId(
-    _tx: string | null | undefined,
-    _entityType: string
-  ): Promise<number> {
-    throw new Error("Do not use for production");
   }
 
   async #confirmTxCompleteAndGetEntityId(tx: string) {
@@ -563,7 +755,7 @@ export class KwilApi implements IKwilApi {
         }
       }
     }
-    throw new Error("Transaction has failed");
+    return 0;
   }
 
   #convertToProfiles(res: GenericResponse<MsgReceipt>) {
@@ -580,6 +772,33 @@ export class KwilApi implements IKwilApi {
             social_link_primary: profile.social_link_primary,
             social_link_second: profile.social_link_second,
           } as ProfileModel;
+        });
+      }
+    }
+    return null;
+  }
+
+  // todo: needs test
+  #convertToTopics(res: GenericResponse<MsgReceipt>) {
+    if (res.status == 200) {
+      if (Array.isArray(res.data?.result)) {
+        return res.data.result.map((topic: TopicModel) => {
+          return {
+            id: topic.id,
+            updated_at: topic.updated_at,
+            name: topic.name,
+          } as TopicModel;
+        });
+      }
+    }
+    return null;
+  }
+
+  #convertToWorkResponses(res: GenericResponse<MsgReceipt>) {
+    if (res.status == 200) {
+      if (Array.isArray(res.data?.result)) {
+        return res.data.result.map((workResponse: WorkResponseModel) => {
+          return workResponse;
         });
       }
     }

@@ -54,6 +54,7 @@ export function WriteStory() {
 
   useEffect(() => {
     if (work_id) {
+      console.log("work_id", work_id);
       kwilApi.getWork(Number(work_id)).then((work) => {
         if (!work) throw new Error("Work item cannot be found trying to edit");
 
@@ -73,21 +74,28 @@ export function WriteStory() {
 
     if (!validateAllFields()) return;
 
-    const tx = await kwilApi.addWork(
-      title,
-      description,
-      mdRef.current?.getMarkdown() || "",
-      profile.id
-    );
-    // todo: remove when read for prod
-    const id = await kwilApi.testWaitAndGetId(tx, "works");
-
-    setValidationMsg("");
-
-    console.log("submit complete, navigate to"), `/write/edit/${id}`;
-    navigate(
-      `/write/edit/${id}/Story created successfully. You can continue to edit it here.`
-    );
+    let id: number = 0;
+    try {
+      setIsSubmitBtnDisabled(true);
+      const tx = await kwilApi.addWork(
+        title,
+        description,
+        mdRef.current?.getMarkdown() || "",
+        profile.id
+      );
+      // todo: remove when read for prod
+      id = await kwilApi.waitAndGetId(tx, "works");
+      console.log("addWork id", id);
+    } catch (e) {
+      console.log(e);
+    } finally {
+      setValidationMsg("");
+      setIsSubmitBtnDisabled(false);
+      console.log("submit complete, navigate to", `/write/edit/${id}`);
+      navigate(
+        `/write/edit/${id}/Story created successfully. You can continue to edit it here.`
+      );
+    }
   };
 
   // todo: getWork can load anyones work so need to test that user can only edit their own record
@@ -98,18 +106,25 @@ export function WriteStory() {
       throw new Error("First register a profile and connect");
 
     if (!validateAllFields()) return;
-    console.log("work_id:", work_id);
-    await kwilApi.updateWork(
-      Number(work_id),
-      title,
-      description,
-      mdRef.current?.getMarkdown() || "",
-      profile.id
-    );
 
-    setValidationMsg(
-      "Story submitted successfully. You can continue editing it here or browse other stories."
-    );
+    try {
+      setIsSubmitBtnDisabled(true);
+      console.log("work_id:", work_id);
+      const tx = await kwilApi.updateWork(
+        Number(work_id),
+        title,
+        description,
+        mdRef.current?.getMarkdown() || "",
+        profile.id
+      );
+      console.log("updateWork tx", tx);
+    } catch (e) {
+      console.log(e);
+    } finally {
+      setValidationMsg(
+        "Story submitted successfully. You can continue editing it here or browse other stories."
+      );
+    }
   };
 
   const validateTitle = (title: string) => {

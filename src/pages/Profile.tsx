@@ -10,12 +10,16 @@ import {
   getProfile,
   getResponseWithResponder,
   getWorkWithAuthor,
-} from "../common/components/models/UIModels";
+} from "../common/ui-api/UIModels";
 import { WorkElements } from "../common/components/display-elements/WorkElements";
 import { useProfile } from "../common/zustand/Store";
 import { TabBar } from "../common/components/TabBar";
 import { ResponseElements } from "../common/components/display-elements/ResponseElements";
 import { FollowElements } from "../common/components/display-elements/FollowElements";
+import {
+  WorkResponseModel,
+  WorkWithAuthorModel,
+} from "../common/api/ApiModels";
 
 /// Register by creating a profile with optional avatar/image
 export function Profile() {
@@ -51,11 +55,19 @@ export function Profile() {
   };
 
   const getStories = async (priorKeyset: number) => {
-    const works = await kwilApi.getAuthorWorks(
-      Number(profile_id || 0),
-      priorKeyset,
-      PAGE_SIZE
-    );
+    let works: WorkWithAuthorModel[] | null;
+    if (priorKeyset === 0) {
+      works = await kwilApi.getAuthorWorksTop(
+        Number(profile_id || 0),
+        PAGE_SIZE
+      );
+    } else {
+      works = await kwilApi.getAuthorWorks(
+        Number(profile_id || 0),
+        priorKeyset,
+        PAGE_SIZE
+      );
+    }
     if (!works || works.length === 0) return null;
 
     const worksWithAuthor = await getWorkWithAuthor(works);
@@ -64,16 +76,22 @@ export function Profile() {
   };
 
   const getResponses = async (priorKeyset: number) => {
-    const workResponses = await kwilApi.getWorkResponsesByProfile(
-      Number(profile_id || 0),
-      priorKeyset,
-      PAGE_SIZE
-    );
+    let workResponses: WorkResponseModel[] | null;
+    if (priorKeyset === 0) {
+      workResponses = await kwilApi.getWorkResponsesByProfileTop(
+        Number(profile_id || 0),
+        PAGE_SIZE
+      );
+    } else {
+      workResponses = await kwilApi.getWorkResponsesByProfile(
+        Number(profile_id || 0),
+        priorKeyset,
+        PAGE_SIZE
+      );
+    }
     if (!workResponses || workResponses.length === 0) return null;
 
-    const responsesWithResponder = await getResponseWithResponder(
-      workResponses
-    );
+    const responsesWithResponder = getResponseWithResponder(workResponses);
     console.log("responses", responsesWithResponder);
     return responsesWithResponder;
   };

@@ -199,41 +199,48 @@ export function ProfileForm({
     e.preventDefault();
 
     if (!validateAllFields()) return;
-
     setValidationMsg(START_CREATE_PROFILE_MSG);
 
-    const existingProfile = await kwilApi.getOwnersProfile();
-    if (existingProfile) {
-      setValidationMsg(
-        "A wallet with that address already exists. Please use a different wallet address to create a profile"
+    try {
+      setSubmitCreateProfileBtnDisabled(true);
+
+      const existingProfile = await kwilApi.getOwnersProfile();
+      if (existingProfile) {
+        setValidationMsg(
+          "A wallet with that address already exists. Please use a different wallet address to create a profile"
+        );
+        return;
+      }
+      const tx = await kwilApi.addProfile(
+        username,
+        fullname,
+        description,
+        kwilApi.Address,
+        socialPrimary,
+        socialSecondary
       );
-      return;
+      await kwilApi.waitAndGetId(tx, "profiles");
+
+      const profile = await kwilApi.getOwnersProfile();
+      if (!profile) throw new Error("Profile has not been created!");
+
+      setProfile({
+        id: profile.id,
+        updatedAt: profile.updated_at,
+        username: profile.username,
+        fullname: profile.fullname,
+        description: profile.description,
+        ownerAddress: profile.owner_address,
+        socialLinkPrimary: profile.social_link_primary || "",
+        socialLinkSecond: profile.social_link_second || "",
+      });
+    } catch (e) {
+      console.log(e);
+    } finally {
+      profileCreatedCallback();
+      setValidationMsg("");
+      setSubmitCreateProfileBtnDisabled(false);
     }
-    const tx = await kwilApi.addProfile(
-      username,
-      fullname,
-      description,
-      kwilApi.Address,
-      socialPrimary,
-      socialSecondary
-    );
-    await kwilApi.testWaitAndGetId(tx, "profiles");
-
-    const profile = await kwilApi.getOwnersProfile();
-    if (!profile) throw new Error("Profile has not been created!");
-
-    setProfile({
-      id: profile.id,
-      updatedAt: profile.updated_at,
-      username: profile.username,
-      fullname: profile.fullname,
-      description: profile.description,
-      ownerAddress: profile.owner_address,
-      socialLinkPrimary: profile.social_link_primary || "",
-      socialLinkSecond: profile.social_link_second || "",
-    });
-    profileCreatedCallback();
-    setValidationMsg("");
   };
 
   const editProfile = async (e: MouseEvent<HTMLButtonElement>) => {
@@ -246,40 +253,48 @@ export function ProfileForm({
     }
 
     if (!validateAllFields()) return;
-
     setValidationMsg(START_EDIT_PROFILE_MSG);
 
-    const existingProfile = await kwilApi.getOwnersProfile();
-    if (!existingProfile) {
-      setValidationMsg(`No profile with the address ${kwilApi.Address} exists`);
-      return;
+    try {
+      setSubmitCreateProfileBtnDisabled(true);
+      const existingProfile = await kwilApi.getOwnersProfile();
+      if (!existingProfile) {
+        setValidationMsg(
+          `No profile with the address ${kwilApi.Address} exists`
+        );
+        return;
+      }
+
+      const tx = await kwilApi.updateProfile(
+        profileId,
+        username,
+        fullname,
+        description,
+        socialPrimary,
+        socialSecondary
+      );
+      await kwilApi.waitAndGetId(tx, "profiles");
+
+      const profile = await kwilApi.getOwnersProfile();
+      if (!profile) throw new Error("Error profile has not been updated!");
+
+      setProfile({
+        id: profile.id,
+        updatedAt: profile.updated_at,
+        username: profile.username,
+        fullname: profile.fullname,
+        description: profile.description,
+        ownerAddress: profile.owner_address,
+        socialLinkPrimary: profile.social_link_primary || "",
+        socialLinkSecond: profile.social_link_second || "",
+      });
+    } catch (e) {
+      console.log(e);
+    } finally {
+      profileCreatedCallback();
+      setValidationMsg("");
+      setSubmitCreateProfileBtnDisabled(false);
     }
-
-    const tx = await kwilApi.updateProfile(
-      profileId,
-      username,
-      fullname,
-      description,
-      socialPrimary,
-      socialSecondary
-    );
-    await kwilApi.testWaitAndGetId(tx, "profiles");
-
-    const profile = await kwilApi.getOwnersProfile();
-    if (!profile) throw new Error("Error profile has not been updated!");
-
-    setProfile({
-      id: profile.id,
-      updatedAt: profile.updated_at,
-      username: profile.username,
-      fullname: profile.fullname,
-      description: profile.description,
-      ownerAddress: profile.owner_address,
-      socialLinkPrimary: profile.social_link_primary || "",
-      socialLinkSecond: profile.social_link_second || "",
-    });
-    profileCreatedCallback();
-    setValidationMsg("");
   };
 
   return (

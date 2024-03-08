@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
 import { kwilApi } from "../../common/api/KwilApiInstance";
 import { PAGE_SIZE } from "../../common/utils/StandardValues";
-import { getWorkWithAuthor } from "../../common/components/models/UIModels";
+import { getWorkWithAuthor } from "../../common/ui-api/UIModels";
 import { useProfile } from "../../common/zustand/Store";
 import { PagedWorkElements } from "../../common/components/display-elements/PagedWorkElements";
 import { Layout } from "../../common/components/Layout";
 import { FollowedList } from "../../common/components/FollowedList";
 import { WorkElements } from "../../common/components/display-elements/WorkElements";
+import { WorkWithAuthorModel } from "../../common/api/ApiModels";
 
 export function ReadFollowed() {
   const profile = useProfile((state) => state.profile);
@@ -29,11 +30,17 @@ export function ReadFollowed() {
 
     // todo: need to test these calls each
     if (currentFollowedId === 0) {
-      const works = await kwilApi.getWorksByAllFollowed(
-        profile.id,
-        priorKeyset,
-        PAGE_SIZE
-      );
+      let works: WorkWithAuthorModel[] | null;
+      if (priorKeyset === 0) {
+        works = await kwilApi.getWorksByAllFollowedTop(profile.id, PAGE_SIZE);
+      } else {
+        works = await kwilApi.getWorksByAllFollowed(
+          profile.id,
+          priorKeyset,
+          PAGE_SIZE
+        );
+      }
+
       if (!works || works.length === 0) {
         return null;
       }
@@ -42,11 +49,20 @@ export function ReadFollowed() {
       console.log("works", works);
       return worksWithAuthor;
     } else {
-      const works = await kwilApi.getWorksByOneFollowed(
-        currentFollowedId,
-        priorKeyset,
-        PAGE_SIZE
-      );
+      let works: WorkWithAuthorModel[] | null;
+      if (priorKeyset === 0) {
+        works = await kwilApi.getWorksByOneFollowedTop(
+          currentFollowedId,
+          PAGE_SIZE
+        );
+      } else {
+        works = await kwilApi.getWorksByOneFollowed(
+          currentFollowedId,
+          priorKeyset,
+          PAGE_SIZE
+        );
+      }
+
       if (!works || works.length === 0) {
         return null;
       }

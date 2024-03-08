@@ -53,7 +53,7 @@ export function ProfileConcentractedDesc({
 
             if (profile) {
               const tx = await kwilApi.addFollow(profile.id || 0, profileId);
-              await kwilApi.testWaitAndGetId(tx, "follows");
+              await kwilApi.waitAndGetId(tx, "follows");
               await confirmFollowed();
             } else {
               console.log("Cannot follow not logged in!");

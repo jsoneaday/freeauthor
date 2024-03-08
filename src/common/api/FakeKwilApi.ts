@@ -3,7 +3,7 @@ import {
   Entity,
   Follow,
   ProfileModel,
-  Topic,
+  TopicModel,
   Work,
   WorkLike,
   WorkResponse,
@@ -18,7 +18,7 @@ const profiles: ProfileModel[] = [];
 const worksLength = 600;
 const works: Work[] = [];
 const follows: Follow[] = [];
-const topics: Topic[] = [];
+const topics: TopicModel[] = [];
 const workTopics: WorkTopic[] = [];
 const workLikes: WorkLike[] = [];
 const workResponses: WorkResponse[] = [];
@@ -241,6 +241,13 @@ export class FakeKwilApi implements IKwilApi {
     return pagedWorks.map((work) => this.#convertWorkWithAuthorModel(work));
   }
 
+  async getAuthorWorksTop(
+    authorId: number,
+    pageSize: number
+  ): Promise<WorkWithAuthorModel[] | null> {
+    return await this.getAuthorWorks(authorId, 0, pageSize);
+  }
+
   async getWorksByTopic(
     topicId: number,
     lastKeyset: number,
@@ -268,6 +275,13 @@ export class FakeKwilApi implements IKwilApi {
       .slice(0, pageSize);
 
     return pagedWorks.map((work) => this.#convertWorkWithAuthorModel(work));
+  }
+
+  async getWorksByTopicTop(
+    topicId: number,
+    pageSize: number
+  ): Promise<WorkWithAuthorModel[] | null> {
+    return await this.getWorksByTopic(topicId, 0, pageSize);
   }
 
   async searchWorks(
@@ -302,6 +316,13 @@ export class FakeKwilApi implements IKwilApi {
     return pagedWorks.map((work) => this.#convertWorkWithAuthorModel(work));
   }
 
+  async searchWorksTop(
+    searchTxt: string,
+    pageSize: number
+  ): Promise<WorkWithAuthorModel[] | null> {
+    return await this.searchWorks(searchTxt, 0, pageSize);
+  }
+
   async getWorksByAllFollowed(
     followerId: number,
     lastKeyset: number,
@@ -333,6 +354,13 @@ export class FakeKwilApi implements IKwilApi {
     return pagedWorks.map((work) => this.#convertWorkWithAuthorModel(work));
   }
 
+  async getWorksByAllFollowedTop(
+    followerId: number,
+    pageSize: number
+  ): Promise<WorkWithAuthorModel[] | null> {
+    return await this.getWorksByAllFollowed(followerId, 0, pageSize);
+  }
+
   async getWorksByOneFollowed(
     followedId: number,
     lastKeyset: number,
@@ -356,6 +384,13 @@ export class FakeKwilApi implements IKwilApi {
       .slice(0, pageSize);
 
     return pagedWorks.map((work) => this.#convertWorkWithAuthorModel(work));
+  }
+
+  async getWorksByOneFollowedTop(
+    followedId: number,
+    pageSize: number
+  ): Promise<WorkWithAuthorModel[] | null> {
+    return await this.getWorksByOneFollowed(followedId, 0, pageSize);
   }
 
   async getWorkLikeCount(workId: number): Promise<number> {
@@ -390,6 +425,13 @@ export class FakeKwilApi implements IKwilApi {
     return this.#convertWorkResponse(responses);
   }
 
+  async getWorkResponsesTop(
+    workId: number,
+    pageSize: number
+  ): Promise<WorkResponseModel[] | null> {
+    return await this.getWorkResponses(workId, 0, pageSize);
+  }
+
   async getWorkResponsesByProfile(
     profileId: number,
     lastKeyset: number,
@@ -419,6 +461,13 @@ export class FakeKwilApi implements IKwilApi {
     return this.#convertWorkResponse(responses);
   }
 
+  async getWorkResponsesByProfileTop(
+    profileId: number,
+    pageSize: number
+  ): Promise<WorkResponseModel[] | null> {
+    return await this.getWorkResponsesByProfile(profileId, 0, pageSize);
+  }
+
   #convertWorkWithAuthorModel(work: Work) {
     const profile = profiles.find((profile) => profile.id === work.author_id);
 
@@ -435,7 +484,7 @@ export class FakeKwilApi implements IKwilApi {
     } as WorkWithAuthorModel;
   }
 
-  async #convertWorkResponse(responses: WorkResponse[]) {
+  #convertWorkResponse(responses: WorkResponse[]) {
     let models: WorkResponseModel[] = [];
     for (let i = 0; i < responses.length; i++) {
       const profile = profiles.find(
@@ -477,19 +526,13 @@ export class FakeKwilApi implements IKwilApi {
     );
   }
 
-  async getAllTopics(): Promise<Topic[]> {
+  async getAllTopics(): Promise<TopicModel[]> {
     return topics;
   }
 
-  async waitAndGetId(_tx: string | null | undefined): Promise<number> {
-    throw new Error(
-      "Deliberately not implemented, for testing use testWaitAndGetId"
-    );
-  }
-
-  async testWaitAndGetId(
+  async waitAndGetId(
     _tx: string | null | undefined,
-    entityType: string
+    entityType?: string
   ): Promise<number> {
     let entities: Entity[] = [];
     if (entityType === "works") {

@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { RandomImg } from "./RandomImage";
 import { FollowTooltip, useFollowTooltip } from "./modals/FollowTooltip";
 import { Link } from "react-router-dom";
-import { ResponseWithResponder } from "./models/UIModels";
+import { ResponseWithResponder } from "../ui-api/UIModels";
 import { kwilApi } from "../api/KwilApiInstance";
 
 interface ResponseResponderDetailProps {

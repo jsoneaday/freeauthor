@@ -5,7 +5,6 @@ import "./theme/pages.css";
 import "./theme/mdxeditor.css";
 import "./theme/layout.css";
 import "./theme/animations.css";
-import "react-tooltip/dist/react-tooltip.css";
 import { Explorer } from "./pages/explorer/Explorer";
 import { WriteStory } from "./pages/write/WriteStory";
 import { ManageStories } from "./pages/write/ManageStories";

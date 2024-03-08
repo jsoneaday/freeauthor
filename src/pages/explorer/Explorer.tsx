@@ -10,12 +10,12 @@ import { Layout } from "../../common/components/Layout";
 import { kwilApi } from "../../common/api/KwilApiInstance";
 import { TopicElement } from "../../common/components/TopicElement";
 import searchIcon from "../../theme/assets/app-icons/search1.png";
-import { getWorkWithAuthor } from "../../common/components/models/UIModels";
+import { getWorkWithAuthor } from "../../common/ui-api/UIModels";
 import { PAGE_SIZE } from "../../common/utils/StandardValues";
 import { useParams } from "react-router-dom";
 import { upperCaseFirstLetterOfWords } from "../../common/utils/CharacterUtils";
 import { PagedWorkElements } from "../../common/components/display-elements/PagedWorkElements";
-import { Topic } from "../../common/api/ApiModels";
+import { TopicModel, WorkWithAuthorModel } from "../../common/api/ApiModels";
 import { TabHeader } from "../../common/components/TabHeader";
 import { WorkElements } from "../../common/components/display-elements/WorkElements";
 
@@ -28,7 +28,7 @@ enum ValidationStates {
 export function Explorer() {
   const [searchTxt, setSearchTxt] = useState("");
   const [topicElements, setTopicElements] = useState<JSX.Element[]>([]);
-  const [topics, setTopics] = useState<Topic[] | null>(null);
+  const [topics, setTopics] = useState<TopicModel[] | null>(null);
   const [topicName, setTopicName] = useState("");
   const { topic_id } = useParams<{ topic_id: string | undefined }>();
   const [refreshWorksData, setRefreshWorksData] = useState(false);
@@ -102,11 +102,13 @@ export function Explorer() {
         return null;
       }
 
-      const works = await kwilApi.searchWorks(
-        searchTxt,
-        priorKeyset,
-        PAGE_SIZE
-      );
+      let works: WorkWithAuthorModel[] | null;
+      if (priorKeyset === 0) {
+        works = await kwilApi.searchWorksTop(searchTxt, PAGE_SIZE);
+      } else {
+        works = await kwilApi.searchWorks(searchTxt, priorKeyset, PAGE_SIZE);
+      }
+
       if (!works || works.length === 0) {
         return null;
       }
@@ -120,11 +122,13 @@ export function Explorer() {
         topicId = Number(topic_id);
       }
 
-      const works = await kwilApi.getWorksByTopic(
-        topicId,
-        priorKeyset,
-        PAGE_SIZE
-      );
+      let works: WorkWithAuthorModel[] | null;
+      if (priorKeyset === 0) {
+        works = await kwilApi.getWorksByTopicTop(topicId, PAGE_SIZE);
+      } else {
+        works = await kwilApi.getWorksByTopic(topicId, priorKeyset, PAGE_SIZE);
+      }
+
       if (!works || works.length === 0) {
         return null;
       }

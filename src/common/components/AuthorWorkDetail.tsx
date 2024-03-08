@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { RandomImg } from "./RandomImage";
 import { TipsResponses } from "./TipsResponses";
 import { FollowTooltip, useFollowTooltip } from "./modals/FollowTooltip";
-import { WorkWithAuthor } from "./models/UIModels";
+import { WorkWithAuthor } from "../ui-api/UIModels";
 import { kwilApi } from "../api/KwilApiInstance";
 
 interface AuthorWorkDetailProps {

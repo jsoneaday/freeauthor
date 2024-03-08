@@ -1,6 +1,6 @@
 import {
   ProfileModel,
-  Topic,
+  TopicModel,
   WorkResponseModel,
   WorkWithAuthorModel,
 } from "./ApiModels";
@@ -62,6 +62,11 @@ export interface IKwilApi {
 
   getWork(workId: number): Promise<WorkWithAuthorModel | null>;
 
+  searchWorksTop(
+    searchTxt: string,
+    pageSize: number
+  ): Promise<WorkWithAuthorModel[] | null>;
+
   searchWorks(
     searchTxt: string,
     lastKeyset: number,
@@ -74,9 +79,19 @@ export interface IKwilApi {
     pageSize: number
   ): Promise<WorkWithAuthorModel[] | null>;
 
+  getWorksByAllFollowedTop(
+    followerId: number,
+    pageSize: number
+  ): Promise<WorkWithAuthorModel[] | null>;
+
   getWorksByOneFollowed(
     followedId: number,
     lastKeyset: number,
+    pageSize: number
+  ): Promise<WorkWithAuthorModel[] | null>;
+
+  getWorksByOneFollowedTop(
+    followedId: number,
     pageSize: number
   ): Promise<WorkWithAuthorModel[] | null>;
 
@@ -86,9 +101,19 @@ export interface IKwilApi {
     pageSize: number
   ): Promise<WorkWithAuthorModel[] | null>;
 
+  getAuthorWorksTop(
+    authorId: number,
+    pageSize: number
+  ): Promise<WorkWithAuthorModel[] | null>;
+
   getWorksByTopic(
     topicId: number,
     lastKeyset: number,
+    pageSize: number
+  ): Promise<WorkWithAuthorModel[] | null>;
+
+  getWorksByTopicTop(
+    topicId: number,
     pageSize: number
   ): Promise<WorkWithAuthorModel[] | null>;
 
@@ -100,9 +125,19 @@ export interface IKwilApi {
     pageSize: number
   ): Promise<WorkResponseModel[] | null>;
 
+  getWorkResponsesTop(
+    workId: number,
+    pageSize: number
+  ): Promise<WorkResponseModel[] | null>;
+
   getWorkResponsesByProfile(
     profileId: number,
     lastKeyset: number,
+    pageSize: number
+  ): Promise<WorkResponseModel[] | null>;
+
+  getWorkResponsesByProfileTop(
+    profileId: number,
     pageSize: number
   ): Promise<WorkResponseModel[] | null>;
 
@@ -111,11 +146,10 @@ export interface IKwilApi {
   getFollowedCount(profileId: number): Promise<number>;
   getFollowerCount(profileId: number): Promise<number>;
 
-  getAllTopics(): Promise<Topic[]>;
+  getAllTopics(): Promise<TopicModel[] | null>;
 
-  waitAndGetId(tx: string | null | undefined): Promise<number>;
-  testWaitAndGetId(
+  waitAndGetId(
     tx: string | null | undefined,
-    entityType: string
+    entityType?: string
   ): Promise<number>;
 }

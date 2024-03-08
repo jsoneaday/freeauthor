@@ -4,7 +4,7 @@ import {
   WorkWithAuthor,
   getResponseWithResponder,
   getWorkWithAuthor,
-} from "../../common/components/models/UIModels";
+} from "../../common/ui-api/UIModels";
 import { useParams } from "react-router-dom";
 import { kwilApi } from "../../common/api/KwilApiInstance";
 import { AuthorWorkDetail } from "../../common/components/AuthorWorkDetail";
@@ -15,6 +15,7 @@ import { PAGE_SIZE } from "../../common/utils/StandardValues";
 import { TabHeader } from "../../common/components/TabHeader";
 import { ReturnEnabledInput } from "../../common/components/ReturnEnabledInput";
 import { useProfile } from "../../common/zustand/Store";
+import { WorkResponseModel } from "../../common/api/ApiModels";
 
 enum ValidationStates {
   ResponseValueIsEmpty = "Response must have a value",
@@ -50,13 +51,10 @@ export function ReadStory() {
           return;
         }
 
-        getWorkWithAuthor([work])
-          .then((work) => {
-            setTitle(work[0].title);
-            setDescription(work[0].description);
-            setWork(work[0]);
-          })
-          .catch((e) => console.log(e));
+        const workWithAuthor = getWorkWithAuthor([work]);
+        setTitle(workWithAuthor[0].title);
+        setDescription(workWithAuthor[0].description);
+        setWork(workWithAuthor[0]);
       })
       .catch((e) => console.log(e));
   }, [work_id]);
@@ -66,11 +64,16 @@ export function ReadStory() {
   };
 
   const getData = async (priorKeyset: number) => {
-    const responses = await kwilApi.getWorkResponses(
-      Number(work_id),
-      priorKeyset,
-      PAGE_SIZE
-    );
+    let responses: WorkResponseModel[] | null;
+    if (priorKeyset === 0) {
+      responses = await kwilApi.getWorkResponsesTop(Number(work_id), PAGE_SIZE);
+    } else {
+      responses = await kwilApi.getWorkResponses(
+        Number(work_id),
+        priorKeyset,
+        PAGE_SIZE
+      );
+    }
     if (!responses || responses.length === 0) {
       return null;
     }

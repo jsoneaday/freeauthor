@@ -2,7 +2,7 @@ import {
   ProfileModel,
   WorkResponseModel,
   WorkWithAuthorModel,
-} from "../../api/ApiModels";
+} from "../api/ApiModels";
 
 export interface UiEntity {
   id: number;
@@ -50,7 +50,7 @@ export class Profile implements UiEntity {
   ) {}
 }
 
-export async function getResponseWithResponder(responses: WorkResponseModel[]) {
+export function getResponseWithResponder(responses: WorkResponseModel[]) {
   const responsesWithResponder: ResponseWithResponder[] = [];
   for (let i = 0; i < responses.length; i++) {
     responsesWithResponder.push({
@@ -68,7 +68,7 @@ export async function getResponseWithResponder(responses: WorkResponseModel[]) {
   return responsesWithResponder;
 }
 
-export async function getWorkWithAuthor(works: WorkWithAuthorModel[]) {
+export function getWorkWithAuthor(works: WorkWithAuthorModel[]) {
   const worksWithAuthor: WorkWithAuthor[] = [];
   for (let i = 0; i < works.length; i++) {
     worksWithAuthor.push({
@@ -86,7 +86,7 @@ export async function getWorkWithAuthor(works: WorkWithAuthorModel[]) {
   return worksWithAuthor;
 }
 
-export async function getProfile(profileModels: ProfileModel[]) {
+export function getProfile(profileModels: ProfileModel[]) {
   const profiles: Profile[] = [];
   for (let i = 0; i < profileModels.length; i++) {
     profiles.push({
