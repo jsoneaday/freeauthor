@@ -3,7 +3,7 @@ import { RandomImg } from "./RandomImage";
 import { TipsResponses } from "./TipsResponses";
 import { FollowTooltip, useFollowTooltip } from "./modals/FollowTooltip";
 import { WorkWithAuthor } from "../ui-api/UIModels";
-import { kwilApi } from "../api/KwilApiInstance";
+import { api } from "../ui-api/UiApiInstance";
 
 interface AuthorWorkDetailProps {
   showAuthor: boolean;
@@ -23,10 +23,10 @@ export function AuthorWorkDetail({ showAuthor, work }: AuthorWorkDetailProps) {
   } = useFollowTooltip(spanRef);
 
   useEffect(() => {
-    kwilApi
+    api
       .getFollowedCount(work.authorId)
       .then((followingCount) => {
-        kwilApi
+        api
           .getFollowerCount(work.authorId)
           .then((followerCount) => {
             setFollowingCount(followingCount);

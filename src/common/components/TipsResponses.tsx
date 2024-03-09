@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { formatLikeCount } from "../utils/DetailInfoFormatter";
 import tipJar from "../../theme/assets/app-icons/save-money.png";
 import response from "../../theme/assets/app-icons/l-resend-100.png";
-import { kwilApi } from "../api/KwilApiInstance";
+import { api } from "../ui-api/UiApiInstance";
 
 interface TipsAndResponsesProps {
   workId: number;
@@ -15,14 +15,14 @@ export function TipsResponses({ workId }: TipsAndResponsesProps) {
   const [responseCount, setResponseCount] = useState(0);
 
   useEffect(() => {
-    kwilApi
+    api
       .getWorkLikeCount(workId)
       .then((count) => {
         setLikeCount(count);
       })
       .catch((e) => console.log(e));
 
-    kwilApi
+    api
       .getWorkResponseCount(workId)
       .then((count) => {
         setResponseCount(count);

@@ -4,22 +4,17 @@ import { ProfileForm } from "../common/components/ProfileForm";
 import { Layout } from "../common/components/Layout";
 import { RandomImg } from "../common/components/RandomImage";
 import { useParams } from "react-router-dom";
-import { kwilApi } from "../common/api/KwilApiInstance";
+import { api } from "../common/ui-api/UiApiInstance";
 import { PAGE_SIZE } from "../common/utils/StandardValues";
-import {
-  getProfile,
-  getResponseWithResponder,
-  getWorkWithAuthor,
-} from "../common/ui-api/UIModels";
 import { WorkElements } from "../common/components/display-elements/WorkElements";
 import { useProfile } from "../common/zustand/Store";
 import { TabBar } from "../common/components/TabBar";
 import { ResponseElements } from "../common/components/display-elements/ResponseElements";
 import { FollowElements } from "../common/components/display-elements/FollowElements";
 import {
-  WorkResponseModel,
-  WorkWithAuthorModel,
-} from "../common/api/ApiModels";
+  ResponseWithResponder,
+  WorkWithAuthor,
+} from "../common/ui-api/UIModels";
 
 /// Register by creating a profile with optional avatar/image
 export function Profile() {
@@ -55,14 +50,11 @@ export function Profile() {
   };
 
   const getStories = async (priorKeyset: number) => {
-    let works: WorkWithAuthorModel[] | null;
+    let works: WorkWithAuthor[] | null;
     if (priorKeyset === 0) {
-      works = await kwilApi.getAuthorWorksTop(
-        Number(profile_id || 0),
-        PAGE_SIZE
-      );
+      works = await api.getAuthorWorksTop(Number(profile_id || 0), PAGE_SIZE);
     } else {
-      works = await kwilApi.getAuthorWorks(
+      works = await api.getAuthorWorks(
         Number(profile_id || 0),
         priorKeyset,
         PAGE_SIZE
@@ -70,20 +62,19 @@ export function Profile() {
     }
     if (!works || works.length === 0) return null;
 
-    const worksWithAuthor = await getWorkWithAuthor(works);
-    console.log("works", worksWithAuthor);
-    return worksWithAuthor;
+    console.log("works", works);
+    return works;
   };
 
   const getResponses = async (priorKeyset: number) => {
-    let workResponses: WorkResponseModel[] | null;
+    let workResponses: ResponseWithResponder[] | null;
     if (priorKeyset === 0) {
-      workResponses = await kwilApi.getWorkResponsesByProfileTop(
+      workResponses = await api.getWorkResponsesByProfileTop(
         Number(profile_id || 0),
         PAGE_SIZE
       );
     } else {
-      workResponses = await kwilApi.getWorkResponsesByProfile(
+      workResponses = await api.getWorkResponsesByProfile(
         Number(profile_id || 0),
         priorKeyset,
         PAGE_SIZE
@@ -91,29 +82,24 @@ export function Profile() {
     }
     if (!workResponses || workResponses.length === 0) return null;
 
-    const responsesWithResponder = getResponseWithResponder(workResponses);
-    console.log("responses", responsesWithResponder);
-    return responsesWithResponder;
+    console.log("responses", workResponses);
+    return workResponses;
   };
 
   const getFollowing = async () => {
-    const following = await kwilApi.getFollowedProfiles(
-      Number(profile_id || 0)
-    );
+    const following = await api.getFollowedProfiles(Number(profile_id || 0));
     if (!following || following.length === 0) return null;
 
-    const followingConverted = await getProfile(following);
-    console.log("following", followingConverted);
-    return followingConverted;
+    console.log("following", following);
+    return following;
   };
 
   const getFollower = async () => {
-    const follower = await kwilApi.getFollowerProfiles(Number(profile_id || 0));
+    const follower = await api.getFollowerProfiles(Number(profile_id || 0));
     if (!follower || follower.length === 0) return null;
 
-    const followerConverted = await getProfile(follower);
-    console.log("follower", followerConverted);
-    return followerConverted;
+    console.log("follower", follower);
+    return follower;
   };
 
   const selectElementsToDisplay = () => {

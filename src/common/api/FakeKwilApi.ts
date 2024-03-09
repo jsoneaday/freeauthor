@@ -1,4 +1,4 @@
-import { IKwilApi } from "./IKwilApi";
+import { IKwilApi, TxHashPromise } from "./IKwilApi";
 import {
   Entity,
   Follow,
@@ -172,10 +172,6 @@ export class FakeKwilApi implements IKwilApi {
     profile.social_link_primary = socialLinkPrimary;
     profile.social_link_second = socialLinkSecond;
 
-    return faker.number.binary();
-  }
-
-  async cleanDb() {
     return faker.number.binary();
   }
 
@@ -545,6 +541,14 @@ export class FakeKwilApi implements IKwilApi {
       throw new Error(`testWaitAndGetId for ${entityType} not implemented yet`);
     }
     return getLastestEntityId(entities);
+  }
+
+  async cleanDb(): TxHashPromise {
+    throw new Error("Do not use during testing");
+  }
+
+  async setupData(): TxHashPromise {
+    throw new Error("Do not use during testing");
   }
 
   async #setupTestData() {

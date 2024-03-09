@@ -1,13 +1,12 @@
 import { useEffect, useState } from "react";
-import { kwilApi } from "../../common/api/KwilApiInstance";
+import { api } from "../../common/ui-api/UiApiInstance";
 import { PAGE_SIZE } from "../../common/utils/StandardValues";
-import { getWorkWithAuthor } from "../../common/ui-api/UIModels";
 import { useProfile } from "../../common/zustand/Store";
 import { PagedWorkElements } from "../../common/components/display-elements/PagedWorkElements";
 import { Layout } from "../../common/components/Layout";
 import { FollowedList } from "../../common/components/FollowedList";
 import { WorkElements } from "../../common/components/display-elements/WorkElements";
-import { WorkWithAuthorModel } from "../../common/api/ApiModels";
+import { WorkWithAuthor } from "../../common/ui-api/UIModels";
 
 export function ReadFollowed() {
   const profile = useProfile((state) => state.profile);
@@ -30,11 +29,11 @@ export function ReadFollowed() {
 
     // todo: need to test these calls each
     if (currentFollowedId === 0) {
-      let works: WorkWithAuthorModel[] | null;
+      let works: WorkWithAuthor[] | null;
       if (priorKeyset === 0) {
-        works = await kwilApi.getWorksByAllFollowedTop(profile.id, PAGE_SIZE);
+        works = await api.getWorksByAllFollowedTop(profile.id, PAGE_SIZE);
       } else {
-        works = await kwilApi.getWorksByAllFollowed(
+        works = await api.getWorksByAllFollowed(
           profile.id,
           priorKeyset,
           PAGE_SIZE
@@ -45,18 +44,16 @@ export function ReadFollowed() {
         return null;
       }
 
-      const worksWithAuthor = await getWorkWithAuthor(works);
-      console.log("works", works);
-      return worksWithAuthor;
+      return works;
     } else {
-      let works: WorkWithAuthorModel[] | null;
+      let works: WorkWithAuthor[] | null;
       if (priorKeyset === 0) {
-        works = await kwilApi.getWorksByOneFollowedTop(
+        works = await api.getWorksByOneFollowedTop(
           currentFollowedId,
           PAGE_SIZE
         );
       } else {
-        works = await kwilApi.getWorksByOneFollowed(
+        works = await api.getWorksByOneFollowed(
           currentFollowedId,
           priorKeyset,
           PAGE_SIZE
@@ -67,9 +64,7 @@ export function ReadFollowed() {
         return null;
       }
 
-      const worksWithAuthor = await getWorkWithAuthor(works);
-      console.log("works", works);
-      return worksWithAuthor;
+      return works;
     }
   };
 

@@ -3,7 +3,7 @@ import { NotificationType } from "./modals/Notification";
 import { PrimaryButton } from "./Buttons";
 import { ProfileForm } from "./ProfileForm";
 import Notification from "./modals/Notification";
-import { kwilApi } from "../api/KwilApiInstance";
+import { api } from "../ui-api/UiApiInstance";
 import { useProfile } from "../zustand/Store";
 
 export const SMALL_NOTIFICATION_HEIGHT = "170px";
@@ -31,8 +31,8 @@ export function ConnectCreateProfile({
     e.preventDefault();
 
     if (!profile) {
-      await kwilApi.connect();
-      const ownersProfile = await kwilApi.getOwnersProfile();
+      await api.connect("");
+      const ownersProfile = await api.getOwnersProfile();
       if (!ownersProfile) {
         setShowProfileForm(true);
         setNotificationHeight(LARGE_NOTIFICATION_HEIGHT);
@@ -44,13 +44,13 @@ export function ConnectCreateProfile({
         toggleNotificationState();
         setProfile({
           id: ownersProfile?.id,
-          updatedAt: ownersProfile.updated_at,
-          username: ownersProfile.username,
-          fullname: ownersProfile.fullname,
+          updatedAt: ownersProfile.updatedAt,
+          username: ownersProfile.userName,
+          fullname: ownersProfile.fullName,
           description: ownersProfile.description,
-          ownerAddress: ownersProfile.owner_address,
-          socialLinkPrimary: ownersProfile.social_link_primary || "",
-          socialLinkSecond: ownersProfile.social_link_second || "",
+          ownerAddress: ownersProfile.ownerAddress,
+          socialLinkPrimary: ownersProfile.socialLinkPrimary || "",
+          socialLinkSecond: ownersProfile.socialLinkSecond || "",
         });
         setShowProfileForm(false);
         setNotificationHeight(SMALL_NOTIFICATION_HEIGHT);

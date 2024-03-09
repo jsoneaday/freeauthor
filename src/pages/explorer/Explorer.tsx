@@ -7,17 +7,16 @@ import {
   MouseEvent,
 } from "react";
 import { Layout } from "../../common/components/Layout";
-import { kwilApi } from "../../common/api/KwilApiInstance";
+import { api } from "../../common/ui-api/UiApiInstance";
 import { TopicElement } from "../../common/components/TopicElement";
 import searchIcon from "../../theme/assets/app-icons/search1.png";
-import { getWorkWithAuthor } from "../../common/ui-api/UIModels";
 import { PAGE_SIZE } from "../../common/utils/StandardValues";
 import { useParams } from "react-router-dom";
 import { upperCaseFirstLetterOfWords } from "../../common/utils/CharacterUtils";
 import { PagedWorkElements } from "../../common/components/display-elements/PagedWorkElements";
-import { TopicModel, WorkWithAuthorModel } from "../../common/api/ApiModels";
 import { TabHeader } from "../../common/components/TabHeader";
 import { WorkElements } from "../../common/components/display-elements/WorkElements";
+import { Topic, WorkWithAuthor } from "../../common/ui-api/UIModels";
 
 enum ValidationStates {
   SearchTxtTooShort = "Search string must be at least 3 characters",
@@ -28,7 +27,7 @@ enum ValidationStates {
 export function Explorer() {
   const [searchTxt, setSearchTxt] = useState("");
   const [topicElements, setTopicElements] = useState<JSX.Element[]>([]);
-  const [topics, setTopics] = useState<TopicModel[] | null>(null);
+  const [topics, setTopics] = useState<Topic[] | null>(null);
   const [topicName, setTopicName] = useState("");
   const { topic_id } = useParams<{ topic_id: string | undefined }>();
   const [refreshWorksData, setRefreshWorksData] = useState(false);
@@ -58,7 +57,8 @@ export function Explorer() {
   };
 
   useEffect(() => {
-    kwilApi.getAllTopics().then((topics) => {
+    api.getAllTopics().then((topics) => {
+      console.log("topics", topics);
       setTopics(topics);
     });
   }, []);
@@ -102,40 +102,36 @@ export function Explorer() {
         return null;
       }
 
-      let works: WorkWithAuthorModel[] | null;
+      let works: WorkWithAuthor[] | null;
       if (priorKeyset === 0) {
-        works = await kwilApi.searchWorksTop(searchTxt, PAGE_SIZE);
+        works = await api.searchWorksTop(searchTxt, PAGE_SIZE);
       } else {
-        works = await kwilApi.searchWorks(searchTxt, priorKeyset, PAGE_SIZE);
+        works = await api.searchWorks(searchTxt, priorKeyset, PAGE_SIZE);
       }
 
       if (!works || works.length === 0) {
         return null;
       }
 
-      const worksWithAuthor = await getWorkWithAuthor(works);
-      console.log("works", worksWithAuthor);
-      return worksWithAuthor;
+      return works;
     } else {
       let topicId = 1;
       if (topic_id) {
         topicId = Number(topic_id);
       }
 
-      let works: WorkWithAuthorModel[] | null;
+      let works: WorkWithAuthor[] | null;
       if (priorKeyset === 0) {
-        works = await kwilApi.getWorksByTopicTop(topicId, PAGE_SIZE);
+        works = await api.getWorksByTopicTop(topicId, PAGE_SIZE);
       } else {
-        works = await kwilApi.getWorksByTopic(topicId, priorKeyset, PAGE_SIZE);
+        works = await api.getWorksByTopic(topicId, priorKeyset, PAGE_SIZE);
       }
 
       if (!works || works.length === 0) {
         return null;
       }
 
-      const worksWithAuthor = await getWorkWithAuthor(works);
-      console.log("works", worksWithAuthor);
-      return worksWithAuthor;
+      return works;
     }
   };
 

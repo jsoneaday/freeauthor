@@ -272,22 +272,6 @@ export class KwilApi implements IKwilApi {
     );
   }
 
-  async cleanDb() {
-    if (!this.#kwil) {
-      await this.connect();
-    }
-
-    const actionBody = {
-      dbid: this.#dbid,
-      action: "clean_db",
-      inputs: [],
-    };
-
-    return this.#getResultHash(
-      await this.#kwil!.execute(actionBody, this.#kwilSigner!, true)
-    );
-  }
-
   async getAuthorWorks(authorId: number, lastKeyset: number, pageSize: number) {
     const actionBody = {
       dbid: this.#dbid,
@@ -636,7 +620,7 @@ export class KwilApi implements IKwilApi {
   ): Promise<WorkResponseModel[] | null> {
     const actionBody = {
       dbid: this.#dbid,
-      action: "get_work_responses_by_profile",
+      action: "get_work_resp_by_profile",
       inputs: [
         {
           $profile_id: profileId,
@@ -655,7 +639,7 @@ export class KwilApi implements IKwilApi {
   ): Promise<WorkResponseModel[] | null> {
     const actionBody = {
       dbid: this.#dbid,
-      action: "get_work_responses_by_profile_top",
+      action: "get_work_resp_by_profile_top",
       inputs: [
         {
           $profile_id: profileId,
@@ -864,5 +848,38 @@ export class KwilApi implements IKwilApi {
     }
     console.log("getLastId id:", id);
     return id;
+  }
+
+  async cleanDb(): TxHashPromise {
+    if (!this.#kwil) {
+      await this.connect();
+    }
+
+    const actionBody = {
+      dbid: this.#dbid,
+      action: "clean_db",
+      inputs: [],
+    };
+
+    return this.#getResultHash(
+      await this.#kwil!.execute(actionBody, this.#kwilSigner!, true)
+    );
+  }
+
+  async setupData(): TxHashPromise {
+    if (!this.#kwil) {
+      console.log("#kwil is null, running connect");
+      await this.connect();
+    }
+
+    const actionBody = {
+      dbid: this.#dbid,
+      action: "setup_data",
+      inputs: [],
+    };
+
+    return this.#getResultHash(
+      await this.#kwil!.execute(actionBody, this.#kwilSigner!, true)
+    );
   }
 }

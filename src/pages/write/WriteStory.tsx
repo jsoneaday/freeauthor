@@ -1,6 +1,6 @@
 import { ChangeEvent, MouseEvent, useEffect, useRef, useState } from "react";
 import { useProfile } from "../../common/zustand/Store";
-import { kwilApi } from "../../common/api/KwilApiInstance";
+import { api } from "../../common/ui-api/UiApiInstance";
 import { PrimaryButton } from "../../common/components/Buttons";
 import { MDXEditorMethods } from "@mdxeditor/editor";
 import { MarkdownEditor } from "../../common/components/MarkdownEditor";
@@ -55,7 +55,7 @@ export function WriteStory() {
   useEffect(() => {
     if (work_id) {
       console.log("work_id", work_id);
-      kwilApi.getWork(Number(work_id)).then((work) => {
+      api.getWork(Number(work_id)).then((work) => {
         if (!work) throw new Error("Work item cannot be found trying to edit");
 
         setTitle(work.title);
@@ -77,14 +77,14 @@ export function WriteStory() {
     let id: number = 0;
     try {
       setIsSubmitBtnDisabled(true);
-      const tx = await kwilApi.addWork(
+      const tx = await api.addWork(
         title,
         description,
         mdRef.current?.getMarkdown() || "",
         profile.id
       );
       // todo: remove when read for prod
-      id = await kwilApi.waitAndGetId(tx, "works");
+      id = await api.waitAndGetId(tx, "works");
       console.log("addWork id", id);
     } catch (e) {
       console.log(e);
@@ -110,7 +110,7 @@ export function WriteStory() {
     try {
       setIsSubmitBtnDisabled(true);
       console.log("work_id:", work_id);
-      const tx = await kwilApi.updateWork(
+      const tx = await api.updateWork(
         Number(work_id),
         title,
         description,

@@ -35,6 +35,12 @@ export interface IKwilApi {
     responderId: number
   ): TxHashPromise;
 
+  /// Used to wait for tx completion and then get entity id
+  waitAndGetId(
+    tx: string | null | undefined,
+    entityType?: string
+  ): Promise<number>;
+
   updateWork(
     workId: number,
     title: string,
@@ -51,8 +57,6 @@ export interface IKwilApi {
     socialLinkPrimary: string,
     socialLinkSecond: string
   ): TxHashPromise;
-
-  cleanDb(): TxHashPromise;
 
   getProfile(profileId: number): Promise<ProfileModel | null>;
   getOwnersProfile(): Promise<ProfileModel | null>;
@@ -148,8 +152,6 @@ export interface IKwilApi {
 
   getAllTopics(): Promise<TopicModel[] | null>;
 
-  waitAndGetId(
-    tx: string | null | undefined,
-    entityType?: string
-  ): Promise<number>;
+  cleanDb(): TxHashPromise;
+  setupData(): TxHashPromise;
 }

@@ -3,7 +3,7 @@ import { RandomImg } from "./RandomImage";
 import { FollowTooltip, useFollowTooltip } from "./modals/FollowTooltip";
 import { Link } from "react-router-dom";
 import { ResponseWithResponder } from "../ui-api/UIModels";
-import { kwilApi } from "../api/KwilApiInstance";
+import { api } from "../ui-api/UiApiInstance";
 
 interface ResponseResponderDetailProps {
   showAuthor: boolean;
@@ -28,10 +28,10 @@ export function ResponseResponderDetail({
   } = useFollowTooltip(spanRef);
 
   useEffect(() => {
-    kwilApi
+    api
       .getFollowedCount(work.responderId)
       .then((followingCount) => {
-        kwilApi
+        api
           .getFollowerCount(work.responderId)
           .then((followerCount) => {
             setFollowingCount(followingCount);

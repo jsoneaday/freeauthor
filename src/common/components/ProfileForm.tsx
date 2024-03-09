@@ -1,5 +1,5 @@
 import { ChangeEvent, useState, MouseEvent, useEffect } from "react";
-import { kwilApi } from "../api/KwilApiInstance";
+import { api } from "../ui-api/UiApiInstance";
 import { useProfile } from "../zustand/Store";
 import { PrimaryButton } from "./Buttons";
 import { ValidationAndProgressMsg } from "./ValidationProgressMsg";
@@ -47,7 +47,7 @@ export function ProfileForm({
 
   useEffect(() => {
     if (profileId) {
-      kwilApi
+      api
         .getProfile(profileId)
         .then((profile) => {
           if (!profile)
@@ -55,11 +55,11 @@ export function ProfileForm({
 
           setPageState(PageState.Edit);
 
-          setUsername(profile.username);
-          setFullname(profile.fullname);
+          setUsername(profile.userName);
+          setFullname(profile.fullName);
           setDescription(profile.description);
-          setSocialPrimary(profile.social_link_primary || "");
-          setSocialSecondary(profile.social_link_second || "");
+          setSocialPrimary(profile.socialLinkPrimary || "");
+          setSocialSecondary(profile.socialLinkSecond || "");
           setValidationMsg("");
         })
         .catch((e) => console.log(e));
@@ -204,35 +204,35 @@ export function ProfileForm({
     try {
       setSubmitCreateProfileBtnDisabled(true);
 
-      const existingProfile = await kwilApi.getOwnersProfile();
+      const existingProfile = await api.getOwnersProfile();
       if (existingProfile) {
         setValidationMsg(
           "A wallet with that address already exists. Please use a different wallet address to create a profile"
         );
         return;
       }
-      const tx = await kwilApi.addProfile(
+      const tx = await api.addProfile(
         username,
         fullname,
         description,
-        kwilApi.Address,
+        api.Address,
         socialPrimary,
         socialSecondary
       );
-      await kwilApi.waitAndGetId(tx, "profiles");
+      await api.waitAndGetId(tx, "profiles");
 
-      const profile = await kwilApi.getOwnersProfile();
+      const profile = await api.getOwnersProfile();
       if (!profile) throw new Error("Profile has not been created!");
 
       setProfile({
         id: profile.id,
-        updatedAt: profile.updated_at,
-        username: profile.username,
-        fullname: profile.fullname,
+        updatedAt: profile.updatedAt,
+        username: profile.userName,
+        fullname: profile.fullName,
         description: profile.description,
-        ownerAddress: profile.owner_address,
-        socialLinkPrimary: profile.social_link_primary || "",
-        socialLinkSecond: profile.social_link_second || "",
+        ownerAddress: profile.ownerAddress,
+        socialLinkPrimary: profile.socialLinkPrimary || "",
+        socialLinkSecond: profile.socialLinkSecond || "",
       });
     } catch (e) {
       console.log(e);
@@ -257,15 +257,13 @@ export function ProfileForm({
 
     try {
       setSubmitCreateProfileBtnDisabled(true);
-      const existingProfile = await kwilApi.getOwnersProfile();
+      const existingProfile = await api.getOwnersProfile();
       if (!existingProfile) {
-        setValidationMsg(
-          `No profile with the address ${kwilApi.Address} exists`
-        );
+        setValidationMsg(`No profile with the address ${api.Address} exists`);
         return;
       }
 
-      const tx = await kwilApi.updateProfile(
+      const tx = await api.updateProfile(
         profileId,
         username,
         fullname,
@@ -273,20 +271,20 @@ export function ProfileForm({
         socialPrimary,
         socialSecondary
       );
-      await kwilApi.waitAndGetId(tx, "profiles");
+      await api.waitAndGetId(tx, "profiles");
 
-      const profile = await kwilApi.getOwnersProfile();
+      const profile = await api.getOwnersProfile();
       if (!profile) throw new Error("Error profile has not been updated!");
 
       setProfile({
         id: profile.id,
-        updatedAt: profile.updated_at,
-        username: profile.username,
-        fullname: profile.fullname,
+        updatedAt: profile.updatedAt,
+        username: profile.userName,
+        fullname: profile.fullName,
         description: profile.description,
-        ownerAddress: profile.owner_address,
-        socialLinkPrimary: profile.social_link_primary || "",
-        socialLinkSecond: profile.social_link_second || "",
+        ownerAddress: profile.ownerAddress,
+        socialLinkPrimary: profile.socialLinkPrimary || "",
+        socialLinkSecond: profile.socialLinkSecond || "",
       });
     } catch (e) {
       console.log(e);

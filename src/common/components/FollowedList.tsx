@@ -1,5 +1,5 @@
 import { MouseEvent, useEffect, useState } from "react";
-import { kwilApi } from "../api/KwilApiInstance";
+import { api } from "../ui-api/UiApiInstance";
 import allFollow from "../../theme/assets/profiles/l-all.png";
 import { useProfile } from "../zustand/Store";
 /// @ts-ignore
@@ -64,7 +64,7 @@ export function FollowedList({
 
   useEffect(() => {
     if (profile) {
-      kwilApi
+      api
         .getFollowedProfiles(profile.id)
         .then((profiles) => {
           if (!profiles || profiles.length === 0) {
@@ -79,7 +79,7 @@ export function FollowedList({
             const followed = profiles?.map((profile) => (
               <div
                 data-profile-id={profile.id}
-                key={`followed-${profile.username}`}
+                key={`followed-${profile.userName}`}
                 className="followed-list-item"
                 onClick={onClickSelectProfile}
               >
@@ -87,11 +87,11 @@ export function FollowedList({
                   <RandomImg />
                 </div>
                 <div className="followed-list-font-items">
-                  <b>{`${profile.id} ${profile.fullname}`}</b>
+                  <b>{`${profile.id} ${profile.fullName}`}</b>
                   <div>
-                    {profile.username.includes("@")
-                      ? profile.username
-                      : `@${profile.username}`}
+                    {profile.userName.includes("@")
+                      ? profile.userName
+                      : `@${profile.userName}`}
                   </div>
                 </div>
               </div>
