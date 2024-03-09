@@ -6,6 +6,7 @@ import { MDXEditorMethods } from "@mdxeditor/editor";
 import { MarkdownEditor } from "../../common/components/MarkdownEditor";
 import { ValidationAndProgressMsg } from "../../common/components/ValidationProgressMsg";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
+import DropDown, { OptionType } from "../../common/components/DropDown";
 
 enum WriteValidation {
   TitleTooLong = "Title must be less than 100 characters",
@@ -38,6 +39,19 @@ export function WriteStory() {
     work_id: string;
     validation_msg: string | undefined;
   }>();
+  const [selectedTopicId, setSelectedTopicId] = useState(1);
+  const [topics, setTopics] = useState<OptionType[]>([]);
+
+  useEffect(() => {
+    api
+      .getAllTopics()
+      .then((topics) => {
+        const topicOptions =
+          topics?.map((topic) => ({ name: topic.name, value: topic.id })) || [];
+        setTopics(topicOptions);
+      })
+      .catch((e) => console.log(e));
+  }, []);
 
   useEffect(() => {
     if (location.pathname === "/write/new") {
@@ -182,6 +196,12 @@ export function WriteStory() {
     return true;
   };
 
+  const onChangeTopic = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    e.preventDefault();
+
+    setSelectedTopicId(e.target.value ? Number(e.target.value) : 0);
+  };
+
   return (
     <div className="home-content" style={{ marginTop: "1.75em" }}>
       <section className="profile-form-section" style={{ marginBottom: "3em" }}>
@@ -196,7 +216,7 @@ export function WriteStory() {
       </section>
       <section
         className="profile-form-section"
-        style={{ marginBottom: "4.5em" }}
+        style={{ marginBottom: "2.5em" }}
       >
         <label htmlFor="description">Description</label>
         <input
@@ -205,6 +225,19 @@ export function WriteStory() {
           className="profile-form-item"
           value={description}
           onChange={onChangeDescription}
+        />
+      </section>
+      <section
+        className="profile-form-section"
+        style={{ marginBottom: "2.5em" }}
+      >
+        <DropDown
+          keyName="topic"
+          label="Topic"
+          name="countryId"
+          onChange={onChangeTopic}
+          value={selectedTopicId}
+          optionItems={topics}
         />
       </section>
       <section
