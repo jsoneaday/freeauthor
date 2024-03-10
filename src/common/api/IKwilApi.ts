@@ -2,6 +2,7 @@ import {
   ProfileModel,
   TopicModel,
   WorkResponseModel,
+  WorkTopicModel,
   WorkWithAuthorModel,
 } from "./ApiModels";
 
@@ -15,7 +16,8 @@ export interface IKwilApi {
     title: string,
     description: string | undefined,
     content: string,
-    authorId: number
+    authorId: number,
+    topicId: number
   ): TxHashPromise;
   addProfile(
     userName: string,
@@ -46,7 +48,8 @@ export interface IKwilApi {
     title: string,
     description: string | undefined,
     content: string,
-    authorId: number
+    authorId: number,
+    topicId: number
   ): TxHashPromise;
 
   updateProfile(
@@ -151,6 +154,8 @@ export interface IKwilApi {
   getFollowerCount(profileId: number): Promise<number>;
 
   getAllTopics(): Promise<TopicModel[] | null>;
+  getWorkTopic(workId: number): Promise<WorkTopicModel | null>;
+  getTopicByWork(workId: number): Promise<TopicModel | null>;
 
   cleanDb(): TxHashPromise;
   setupData(): TxHashPromise;

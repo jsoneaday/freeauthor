@@ -8,6 +8,7 @@ import {
   ProfileModel,
   TopicModel,
   WorkResponseModel,
+  WorkTopicModel,
   WorkWithAuthorModel,
 } from "./ApiModels";
 import { MsgReceipt } from "@kwilteam/kwil-js/dist/core/message";
@@ -50,24 +51,27 @@ export class KwilApi implements IKwilApi {
     title: string,
     description: string | undefined,
     content: string,
-    authorId: number
+    authorId: number,
+    topicId: number
   ) {
     let id = await this.#getLastId("get_last_work_id");
+    const workTopicId = await this.#getLastId("get_last_work_topic_id");
 
-    console.log("Send addWork authorId:", authorId);
+    const input = {
+      $work_id: id + 1,
+      $updated_at: formattedNow(),
+      $title: title,
+      $description: description || "",
+      $content: content,
+      $author_id: authorId,
+      $work_topic_id: workTopicId,
+      $topic_id: topicId,
+    };
+    console.log("api addWork params", input);
     const actionBody = {
       dbid: this.#dbid,
       action: "add_work",
-      inputs: [
-        {
-          $work_id: id + 1,
-          $updated_at: formattedNow(),
-          $title: title,
-          $description: description || "",
-          $content: content,
-          $author_id: authorId,
-        },
-      ],
+      inputs: [input],
     };
 
     return this.#getResultHash(
@@ -221,21 +225,25 @@ export class KwilApi implements IKwilApi {
     title: string,
     description: string | undefined,
     content: string,
-    authorId: number
+    authorId: number,
+    topicId: number
   ) {
+    const workTopic = await this.getWorkTopic(workId);
+    const input = {
+      $work_id: workId,
+      $updated_at: formattedNow(),
+      $title: title,
+      $description: description || "",
+      $content: content,
+      $author_id: authorId,
+      $work_topic_id: workTopic?.id || 0,
+      $topic_id: topicId,
+    };
+    console.log("api updateWork params:", input);
     const actionBody = {
       dbid: this.#dbid,
       action: "update_work",
-      inputs: [
-        {
-          $work_id: workId,
-          $updated_at: formattedNow(),
-          $title: title,
-          $description: description || "",
-          $content: content,
-          $author_id: authorId,
-        },
-      ],
+      inputs: [input],
     };
 
     return this.#getResultHash(
@@ -513,6 +521,40 @@ export class KwilApi implements IKwilApi {
     );
   }
 
+  async getTopicByWork(workId: number): Promise<TopicModel | null> {
+    const actionBody = {
+      dbid: this.#dbid,
+      action: "get_topic_by_work",
+      inputs: [
+        {
+          $work_id: workId,
+        },
+      ],
+    };
+
+    const topics = this.#convertToTopics(
+      await this.#kwil!.call(actionBody, this.#kwilSigner)
+    );
+    return this.#getFirstItem(topics);
+  }
+
+  async getWorkTopic(workId: number): Promise<WorkTopicModel | null> {
+    const actionBody = {
+      dbid: this.#dbid,
+      action: "get_work_topic",
+      inputs: [
+        {
+          $work_id: workId,
+        },
+      ],
+    };
+
+    const topics = this.#convertToWorkTopics(
+      await this.#kwil!.call(actionBody, this.#kwilSigner)
+    );
+    return this.#getFirstItem(topics);
+  }
+
   // todo: needs testing
   async getWorksByTopic(
     topicId: number,
@@ -778,6 +820,17 @@ export class KwilApi implements IKwilApi {
     return null;
   }
 
+  #convertToWorkTopics(res: GenericResponse<MsgReceipt>) {
+    if (res.status == 200) {
+      if (Array.isArray(res.data?.result)) {
+        return res.data.result.map((topic: WorkTopicModel) => {
+          return topic;
+        });
+      }
+    }
+    return null;
+  }
+
   #convertToWorkResponses(res: GenericResponse<MsgReceipt>) {
     if (res.status == 200) {
       if (Array.isArray(res.data?.result)) {
@@ -793,16 +846,8 @@ export class KwilApi implements IKwilApi {
     if (res.status == 200) {
       if (Array.isArray(res.data?.result)) {
         return res.data.result.map((work: WorkWithAuthorModel) => {
-          return {
-            id: work.id,
-            updated_at: work.updated_at,
-            title: work.title,
-            content: work.content,
-            description: work.description,
-            author_id: work.author_id,
-            fullname: work.fullname,
-            username: work.username,
-          } as WorkWithAuthorModel;
+          console.log("convertToWorks work", work);
+          return work;
         });
       }
     }

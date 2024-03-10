@@ -51,3 +51,12 @@ export class Topic implements UiEntity {
     public name: string
   ) {}
 }
+
+export class WorkTopic implements UiEntity {
+  constructor(
+    public id: number,
+    public updatedAt: string,
+    public workId: number,
+    public topicId: number
+  ) {}
+}

@@ -8,7 +8,7 @@ import {
   WorkLike,
   WorkResponse,
   WorkResponseModel,
-  WorkTopic,
+  WorkTopicModel,
   WorkWithAuthorModel,
 } from "./ApiModels";
 import { faker } from "@faker-js/faker";
@@ -19,7 +19,7 @@ const worksLength = 600;
 const works: Work[] = [];
 const follows: Follow[] = [];
 const topics: TopicModel[] = [];
-const workTopics: WorkTopic[] = [];
+const workTopics: WorkTopicModel[] = [];
 const workLikes: WorkLike[] = [];
 const workResponses: WorkResponse[] = [];
 
@@ -42,9 +42,11 @@ export class FakeKwilApi implements IKwilApi {
     title: string,
     description: string | undefined,
     content: string,
-    authorId: number
+    authorId: number,
+    topicId: number
   ) {
     const id = getLastestEntityId(works);
+    const workTopicId = getLastestEntityId(workTopics);
     console.log("last work id", id);
     works.push({
       id: id + 1,
@@ -53,6 +55,12 @@ export class FakeKwilApi implements IKwilApi {
       description,
       content,
       author_id: authorId,
+    });
+    workTopics.push({
+      id: workTopicId + 1,
+      updated_at: formattedNow(),
+      topic_id: topicId,
+      work_id: id,
     });
     return faker.number.binary();
   }
@@ -141,7 +149,8 @@ export class FakeKwilApi implements IKwilApi {
     title: string,
     description: string | undefined,
     content: string,
-    _authorId: number
+    _authorId: number,
+    topicId: number
   ) {
     const work = works.find((work) => work.id === workId);
     if (work) {
@@ -150,6 +159,14 @@ export class FakeKwilApi implements IKwilApi {
       work.content = content;
     } else {
       throw new Error(`work to update is not found ${workId}`);
+    }
+
+    const workTopic = workTopics.find(
+      (workTopic) =>
+        workTopic.work_id === workId && workTopic.topic_id === topicId
+    );
+    if (workTopic) {
+      workTopic.work_id;
     }
     return faker.number.binary();
   }
@@ -524,6 +541,18 @@ export class FakeKwilApi implements IKwilApi {
 
   async getAllTopics(): Promise<TopicModel[]> {
     return topics;
+  }
+
+  async getTopicByWork(workId: number): Promise<TopicModel | null> {
+    const workTopic = workTopics.find(
+      (workTopic) => workTopic.work_id === workId
+    );
+    return topics.find((topic) => workTopic?.topic_id === topic.id) || null;
+  }
+
+  // todo: need to check if this collection may return more than one
+  async getWorkTopic(workId: number): Promise<WorkTopicModel | null> {
+    return workTopics.find((workTopic) => workTopic.work_id === workId) || null;
   }
 
   async waitAndGetId(

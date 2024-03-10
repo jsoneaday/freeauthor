@@ -66,19 +66,13 @@ export class TopicModel implements Entity {
 }
 
 // todo: refactor
-export class WorkTopic implements Entity {
+export class WorkTopicModel implements Entity {
   constructor(
-    id: number,
-    updated_at: string,
+    public id: number,
+    public updated_at: string,
     public topic_id: number,
     public work_id: number
-  ) {
-    this.id = id;
-    this.updated_at = updated_at;
-  }
-
-  id: number;
-  updated_at: string;
+  ) {}
 }
 
 // todo: refactor

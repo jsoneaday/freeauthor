@@ -10,6 +10,7 @@ import {
   Profile,
   ResponseWithResponder,
   Topic,
+  WorkTopic,
   WorkWithAuthor,
 } from "./UIModels";
 
@@ -38,9 +39,16 @@ export class UiApi {
     title: string,
     description: string | undefined,
     content: string,
-    authorId: number
+    authorId: number,
+    topicId: number
   ): TxHashPromise {
-    return await this.#kwilApi.addWork(title, description, content, authorId);
+    return await this.#kwilApi.addWork(
+      title,
+      description,
+      content,
+      authorId,
+      topicId
+    );
   }
 
   async addProfile(
@@ -92,14 +100,16 @@ export class UiApi {
     title: string,
     description: string | undefined,
     content: string,
-    authorId: number
+    authorId: number,
+    topicId: number
   ): TxHashPromise {
     return this.#kwilApi.updateWork(
       workId,
       title,
       description,
       content,
-      authorId
+      authorId,
+      topicId
     );
   }
 
@@ -345,6 +355,31 @@ export class UiApi {
         name: topic.name,
       })) || null
     );
+  }
+
+  async getTopicByWork(workId: number): Promise<Topic | null> {
+    const topic = await this.#kwilApi.getTopicByWork(workId);
+    if (topic) {
+      return {
+        id: topic.id,
+        updatedAt: topic.updated_at,
+        name: topic.name,
+      };
+    }
+    return null;
+  }
+
+  async getWorkTopic(workId: number): Promise<WorkTopic | null> {
+    const workTopic = await this.#kwilApi.getWorkTopic(workId);
+    if (workTopic) {
+      return {
+        id: workTopic.id,
+        updatedAt: workTopic.updated_at,
+        workId: workTopic.work_id,
+        topicId: workTopic.topic_id,
+      };
+    }
+    return null;
   }
 
   async cleanDb(): TxHashPromise {

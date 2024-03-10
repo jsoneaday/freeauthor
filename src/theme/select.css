@@ -20,8 +20,7 @@ select {
   padding: 0.25em 0.5em;
   cursor: pointer;
   line-height: 1.1;
-  background-color: #fff;
-  background-image: linear-gradient(to top, #f9f9f9, #fff 33%);
+  background-color: var(--tertiary-cl);
 }
 
 .dropdown-container-row {

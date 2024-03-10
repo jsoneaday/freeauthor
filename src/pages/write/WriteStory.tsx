@@ -72,10 +72,16 @@ export function WriteStory() {
       api.getWork(Number(work_id)).then((work) => {
         if (!work) throw new Error("Work item cannot be found trying to edit");
 
-        setTitle(work.title);
-        setDescription(work.description);
-        mdRef.current?.setMarkdown(work.content);
-        setValidationMsg(validation_msg || "");
+        api
+          .getTopicByWork(work.id)
+          .then((topic) => {
+            setTitle(work.title);
+            setDescription(work.description);
+            mdRef.current?.setMarkdown(work.content);
+            setValidationMsg(validation_msg || "");
+            setSelectedTopicId(topic?.id || 0);
+          })
+          .catch((e) => console.log(e));
       });
     }
   }, [work_id]);
@@ -91,13 +97,23 @@ export function WriteStory() {
     let id: number = 0;
     try {
       setIsSubmitBtnDisabled(true);
+      console.log(
+        "addWork params",
+        title,
+        description,
+        mdRef.current?.getMarkdown() || "",
+        profile.id,
+        selectedTopicId
+      );
       const tx = await api.addWork(
         title,
         description,
         mdRef.current?.getMarkdown() || "",
-        profile.id
+        profile.id,
+        selectedTopicId
       );
-      // todo: remove when read for prod
+      // todo: remove when ready for prod
+      console.log("addWork tx", tx);
       id = await api.waitAndGetId(tx, "works");
       console.log("addWork id", id);
     } catch (e) {
@@ -123,13 +139,22 @@ export function WriteStory() {
 
     try {
       setIsSubmitBtnDisabled(true);
-      console.log("work_id:", work_id);
+      console.log(
+        "updateWork params:",
+        Number(work_id),
+        title,
+        description,
+        mdRef.current?.getMarkdown() || "",
+        profile.id,
+        selectedTopicId
+      );
       const tx = await api.updateWork(
         Number(work_id),
         title,
         description,
         mdRef.current?.getMarkdown() || "",
-        profile.id
+        profile.id,
+        selectedTopicId
       );
       console.log("updateWork tx", tx);
     } catch (e) {
