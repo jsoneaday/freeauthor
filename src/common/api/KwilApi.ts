@@ -64,7 +64,7 @@ export class KwilApi implements IKwilApi {
       $description: description || "",
       $content: content,
       $author_id: authorId,
-      $work_topic_id: workTopicId,
+      $work_topic_id: workTopicId + 1,
       $topic_id: topicId,
     };
     console.log("api addWork params", input);
@@ -229,6 +229,8 @@ export class KwilApi implements IKwilApi {
     topicId: number
   ) {
     const workTopic = await this.getWorkTopic(workId);
+    if (!workTopic)
+      throw new Error("A Work must have an associated Work Topic");
     const input = {
       $work_id: workId,
       $updated_at: formattedNow(),
@@ -236,7 +238,7 @@ export class KwilApi implements IKwilApi {
       $description: description || "",
       $content: content,
       $author_id: authorId,
-      $work_topic_id: workTopic?.id || 0,
+      $work_topic_id: workTopic.id,
       $topic_id: topicId,
     };
     console.log("api updateWork params:", input);

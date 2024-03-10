@@ -78,10 +78,11 @@ export function WriteStory() {
       console.log("work_id", work_id);
       api.getWork(Number(work_id)).then((work) => {
         if (!work) throw new Error("Work item cannot be found trying to edit");
-
+        console.log("getTopicByWork work", work);
         api
           .getTopicByWork(work.id)
           .then((topic) => {
+            console.log("getTopicByWork topic", topic);
             setTitle(work.title);
             setDescription(work.description);
             mdRef.current?.setMarkdown(work.content);
