@@ -14,6 +14,7 @@ enum WriteValidation {
   DescTooLong = "Description must be less than 250 characters",
   ContentTooShort = "You must write at least 250 characters of content",
   ContentTooLong = "Content cannot be more than 1 million characters",
+  TopicNotSelected = "A Topic must be selected",
   FieldIsValid = "",
 }
 
@@ -46,8 +47,13 @@ export function WriteStory() {
     api
       .getAllTopics()
       .then((topics) => {
+        if (!topics || topics.length === 0) {
+          setTopics([]);
+          return;
+        }
         const topicOptions =
           topics?.map((topic) => ({ name: topic.name, value: topic.id })) || [];
+        topicOptions.splice(0, 0, { name: "Select Topic", value: 0 });
         setTopics(topicOptions);
       })
       .catch((e) => console.log(e));
@@ -60,6 +66,7 @@ export function WriteStory() {
       setDescription("");
       setValidationMsg("");
       mdRef.current?.setMarkdown(PLACEHOLDER_TEXT);
+      setSelectedTopicId(0);
     } else {
       setPageState(PageState.Edit);
       setIsSubmitBtnDisabled(false);
@@ -97,14 +104,7 @@ export function WriteStory() {
     let id: number = 0;
     try {
       setIsSubmitBtnDisabled(true);
-      console.log(
-        "addWork params",
-        title,
-        description,
-        mdRef.current?.getMarkdown() || "",
-        profile.id,
-        selectedTopicId
-      );
+
       const tx = await api.addWork(
         title,
         description,
@@ -139,15 +139,6 @@ export function WriteStory() {
 
     try {
       setIsSubmitBtnDisabled(true);
-      console.log(
-        "updateWork params:",
-        Number(work_id),
-        title,
-        description,
-        mdRef.current?.getMarkdown() || "",
-        profile.id,
-        selectedTopicId
-      );
       const tx = await api.updateWork(
         Number(work_id),
         title,
@@ -184,6 +175,11 @@ export function WriteStory() {
     return WriteValidation.FieldIsValid;
   };
 
+  const validateTopic = (topicId: number) => {
+    if (topicId === 0) return WriteValidation.TopicNotSelected;
+    return WriteValidation.FieldIsValid;
+  };
+
   const onChangeTitle = (e: ChangeEvent<HTMLInputElement>) => {
     const validationMsg = validateTitle(e.target.value);
     setIsSubmitBtnDisabled(
@@ -206,6 +202,7 @@ export function WriteStory() {
     const titleValidation = validateTitle(title);
     const descValidation = validateDesc(description);
     const contentValidation = validateContent();
+    const topicValidation = validateTopic(selectedTopicId);
 
     if (titleValidation !== WriteValidation.FieldIsValid) {
       setValidationMsg(titleValidation);
@@ -216,7 +213,11 @@ export function WriteStory() {
     } else if (contentValidation !== WriteValidation.FieldIsValid) {
       setValidationMsg(contentValidation);
       return false;
+    } else if (topicValidation !== WriteValidation.FieldIsValid) {
+      setValidationMsg(topicValidation);
+      return false;
     }
+
     setValidationMsg("");
     return true;
   };
@@ -224,7 +225,14 @@ export function WriteStory() {
   const onChangeTopic = (e: React.ChangeEvent<HTMLSelectElement>) => {
     e.preventDefault();
 
-    setSelectedTopicId(e.target.value ? Number(e.target.value) : 0);
+    const currentSelectedId = e.target.value ? Number(e.target.value) : 0;
+    const validationMsg = validateTopic(currentSelectedId);
+    setIsSubmitBtnDisabled(
+      validationMsg === WriteValidation.FieldIsValid ? false : true
+    );
+
+    setSelectedTopicId(currentSelectedId);
+    setValidationMsg(validationMsg);
   };
 
   return (
