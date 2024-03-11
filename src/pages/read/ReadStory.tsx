@@ -118,7 +118,7 @@ export function ReadStory() {
   return (
     <Layout>
       <div className="home-single" style={{ marginBottom: "2em" }}>
-        <div>
+        <div style={{ width: "100%" }}>
           <h1 className="story-title" style={{ marginBottom: "1.25em" }}>
             {title}
           </h1>
