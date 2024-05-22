@@ -2,19 +2,19 @@ import {
   Avatar,
   BaseTags,
   ProfileModel,
-  QueryResponse,
+  FreeAuthQueryResponse,
   Tag,
   TopicModel,
   Work,
   WorkResponseModel,
   WorkTopicModel,
   WorkWithAuthorModel,
+  QueryResponse,
 } from "./ApiModels";
 import { IApi, TxHashPromise } from "./IApi";
 import { WebIrys, NodeIrys } from "@irys/sdk";
 import Query from "@irys/query";
 import { RPC_URL, TOKEN, TX_METADATA_URL } from "../Env";
-import BigNumber from "bignumber.js";
 import { readFileSync } from "fs";
 import bs58 from "bs58";
 
@@ -75,21 +75,18 @@ export class IrysApi implements IApi {
         },
       });
       this.#irys = await irys.ready();
-
-      this.#address = this.#irys.address;
-      console.log("address", this.#address);
     }
+
+    this.#address = this.#irys.address;
 
     this.#query = new Query({ network: this.#network });
   }
 
   async #fundText(content: string) {
     const contentSize = this.#getByteSizeOfString(content);
-    console.log("fundText contentSize", contentSize);
     const fundingAmount = await this.#Irys.getPrice(contentSize);
-    console.log("fundText fundingAmount", fundingAmount);
+    console.log("funding needed:", fundingAmount);
     await this.#Irys.fund(fundingAmount);
-    console.log("fundText funded");
   }
 
   async #fundFile(file: File) {
@@ -101,7 +98,6 @@ export class IrysApi implements IApi {
   }
 
   #getByteSizeOfString(content: string): number {
-    console.log("getByteSizeOfString", content);
     const encoder = new TextEncoder();
     const encodedString = encoder.encode(content);
     return encodedString.length;
@@ -146,6 +142,38 @@ export class IrysApi implements IApi {
     return false;
   }
 
+  async getData(entityTxId: string): Promise<null | string | ArrayBuffer> {
+    const response = await fetch(`IRYS_DATA_URL/${entityTxId}`);
+
+    if (response.ok) {
+      const contentType = response.headers.get("Content-Type");
+      if (contentType === "text/plain" || contentType === "application/json") {
+        return await response.text();
+      }
+      return new Promise(async (res, rej) => {
+        const reader = new FileReader();
+        reader.onload = function () {
+          res(reader.result);
+        };
+        reader.onerror = function () {
+          rej(reader.error);
+        };
+        reader.readAsArrayBuffer(await response.blob());
+      });
+    }
+    return null;
+  }
+
+  async arbitraryFund(amount: number): Promise<void> {
+    this.#Irys.fund(amount);
+  }
+
+  async balance(): Promise<number> {
+    return this.#Irys.utils
+      .fromAtomic(await this.#Irys.getLoadedBalance())
+      .toNumber();
+  }
+
   async addWork(
     title: string,
     description: string | undefined,
@@ -184,12 +212,20 @@ export class IrysApi implements IApi {
   }
 
   async getWork(workId: string): Promise<WorkWithAuthorModel | null> {
-    const workResponse = await this.#Query
+    const workQueryResponse = await this.#Query
       .search(SEARCH_TX)
       .ids([workId])
       .sort(DESC);
-    if (workResponse.length > 0) {
-      const work = convertQueryToWork(workResponse[0]);
+
+    if (workQueryResponse.length > 0) {
+      const workQueryResponseItem: QueryResponse = workQueryResponse[0];
+      const data = await this.getData(workQueryResponseItem.id);
+      const workResponse: FreeAuthQueryResponse = {
+        data,
+        ...workQueryResponseItem,
+      };
+      const work = convertQueryToWork(workResponse);
+
       const profile = await this.getProfile(work.author_id);
       return convertModelsToWorkWithAuthor(work, profile!);
     }
@@ -275,7 +311,6 @@ export class IrysApi implements IApi {
     userName: string,
     fullName: string,
     description: string,
-    ownerAddress: string,
     socialLinkPrimary?: string,
     socialLinkSecondary?: string,
     avatar?: Avatar
@@ -285,7 +320,7 @@ export class IrysApi implements IApi {
       { name: "userName", value: userName },
       { name: "fullName", value: fullName },
       { name: "description", value: description },
-      { name: "ownerAddress", value: ownerAddress },
+      { name: "ownerAddress", value: this.Address },
     ];
     if (avatar) {
       tags.push({
@@ -310,7 +345,6 @@ export class IrysApi implements IApi {
     userName: string,
     fullName: string,
     description: string,
-    ownerAddress: string,
     socialLinkPrimary: string,
     socialLinkSecondary: string,
     avatar?: Avatar
@@ -319,7 +353,6 @@ export class IrysApi implements IApi {
       userName,
       fullName,
       description,
-      ownerAddress,
       socialLinkPrimary,
       socialLinkSecondary,
       avatar
@@ -332,7 +365,9 @@ export class IrysApi implements IApi {
       .ids([profileId])
       .sort(DESC);
 
-    return convertQueryToProfile(result[0]);
+    const data = await this.getData(result[0].id);
+
+    return convertQueryToProfile({ data, ...result[0] });
   }
 
   async getOwnersProfile(): Promise<ProfileModel | null> {
@@ -472,7 +507,7 @@ export class IrysApi implements IApi {
   }
 }
 
-function convertQueryToWork(response: QueryResponse): Work {
+function convertQueryToWork(response: FreeAuthQueryResponse): Work {
   return new Work(
     response.id,
     response.timestamp,
@@ -483,7 +518,7 @@ function convertQueryToWork(response: QueryResponse): Work {
   );
 }
 
-function convertQueryToProfile(response: QueryResponse): ProfileModel {
+function convertQueryToProfile(response: FreeAuthQueryResponse): ProfileModel {
   return new ProfileModel(
     response.id,
     response.timestamp,

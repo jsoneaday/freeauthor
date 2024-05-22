@@ -21,6 +21,10 @@ export type QueryResponse = {
   timestamp: number;
 };
 
+export type FreeAuthQueryResponse = QueryResponse & {
+  data: undefined | null | string | ArrayBuffer;
+};
+
 export interface Entity {
   id: string;
   updated_at: number;

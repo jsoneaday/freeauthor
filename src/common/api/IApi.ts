@@ -13,6 +13,13 @@ export type TxHashPromise = Promise<string | null | undefined | UploadResponse>;
 export interface IApi {
   get Address(): string;
 
+  getData(entityTxId: string): Promise<null | string | ArrayBuffer>;
+
+  arbitraryFund(amount: number): Promise<void>;
+
+  /// Loaded balance on Irys
+  balance(): Promise<number>;
+
   addWork(
     title: string,
     /// if undefined use first few words of content
@@ -94,7 +101,6 @@ export interface IApi {
     userName: string,
     fullName: string,
     description: string,
-    ownerAddress: string,
     socialLinkPrimary?: string,
     socialLinkSecondary?: string,
     avatar?: Avatar
@@ -104,7 +110,6 @@ export interface IApi {
     userName: string,
     fullName: string,
     description: string,
-    ownerAddress: string,
     socialLinkPrimary: string,
     socialLinkSecondary: string,
     avatar?: Avatar
