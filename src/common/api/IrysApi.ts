@@ -2,7 +2,7 @@ import {
   Avatar,
   BaseTags,
   ProfileModel,
-  FreeAuthQueryResponse,
+  QueryResponseWithData,
   Tag,
   TopicModel,
   Work,
@@ -14,7 +14,7 @@ import {
 import { IApi, TxHashPromise } from "./IApi";
 import { WebIrys, NodeIrys } from "@irys/sdk";
 import Query from "@irys/query";
-import { RPC_URL, TOKEN, TX_METADATA_URL } from "../Env";
+import { IRYS_DATA_URL, RPC_URL, TOKEN, TX_METADATA_URL } from "../Env";
 import { readFileSync } from "fs";
 import bs58 from "bs58";
 
@@ -103,37 +103,49 @@ export class IrysApi implements IApi {
     return encodedString.length;
   }
 
-  async #uploadText(content: string, tags: Tag[]): TxHashPromise {
-    await this.#fundText(content);
+  async #uploadText(
+    content: string,
+    tags: Tag[],
+    fund: boolean
+  ): TxHashPromise {
+    if (fund) await this.#fundText(content);
 
     return await this.#Irys.upload(content, {
       tags: [...BaseTags, ...tags],
     });
   }
 
-  async #uploadFile(file: File | string, tags: Tag[]): TxHashPromise {
+  async #uploadFile(
+    file: File | string,
+    tags: Tag[],
+    fund: boolean
+  ): TxHashPromise {
     if (typeof file == "string") {
-      return await this.#uploadFileFromPath(file, tags);
+      return await this.#uploadFileFromPath(file, tags, fund);
     }
-    await this.#fundFile(file);
+    if (fund) await this.#fundFile(file);
     return await (this.#Irys as WebIrys).uploadFile(file, {
       tags: [...BaseTags, ...tags],
     });
   }
 
-  async #uploadFileFromPath(path: string, tags: Tag[]): TxHashPromise {
+  async #uploadFileFromPath(
+    path: string,
+    tags: Tag[],
+    fund: boolean
+  ): TxHashPromise {
     const file = readFileSync(path);
-    await this.#fundFileBuffer(file);
+    if (fund) await this.#fundFileBuffer(file);
     return await (this.#Irys as NodeIrys).uploadFile(path, {
       tags: [...BaseTags, ...tags],
     });
   }
 
   async #confirmEntityOwner(
-    _txId: string,
+    txId: string,
     _verificationAddress: string
   ): Promise<boolean> {
-    const result = await fetch(TX_METADATA_URL);
+    const result = await fetch(`${TX_METADATA_URL}/${txId}`);
     if (result.ok) {
       const txMeta = await result.json();
       console.log("txMeta", txMeta);
@@ -143,7 +155,7 @@ export class IrysApi implements IApi {
   }
 
   async getData(entityTxId: string): Promise<null | string | ArrayBuffer> {
-    const response = await fetch(`IRYS_DATA_URL/${entityTxId}`);
+    const response = await fetch(`${IRYS_DATA_URL}/${entityTxId}`);
 
     if (response.ok) {
       const contentType = response.headers.get("Content-Type");
@@ -179,7 +191,8 @@ export class IrysApi implements IApi {
     description: string | undefined,
     content: string,
     authorId: string,
-    topicId: string
+    topicId: string,
+    fund: boolean = false
   ): TxHashPromise {
     let _desc = !description
       ? content.substring(0, content.length < 20 ? content.length : 20)
@@ -194,7 +207,7 @@ export class IrysApi implements IApi {
       { name: "topicId", value: topicId.toString() },
     ];
 
-    return await this.#uploadText(content, tags);
+    return await this.#uploadText(content, tags, fund);
   }
 
   async updateWork(
@@ -203,12 +216,20 @@ export class IrysApi implements IApi {
     content: string,
     authorId: string,
     topicId: string,
-    priorWorkId: string
+    priorWorkId: string,
+    fund: boolean = false
   ): TxHashPromise {
     if (!(await this.#confirmEntityOwner(priorWorkId, this.Address))) {
       throw new Error("");
     }
-    return await this.addWork(title, description, content, authorId, topicId);
+    return await this.addWork(
+      title,
+      description,
+      content,
+      authorId,
+      topicId,
+      fund
+    );
   }
 
   async getWork(workId: string): Promise<WorkWithAuthorModel | null> {
@@ -220,7 +241,7 @@ export class IrysApi implements IApi {
     if (workQueryResponse.length > 0) {
       const workQueryResponseItem: QueryResponse = workQueryResponse[0];
       const data = await this.getData(workQueryResponseItem.id);
-      const workResponse: FreeAuthQueryResponse = {
+      const workResponse: QueryResponseWithData = {
         data,
         ...workQueryResponseItem,
       };
@@ -311,6 +332,7 @@ export class IrysApi implements IApi {
     userName: string,
     fullName: string,
     description: string,
+    fund: boolean = false,
     socialLinkPrimary?: string,
     socialLinkSecondary?: string,
     avatar?: Avatar
@@ -336,23 +358,25 @@ export class IrysApi implements IApi {
     }
 
     if (!avatar) {
-      return await this.#uploadText("", tags);
+      return await this.#uploadText("", tags, fund);
     }
-    return await this.#uploadFile(avatar.file, tags);
+    return await this.#uploadFile(avatar.file, tags, fund);
   }
 
   async updateProfile(
     userName: string,
     fullName: string,
     description: string,
-    socialLinkPrimary: string,
-    socialLinkSecondary: string,
+    fund: boolean = false,
+    socialLinkPrimary?: string,
+    socialLinkSecondary?: string,
     avatar?: Avatar
   ): TxHashPromise {
     return await this.addProfile(
       userName,
       fullName,
       description,
+      fund,
       socialLinkPrimary,
       socialLinkSecondary,
       avatar
@@ -388,7 +412,8 @@ export class IrysApi implements IApi {
   async addWorkResponse(
     content: string,
     workId: number,
-    responderId: number
+    responderId: number,
+    fund: boolean = false
   ): TxHashPromise {
     const tags = [
       { name: "Content-Type", value: "text/html" },
@@ -397,7 +422,7 @@ export class IrysApi implements IApi {
       { name: "responderId", value: responderId.toString() },
     ];
 
-    return await this.#uploadText(content, tags);
+    return await this.#uploadText(content, tags, fund);
   }
 
   async getWorkResponses(
@@ -430,52 +455,64 @@ export class IrysApi implements IApi {
     throw new Error("Not implemented");
   }
 
-  async addFollow(followerId: number, followedId: number): TxHashPromise {
+  async addFollow(
+    followerId: number,
+    followedId: number,
+    fund: boolean = false
+  ): TxHashPromise {
     const tags = [
       { name: "Entity-Type", value: "Follow" },
       { name: "followerId", value: followerId.toString() },
       { name: "followedId", value: followedId.toString() },
     ];
 
-    return await this.#uploadText("", tags);
+    return await this.#uploadText("", tags, fund);
   }
   async removeFollow(_followerId: number, _followedId: number): TxHashPromise {
     throw new Error("Not implemented");
   }
 
-  async addTopic(name: string): TxHashPromise {
+  async addTopic(name: string, fund: boolean = false): TxHashPromise {
     const tags = [
       { name: "Entity-Type", value: "Topic" },
       { name: "name", value: name },
     ];
 
-    return await this.#uploadText("", tags);
+    return await this.#uploadText("", tags, fund);
   }
   async removeTopic(_name: string): TxHashPromise {
     throw new Error("Not implemented");
   }
 
-  async addWorkTopic(topicId: number, workId: number): TxHashPromise {
+  async addWorkTopic(
+    topicId: number,
+    workId: number,
+    fund: boolean = false
+  ): TxHashPromise {
     const tags = [
       { name: "Entity-Type", value: "WorkTopic" },
       { name: "topicId", value: topicId.toString() },
       { name: "workId", value: workId.toString() },
     ];
 
-    return await this.#uploadText("", tags);
+    return await this.#uploadText("", tags, fund);
   }
   async removeWorkTopic(_topicId: number, _workId: number): TxHashPromise {
     throw new Error("Not implemented");
   }
 
-  async addWorkLike(workId: number, likerId: number): TxHashPromise {
+  async addWorkLike(
+    workId: number,
+    likerId: number,
+    fund: boolean = false
+  ): TxHashPromise {
     const tags = [
       { name: "Entity-Type", value: "WorkLike" },
       { name: "workId", value: workId.toString() },
       { name: "likerId", value: likerId.toString() },
     ];
 
-    return await this.#uploadText("", tags);
+    return await this.#uploadText("", tags, fund);
   }
   async removeWorkLike(_workId: number, _likerId: number): TxHashPromise {
     throw new Error("Not implemented");
@@ -507,7 +544,7 @@ export class IrysApi implements IApi {
   }
 }
 
-function convertQueryToWork(response: FreeAuthQueryResponse): Work {
+function convertQueryToWork(response: QueryResponseWithData): Work {
   return new Work(
     response.id,
     response.timestamp,
@@ -518,7 +555,7 @@ function convertQueryToWork(response: FreeAuthQueryResponse): Work {
   );
 }
 
-function convertQueryToProfile(response: FreeAuthQueryResponse): ProfileModel {
+function convertQueryToProfile(response: QueryResponseWithData): ProfileModel {
   return new ProfileModel(
     response.id,
     response.timestamp,

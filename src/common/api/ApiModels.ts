@@ -21,7 +21,7 @@ export type QueryResponse = {
   timestamp: number;
 };
 
-export type FreeAuthQueryResponse = QueryResponse & {
+export type QueryResponseWithData = QueryResponse & {
   data: undefined | null | string | ArrayBuffer;
 };
 

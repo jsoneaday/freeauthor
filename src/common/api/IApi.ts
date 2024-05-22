@@ -27,7 +27,8 @@ export interface IApi {
     /// should be html
     content: string,
     authorId: string,
-    topicId: string
+    topicId: string,
+    fund?: boolean
   ): TxHashPromise;
 
   updateWork(
@@ -36,7 +37,8 @@ export interface IApi {
     content: string,
     authorId: string,
     topicId: string,
-    priorWorkId: string
+    priorWorkId: string,
+    fund?: boolean
   ): TxHashPromise;
 
   /// workId is transaction id
@@ -101,6 +103,7 @@ export interface IApi {
     userName: string,
     fullName: string,
     description: string,
+    fund?: boolean,
     socialLinkPrimary?: string,
     socialLinkSecondary?: string,
     avatar?: Avatar
@@ -110,8 +113,9 @@ export interface IApi {
     userName: string,
     fullName: string,
     description: string,
-    socialLinkPrimary: string,
-    socialLinkSecondary: string,
+    fund?: boolean,
+    socialLinkPrimary?: string,
+    socialLinkSecondary?: string,
     avatar?: Avatar
   ): TxHashPromise;
 
@@ -123,7 +127,8 @@ export interface IApi {
   addWorkResponse(
     content: string,
     workId: number,
-    responderId: number
+    responderId: number,
+    fund?: boolean
   ): TxHashPromise;
 
   getWorkResponses(
@@ -151,16 +156,20 @@ export interface IApi {
   isConnected(): Promise<boolean>;
   connect(walletProvider?: object): Promise<void>;
 
-  addFollow(followerId: number, followedId: number): TxHashPromise;
+  addFollow(
+    followerId: number,
+    followedId: number,
+    fund?: boolean
+  ): TxHashPromise;
   removeFollow(followerId: number, followedId: number): TxHashPromise;
 
-  addTopic(name: string): TxHashPromise;
+  addTopic(name: string, fund?: boolean): TxHashPromise;
   removeTopic(name: string): TxHashPromise;
 
-  addWorkTopic(topicId: number, workId: number): TxHashPromise;
+  addWorkTopic(topicId: number, workId: number, fund?: boolean): TxHashPromise;
   removeWorkTopic(topicId: number, workId: number): TxHashPromise;
 
-  addWorkLike(workId: number, likerId: number): TxHashPromise;
+  addWorkLike(workId: number, likerId: number, fund?: boolean): TxHashPromise;
   removeWorkLike(workId: number, likerId: number): TxHashPromise;
 
   /// Used to wait for tx completion and then get entity id
