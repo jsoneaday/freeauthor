@@ -61,8 +61,11 @@ export class IrysApi implements IApi {
       });
       this.#irys = await webIrys.ready();
     } else {
-      const keyBuffer = Buffer.from(import.meta.env.VITE_SOLANA_KEY);
+      const keyBuffer = Uint8Array.from(
+        JSON.parse(import.meta.env.VITE_SOLANA_KEY)
+      );
       const key = bs58.encode(keyBuffer);
+
       const irys = new NodeIrys({
         network: this.#network,
         token: this.#token,
@@ -72,6 +75,9 @@ export class IrysApi implements IApi {
         },
       });
       this.#irys = await irys.ready();
+
+      this.#address = this.#irys.address;
+      console.log("address", this.#address);
     }
 
     this.#query = new Query({ network: this.#network });
@@ -79,28 +85,31 @@ export class IrysApi implements IApi {
 
   async #fundText(content: string) {
     const contentSize = this.#getByteSizeOfString(content);
-    const fundingSize = this.#Irys.utils.toAtomic(contentSize);
-    console.log("fundText fundingSize", fundingSize);
-    await this.#Irys.fund(fundingSize);
+    console.log("fundText contentSize", contentSize);
+    const fundingAmount = await this.#Irys.getPrice(contentSize);
+    console.log("fundText fundingAmount", fundingAmount);
+    await this.#Irys.fund(fundingAmount);
+    console.log("fundText funded");
   }
 
   async #fundFile(file: File) {
-    await this.#Irys.fund(this.#Irys.utils.toAtomic(file.size));
+    await this.#Irys.fund(await this.#Irys.getPrice(file.size));
   }
 
   async #fundFileBuffer(file: Buffer) {
-    await this.#Irys.fund(this.#Irys.utils.toAtomic(file.byteLength));
+    await this.#Irys.fund(await this.#Irys.getPrice(file.byteLength));
   }
 
-  #getByteSizeOfString(content: string): BigNumber {
+  #getByteSizeOfString(content: string): number {
     console.log("getByteSizeOfString", content);
     const encoder = new TextEncoder();
     const encodedString = encoder.encode(content);
-    return new BigNumber(encodedString.length);
+    return encodedString.length;
   }
 
   async #uploadText(content: string, tags: Tag[]): TxHashPromise {
     await this.#fundText(content);
+
     return await this.#Irys.upload(content, {
       tags: [...BaseTags, ...tags],
     });
