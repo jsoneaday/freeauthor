@@ -1,6 +1,4 @@
-import { IKwilApi, TxHashPromise } from "../api/IKwilApi";
-import { FakeKwilApi } from "../../common/api/FakeKwilApi";
-import { KwilApi } from "../api/KwilApi";
+import { IApi, TxHashPromise } from "../api/IApi";
 import {
   ProfileModel,
   WorkResponseModel,
@@ -15,24 +13,30 @@ import {
 } from "./UIModels";
 
 export class UiApi {
-  #_kwilApi: IKwilApi | null = null;
-  get #kwilApi(): IKwilApi {
-    return this.#_kwilApi!;
+  #_api: IApi | null = null;
+  get #Api(): IApi {
+    return this.#_api!;
   }
 
   get Address() {
-    return this.#kwilApi.Address;
+    return this.#Api.Address;
   }
 
-  async connect(environment: string) {
-    if (environment === "development") {
-      this.#_kwilApi = new FakeKwilApi(
-        "0xE7DCCAE2d95A1cB1E30E07477207065A9EDf6D38"
-      );
-    } else {
-      this.#_kwilApi = new KwilApi();
-      await this.#_kwilApi.connect();
+  /// Pass api instance here
+  /// e.g. new FakeApi("0xE7DCCAE2d95A1cB1E30E07477207065A9EDf6D38")
+  constructor(apiObj: IApi, walletProvider: object) {
+    this.#_api = apiObj;
+    if (!this.isConnected()) {
+      this.connect(walletProvider);
     }
+  }
+
+  async isConnected(): Promise<boolean> {
+    return await this.#Api?.isConnected();
+  }
+
+  async connect(walletProvider: object) {
+    await this.#Api.connect(walletProvider);
   }
 
   async addWork(
@@ -42,7 +46,7 @@ export class UiApi {
     authorId: number,
     topicId: number
   ): TxHashPromise {
-    return await this.#kwilApi.addWork(
+    return await this.#Api.addWork(
       title,
       description,
       content,
@@ -59,7 +63,7 @@ export class UiApi {
     socialLinkPrimary: string,
     socialLinkSecond: string
   ): TxHashPromise {
-    return await this.#kwilApi.addProfile(
+    return await this.#Api.addProfile(
       userName,
       fullName,
       description,
@@ -69,30 +73,30 @@ export class UiApi {
     );
   }
   async addFollow(followerId: number, followedId: number): TxHashPromise {
-    return await this.#kwilApi.addFollow(followerId, followedId);
+    return await this.#Api.addFollow(followerId, followedId);
   }
   async addTopic(name: string): TxHashPromise {
-    return await this.#kwilApi.addTopic(name);
+    return await this.#Api.addTopic(name);
   }
   async addWorkTopic(topicId: number, workId: number): TxHashPromise {
-    return await this.#kwilApi.addWorkTopic(topicId, workId);
+    return await this.#Api.addWorkTopic(topicId, workId);
   }
   async addWorkLikes(workId: number, likerId: number): TxHashPromise {
-    return await this.#kwilApi.addWorkLikes(workId, likerId);
+    return await this.#Api.addWorkLike(workId, likerId);
   }
   async addWorkResponse(
     content: string,
     workId: number,
     responderId: number
   ): TxHashPromise {
-    return await this.#kwilApi.addWorkResponse(content, workId, responderId);
+    return await this.#Api.addWorkResponse(content, workId, responderId);
   }
 
   async waitAndGetId(
     tx: string | null | undefined,
     entityType?: string
   ): Promise<number> {
-    return await this.#kwilApi.waitAndGetId(tx, entityType);
+    return await this.#Api.waitAndGetId(tx, entityType);
   }
 
   async updateWork(
@@ -103,7 +107,7 @@ export class UiApi {
     authorId: number,
     topicId: number
   ): TxHashPromise {
-    return this.#kwilApi.updateWork(
+    return this.#Api.updateWork(
       workId,
       title,
       description,
@@ -121,7 +125,7 @@ export class UiApi {
     socialLinkPrimary: string,
     socialLinkSecond: string
   ): TxHashPromise {
-    return this.#kwilApi.updateProfile(
+    return this.#Api.updateProfile(
       profileId,
       userName,
       fullName,
@@ -132,31 +136,31 @@ export class UiApi {
   }
 
   async getProfile(profileId: number): Promise<Profile | null> {
-    const profile = await this.#kwilApi.getProfile(profileId);
+    const profile = await this.#Api.getProfile(profileId);
     if (profile) return this.#getProfile(profile);
     return null;
   }
 
   async getOwnersProfile(): Promise<Profile | null> {
-    const profile = await this.#kwilApi.getOwnersProfile();
+    const profile = await this.#Api.getOwnersProfile();
     if (profile) return this.#getProfile(profile);
     return null;
   }
 
   async getFollowedProfiles(profileId: number): Promise<Profile[] | null> {
-    const profiles = await this.#kwilApi.getFollowedProfiles(profileId);
+    const profiles = await this.#Api.getFollowedProfiles(profileId);
     if (profiles) return this.#getProfiles(profiles);
     return null;
   }
 
   async getFollowerProfiles(profileId: number): Promise<Profile[] | null> {
-    const profiles = await this.#kwilApi.getFollowerProfiles(profileId);
+    const profiles = await this.#Api.getFollowerProfiles(profileId);
     if (profiles) return this.#getProfiles(profiles);
     return null;
   }
 
   async getWork(workId: number): Promise<WorkWithAuthor | null> {
-    const work = await this.#kwilApi.getWork(workId);
+    const work = await this.#Api.getWork(workId);
     if (work) return this.#getWorkWithAuthor(work);
     return null;
   }
@@ -165,7 +169,7 @@ export class UiApi {
     searchTxt: string,
     pageSize: number
   ): Promise<WorkWithAuthor[] | null> {
-    const works = await this.#kwilApi.searchWorksTop(searchTxt, pageSize);
+    const works = await this.#Api.searchWorksTop(searchTxt, pageSize);
     if (works) return this.#getWorkWithAuthors(works);
     return null;
   }
@@ -175,11 +179,7 @@ export class UiApi {
     lastKeyset: number,
     pageSize: number
   ): Promise<WorkWithAuthor[] | null> {
-    const works = await this.#kwilApi.searchWorks(
-      searchTxt,
-      lastKeyset,
-      pageSize
-    );
+    const works = await this.#Api.searchWorks(searchTxt, lastKeyset, pageSize);
     if (works) return this.#getWorkWithAuthors(works);
     return null;
   }
@@ -189,7 +189,7 @@ export class UiApi {
     lastKeyset: number,
     pageSize: number
   ): Promise<WorkWithAuthor[] | null> {
-    const works = await this.#kwilApi.getWorksByAllFollowed(
+    const works = await this.#Api.getWorksByAllFollowed(
       followerId,
       lastKeyset,
       pageSize
@@ -202,7 +202,7 @@ export class UiApi {
     followerId: number,
     pageSize: number
   ): Promise<WorkWithAuthor[] | null> {
-    const works = await this.#kwilApi.getWorksByAllFollowedTop(
+    const works = await this.#Api.getWorksByAllFollowedTop(
       followerId,
       pageSize
     );
@@ -215,7 +215,7 @@ export class UiApi {
     lastKeyset: number,
     pageSize: number
   ): Promise<WorkWithAuthor[] | null> {
-    const works = await this.#kwilApi.getWorksByOneFollowed(
+    const works = await this.#Api.getWorksByOneFollowed(
       followedId,
       lastKeyset,
       pageSize
@@ -228,7 +228,7 @@ export class UiApi {
     followedId: number,
     pageSize: number
   ): Promise<WorkWithAuthor[] | null> {
-    const works = await this.#kwilApi.getWorksByOneFollowedTop(
+    const works = await this.#Api.getWorksByOneFollowedTop(
       followedId,
       pageSize
     );
@@ -241,7 +241,7 @@ export class UiApi {
     lastKeyset: number,
     pageSize: number
   ): Promise<WorkWithAuthor[] | null> {
-    const works = await this.#kwilApi.getAuthorWorks(
+    const works = await this.#Api.getAuthorWorks(
       authorId,
       lastKeyset,
       pageSize
@@ -254,7 +254,7 @@ export class UiApi {
     authorId: number,
     pageSize: number
   ): Promise<WorkWithAuthor[] | null> {
-    const works = await this.#kwilApi.getAuthorWorksTop(authorId, pageSize);
+    const works = await this.#Api.getAuthorWorksTop(authorId, pageSize);
     if (works) return this.#getWorkWithAuthors(works);
     return null;
   }
@@ -264,7 +264,7 @@ export class UiApi {
     lastKeyset: number,
     pageSize: number
   ): Promise<WorkWithAuthor[] | null> {
-    const works = await this.#kwilApi.getWorksByTopic(
+    const works = await this.#Api.getWorksByTopic(
       topicId,
       lastKeyset,
       pageSize
@@ -277,13 +277,13 @@ export class UiApi {
     topicId: number,
     pageSize: number
   ): Promise<WorkWithAuthor[] | null> {
-    const works = await this.#kwilApi.getWorksByTopicTop(topicId, pageSize);
+    const works = await this.#Api.getWorksByTopicTop(topicId, pageSize);
     if (works) return this.#getWorkWithAuthors(works);
     return null;
   }
 
   async getWorkLikeCount(workId: number): Promise<number> {
-    return await this.#kwilApi.getWorkLikeCount(workId);
+    return await this.#Api.getWorkLikeCount(workId);
   }
 
   async getWorkResponses(
@@ -291,7 +291,7 @@ export class UiApi {
     lastKeyset: number,
     pageSize: number
   ): Promise<ResponseWithResponder[] | null> {
-    const responses = await this.#kwilApi.getWorkResponses(
+    const responses = await this.#Api.getWorkResponses(
       workId,
       lastKeyset,
       pageSize
@@ -304,7 +304,7 @@ export class UiApi {
     workId: number,
     pageSize: number
   ): Promise<ResponseWithResponder[] | null> {
-    const responses = await this.#kwilApi.getWorkResponsesTop(workId, pageSize);
+    const responses = await this.#Api.getWorkResponsesTop(workId, pageSize);
     if (responses) return this.#getResponseWithResponders(responses);
     return null;
   }
@@ -314,7 +314,7 @@ export class UiApi {
     lastKeyset: number,
     pageSize: number
   ): Promise<ResponseWithResponder[] | null> {
-    const responses = await this.#kwilApi.getWorkResponsesByProfile(
+    const responses = await this.#Api.getWorkResponsesByProfile(
       profileId,
       lastKeyset,
       pageSize
@@ -327,7 +327,7 @@ export class UiApi {
     profileId: number,
     pageSize: number
   ): Promise<ResponseWithResponder[] | null> {
-    const responses = await this.#kwilApi.getWorkResponsesByProfileTop(
+    const responses = await this.#Api.getWorkResponsesByProfileTop(
       profileId,
       pageSize
     );
@@ -336,18 +336,18 @@ export class UiApi {
   }
 
   async getWorkResponseCount(workId: number): Promise<number> {
-    return await this.#kwilApi.getWorkResponseCount(workId);
+    return await this.#Api.getWorkResponseCount(workId);
   }
 
   async getFollowedCount(profileId: number): Promise<number> {
-    return this.#kwilApi.getFollowedCount(profileId);
+    return this.#Api.getFollowedCount(profileId);
   }
   async getFollowerCount(profileId: number): Promise<number> {
-    return this.#kwilApi.getFollowerCount(profileId);
+    return this.#Api.getFollowerCount(profileId);
   }
 
   async getAllTopics(): Promise<Topic[] | null> {
-    const topics = await this.#kwilApi.getAllTopics();
+    const topics = await this.#Api.getAllTopics();
     return (
       topics?.map((topic) => ({
         id: topic.id,
@@ -358,7 +358,7 @@ export class UiApi {
   }
 
   async getTopicByWork(workId: number): Promise<Topic | null> {
-    const topic = await this.#kwilApi.getTopicByWork(workId);
+    const topic = await this.#Api.getTopicByWork(workId);
     if (topic) {
       return {
         id: topic.id,
@@ -370,7 +370,7 @@ export class UiApi {
   }
 
   async getWorkTopic(workId: number): Promise<WorkTopic | null> {
-    const workTopic = await this.#kwilApi.getWorkTopic(workId);
+    const workTopic = await this.#Api.getWorkTopic(workId);
     if (workTopic) {
       return {
         id: workTopic.id,
@@ -383,11 +383,11 @@ export class UiApi {
   }
 
   async cleanDb(): TxHashPromise {
-    return await this.#kwilApi.cleanDb();
+    return await this.#Api.cleanDb();
   }
 
   async setupData(): TxHashPromise {
-    return await this.#kwilApi.setupData();
+    return await this.#Api.setupData();
   }
 
   #getResponseWithResponders(responses: WorkResponseModel[]) {

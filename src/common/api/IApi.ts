@@ -1,4 +1,6 @@
+import { UploadResponse } from "@irys/sdk/common/types";
 import {
+  Avatar,
   ProfileModel,
   TopicModel,
   WorkResponseModel,
@@ -6,68 +8,32 @@ import {
   WorkWithAuthorModel,
 } from "./ApiModels";
 
-export type TxHashPromise = Promise<string | null | undefined>;
+export type TxHashPromise = Promise<string | null | undefined | UploadResponse>;
 
-export interface IKwilApi {
+export interface IApi {
   get Address(): string;
-  connect(): Promise<void>;
 
   addWork(
     title: string,
+    /// if undefined use first few words of content
     description: string | undefined,
+    /// should be html
     content: string,
-    authorId: number,
-    topicId: number
+    authorId: string,
+    topicId: string
   ): TxHashPromise;
-  addProfile(
-    userName: string,
-    fullName: string,
-    description: string,
-    ownerAddress: string,
-    socialLinkPrimary: string,
-    socialLinkSecond: string
-  ): TxHashPromise;
-  addFollow(followerId: number, followedId: number): TxHashPromise;
-  addTopic(name: string): TxHashPromise;
-  addWorkTopic(topicId: number, workId: number): TxHashPromise;
-  addWorkLikes(workId: number, likerId: number): TxHashPromise;
-  addWorkResponse(
-    content: string,
-    workId: number,
-    responderId: number
-  ): TxHashPromise;
-
-  /// Used to wait for tx completion and then get entity id
-  waitAndGetId(
-    tx: string | null | undefined,
-    entityType?: string
-  ): Promise<number>;
 
   updateWork(
-    workId: number,
     title: string,
     description: string | undefined,
     content: string,
-    authorId: number,
-    topicId: number
+    authorId: string,
+    topicId: string,
+    priorWorkId: string
   ): TxHashPromise;
 
-  updateProfile(
-    profileId: number,
-    userName: string,
-    fullName: string,
-    description: string,
-    socialLinkPrimary: string,
-    socialLinkSecond: string
-  ): TxHashPromise;
-
-  getProfile(profileId: number): Promise<ProfileModel | null>;
-  getOwnersProfile(): Promise<ProfileModel | null>;
-
-  getFollowedProfiles(profileId: number): Promise<ProfileModel[] | null>;
-  getFollowerProfiles(profileId: number): Promise<ProfileModel[] | null>;
-
-  getWork(workId: number): Promise<WorkWithAuthorModel | null>;
+  /// workId is transaction id
+  getWork(workId: string): Promise<WorkWithAuthorModel | null>;
 
   searchWorksTop(
     searchTxt: string,
@@ -124,7 +90,36 @@ export interface IKwilApi {
     pageSize: number
   ): Promise<WorkWithAuthorModel[] | null>;
 
-  getWorkLikeCount(workId: number): Promise<number>;
+  addProfile(
+    userName: string,
+    fullName: string,
+    description: string,
+    ownerAddress: string,
+    socialLinkPrimary?: string,
+    socialLinkSecondary?: string,
+    avatar?: Avatar
+  ): TxHashPromise;
+
+  updateProfile(
+    userName: string,
+    fullName: string,
+    description: string,
+    ownerAddress: string,
+    socialLinkPrimary: string,
+    socialLinkSecondary: string,
+    avatar?: Avatar
+  ): TxHashPromise;
+
+  getProfile(profileId: string): Promise<ProfileModel | null>;
+  getOwnersProfile(): Promise<ProfileModel | null>;
+  getFollowedProfiles(profileId: number): Promise<ProfileModel[] | null>;
+  getFollowerProfiles(profileId: number): Promise<ProfileModel[] | null>;
+
+  addWorkResponse(
+    content: string,
+    workId: number,
+    responderId: number
+  ): TxHashPromise;
 
   getWorkResponses(
     workId: number,
@@ -148,6 +143,29 @@ export interface IKwilApi {
     pageSize: number
   ): Promise<WorkResponseModel[] | null>;
 
+  isConnected(): Promise<boolean>;
+  connect(walletProvider?: object): Promise<void>;
+
+  addFollow(followerId: number, followedId: number): TxHashPromise;
+  removeFollow(followerId: number, followedId: number): TxHashPromise;
+
+  addTopic(name: string): TxHashPromise;
+  removeTopic(name: string): TxHashPromise;
+
+  addWorkTopic(topicId: number, workId: number): TxHashPromise;
+  removeWorkTopic(topicId: number, workId: number): TxHashPromise;
+
+  addWorkLike(workId: number, likerId: number): TxHashPromise;
+  removeWorkLike(workId: number, likerId: number): TxHashPromise;
+
+  /// Used to wait for tx completion and then get entity id
+  // waitAndGetId(
+  //   tx: string | null | undefined,
+  //   entityType?: string
+  // ): Promise<number>;
+
+  getWorkLikeCount(workId: number): Promise<number>;
+
   getWorkResponseCount(workId: number): Promise<number>;
 
   getFollowedCount(profileId: number): Promise<number>;
@@ -157,6 +175,6 @@ export interface IKwilApi {
   getWorkTopic(workId: number): Promise<WorkTopicModel | null>;
   getTopicByWork(workId: number): Promise<TopicModel | null>;
 
-  cleanDb(): TxHashPromise;
-  setupData(): TxHashPromise;
+  // cleanDb(): TxHashPromise;
+  // setupData(): TxHashPromise;
 }

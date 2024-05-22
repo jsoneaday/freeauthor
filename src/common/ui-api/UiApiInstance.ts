@@ -1,6 +1,12 @@
+import { IApi } from "../api/IApi";
 import { UiApi } from "./UiApi";
 
-const uiApi = new UiApi();
-await uiApi.connect("");
+let uiApi: UiApi;
 
-export const api = uiApi;
+/// always returns same instance
+export async function initOrGetUiApi(apiObj: IApi, walletProvider: object) {
+  if (!uiApi) {
+    uiApi = new UiApi(apiObj, walletProvider);
+  }
+  return uiApi;
+}

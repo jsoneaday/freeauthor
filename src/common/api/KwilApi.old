@@ -12,9 +12,9 @@ import {
   WorkWithAuthorModel,
 } from "./ApiModels";
 import { MsgReceipt } from "@kwilteam/kwil-js/dist/core/message";
-import { IKwilApi, TxHashPromise } from "./IKwilApi";
+import { IApi, TxHashPromise } from "./IApi";
 
-export class KwilApi implements IKwilApi {
+export class KwilApi implements IApi {
   #provider: BrowserProvider | undefined;
   #signer: JsonRpcSigner | undefined;
   #address: string | undefined;
@@ -30,6 +30,10 @@ export class KwilApi implements IKwilApi {
   #dbid: string = "";
   #kwilProvider: string = "https://testnet.kwil.com";
   #chainId: string = "kwil-chain-testnet-0.6";
+
+  async isConnected(): Promise<boolean> {
+    return this.#provider ? true : false;
+  }
 
   async connect() {
     this.#provider = new BrowserProvider(window.ethereum);
@@ -176,7 +180,7 @@ export class KwilApi implements IKwilApi {
     );
   }
 
-  async addWorkLikes(workId: number, likerId: number) {
+  async addWorkLike(workId: number, likerId: number) {
     let id = await this.#getLastId("get_last_like_id");
 
     const actionBody = {

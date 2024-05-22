@@ -1,37 +1,72 @@
+export const BaseTags = [
+  { name: "App", value: "FreeAuth" },
+  { name: "Version", value: "1.0" },
+];
+
+export type QueryResponse = {
+  id: string;
+  receipt: {
+    deadlineHeight: number;
+    signature: string;
+    timestamp: number;
+    version: string;
+  };
+  tags: {
+    name: string;
+    value: string;
+  }[];
+  address: string;
+  token: string;
+  signature: string;
+  timestamp: number;
+};
+
 export interface Entity {
-  id: number;
-  updated_at: string;
+  id: string;
+  updated_at: number;
 }
 
+export type Tag = {
+  name: string;
+  value: string;
+};
+
+export type Avatar = {
+  file: File;
+  fileExtension: string;
+};
+
+/// The content
 export class Work implements Entity {
   constructor(
-    public id: number,
-    public updated_at: string,
+    public id: string,
+    public updated_at: number,
     public title: string,
     public content: string,
-    public author_id: number,
+    public author_id: string,
     public description: string | undefined
   ) {}
 }
 
 export class WorkWithAuthorModel implements Entity {
   constructor(
-    public id: number,
-    public updated_at: string,
+    public id: string,
+    public updated_at: number,
     public title: string,
     public content: string,
     public description: string | undefined,
-    public author_id: number,
+    public author_id: string,
     public username: string,
     public fullname: string,
     public profileDesc: string
   ) {}
 }
 
+/// Details about the author
 export class ProfileModel implements Entity {
   constructor(
-    public id: number,
-    public updated_at: string,
+    public id: string,
+    public updated_at: number,
     public username: string,
     public fullname: string,
     public description: string,
@@ -41,77 +76,58 @@ export class ProfileModel implements Entity {
   ) {}
 }
 
-// todo: refactor
+/// Profile follower and the Profile being followed
 export class Follow implements Entity {
   constructor(
-    id: number,
-    updated_at: string,
+    public id: string,
+    public updated_at: number,
     public follower_id: number,
     public followed_id: number
-  ) {
-    this.id = id;
-    this.updated_at = updated_at;
-  }
-
-  id: number;
-  updated_at: string;
+  ) {}
 }
 
+/// Content category
 export class TopicModel implements Entity {
   constructor(
-    public id: number,
-    public updated_at: string,
+    public id: string,
+    public updated_at: number,
     public name: string
   ) {}
 }
 
-// todo: refactor
 export class WorkTopicModel implements Entity {
   constructor(
-    public id: number,
-    public updated_at: string,
+    public id: string,
+    public updated_at: number,
     public topic_id: number,
     public work_id: number
   ) {}
 }
 
-// todo: refactor
 export class WorkLike implements Entity {
   constructor(
-    id: number,
-    updated_at: string,
+    public id: string,
+    public updated_at: number,
     public work_id: number,
     public liker_id: number
-  ) {
-    this.id = id;
-    this.updated_at = updated_at;
-  }
-
-  id: number;
-  updated_at: string;
+  ) {}
 }
 
-// todo: refactor
 export class WorkResponse implements Entity {
   constructor(
-    id: number,
-    updated_at: string,
+    public id: string,
+    public updated_at: number,
     public content: string,
     public work_id: number,
     public responder_id: number
-  ) {
-    this.id = id;
-    this.updated_at = updated_at;
-  }
-
-  id: number;
-  updated_at: string;
+  ) {}
 }
 
+/// Response comment
 export class WorkResponseModel implements Entity {
   constructor(
-    public id: number,
-    public updated_at: string,
+    public id: string,
+    public updated_at: number,
     public work_id: number,
     public work_title: string,
     public response_content: string,

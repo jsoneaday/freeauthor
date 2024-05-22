@@ -1,4 +1,4 @@
-import { IKwilApi, TxHashPromise } from "./IKwilApi";
+import { IApi, TxHashPromise } from "./IApi";
 import {
   Entity,
   Follow,
@@ -23,10 +23,14 @@ const workTopics: WorkTopicModel[] = [];
 const workLikes: WorkLike[] = [];
 const workResponses: WorkResponse[] = [];
 
-export class FakeKwilApi implements IKwilApi {
+export class FakeApi implements IApi {
   #address: string;
   get Address() {
     return this.#address;
+  }
+
+  async isConnected(): Promise<boolean> {
+    return true;
   }
 
   constructor(address: string) {
@@ -121,7 +125,7 @@ export class FakeKwilApi implements IKwilApi {
     return faker.number.binary();
   }
 
-  async addWorkLikes(workId: number, likerId: number) {
+  async addWorkLike(workId: number, likerId: number) {
     const id = getLastestEntityId(workLikes);
     workLikes.push({
       id: id + 1,

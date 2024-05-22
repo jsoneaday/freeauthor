@@ -13,6 +13,26 @@ import { Write } from "./pages/write/Write";
 import { ReadFollowed } from "./pages/read/ReadFollowed";
 import { ReadStory } from "./pages/read/ReadStory";
 import { Profile } from "./pages/Profile";
+import {
+  ConnectionProvider,
+  WalletProvider,
+} from "@solana/wallet-adapter-react";
+import { WalletAdapterNetwork } from "@solana/wallet-adapter-base";
+import {
+  CoinbaseWalletAdapter,
+  PhantomWalletAdapter,
+  SolflareWalletAdapter,
+} from "@solana/wallet-adapter-wallets";
+import { clusterApiUrl } from "@solana/web3.js";
+import { WalletModalProvider } from "@solana/wallet-adapter-react-ui";
+
+const network = WalletAdapterNetwork.Devnet;
+const endpoint = clusterApiUrl(network);
+const wallets = [
+  new PhantomWalletAdapter(),
+  new SolflareWalletAdapter(),
+  new CoinbaseWalletAdapter(),
+];
 
 const router = createBrowserRouter([
   {
@@ -56,7 +76,15 @@ const router = createBrowserRouter([
 ]);
 
 function App() {
-  return <RouterProvider router={router} />;
+  return (
+    <ConnectionProvider endpoint={endpoint}>
+      <WalletProvider wallets={wallets} autoConnect>
+        <WalletModalProvider>
+          <RouterProvider router={router} />
+        </WalletModalProvider>
+      </WalletProvider>
+    </ConnectionProvider>
+  );
 }
 
 export default App;
