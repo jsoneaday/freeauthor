@@ -13,7 +13,10 @@ export type TxHashPromise = Promise<string | null | undefined | UploadResponse>;
 export interface IApi {
   get Address(): string;
 
-  getData(entityTxId: string): Promise<null | string | ArrayBuffer>;
+  getData(
+    entityTxId: string,
+    isTextData: boolean
+  ): Promise<null | string | ArrayBuffer>;
 
   arbitraryFund(amount: number): Promise<void>;
 

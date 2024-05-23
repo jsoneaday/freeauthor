@@ -154,24 +154,17 @@ export class IrysApi implements IApi {
     return false;
   }
 
-  async getData(entityTxId: string): Promise<null | string | ArrayBuffer> {
+  async getData(
+    entityTxId: string,
+    isTextData: boolean
+  ): Promise<null | string | ArrayBuffer> {
     const response = await fetch(`${IRYS_DATA_URL}/${entityTxId}`);
 
     if (response.ok) {
-      const contentType = response.headers.get("Content-Type");
-      if (contentType === "text/plain" || contentType === "application/json") {
+      if (isTextData) {
         return await response.text();
       }
-      return new Promise(async (res, rej) => {
-        const reader = new FileReader();
-        reader.onload = function () {
-          res(reader.result);
-        };
-        reader.onerror = function () {
-          rej(reader.error);
-        };
-        reader.readAsArrayBuffer(await response.blob());
-      });
+      return await response.arrayBuffer();
     }
     return null;
   }
@@ -240,7 +233,7 @@ export class IrysApi implements IApi {
 
     if (workQueryResponse.length > 0) {
       const workQueryResponseItem: QueryResponse = workQueryResponse[0];
-      const data = await this.getData(workQueryResponseItem.id);
+      const data = await this.getData(workQueryResponseItem.id, true);
       const workResponse: QueryResponseWithData = {
         data,
         ...workQueryResponseItem,
@@ -389,7 +382,7 @@ export class IrysApi implements IApi {
       .ids([profileId])
       .sort(DESC);
 
-    const data = await this.getData(result[0].id);
+    const data = await this.getData(result[0].id, false);
 
     return convertQueryToProfile({ data, ...result[0] });
   }
@@ -549,7 +542,7 @@ function convertQueryToWork(response: QueryResponseWithData): Work {
     response.id,
     response.timestamp,
     response.tags.find((tag) => tag.name == "title")?.value || "",
-    response.tags.find((tag) => tag.name == "content")?.value || "",
+    (response.data as string) ? (response.data as string) : "",
     response.tags.find((tag) => tag.name == "authorId")?.value || "",
     response.tags.find((tag) => tag.name == "description")?.value
   );

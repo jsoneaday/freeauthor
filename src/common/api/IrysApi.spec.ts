@@ -19,7 +19,7 @@ describe("IrysApi tests", () => {
     }
   });
 
-  it.only("addWork adds a new work", async () => {
+  it("addWork adds a new work", async () => {
     const api: IApi = new IrysApi();
     await api.connect();
 
