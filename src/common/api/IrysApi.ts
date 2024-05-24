@@ -5,7 +5,7 @@ import {
   QueryResponseWithData,
   Tag,
   TopicModel,
-  Work,
+  WorkModel,
   WorkResponseModel,
   WorkTopicModel,
   WorkWithAuthorModel,
@@ -22,6 +22,7 @@ const DESC = "DESC";
 //const ASC = "ASC";
 const SEARCH_TX = "irys:transactions";
 
+/// Note all entity id are the transaction id on Irys
 export class IrysApi implements IApi {
   #irys?: WebIrys | NodeIrys;
   get #Irys() {
@@ -255,67 +256,67 @@ export class IrysApi implements IApi {
 
   async searchWorks(
     _searchTxt: string,
-    _lastKeyset: number,
+    _lastKeyset: string,
     _pageSize: number
   ): Promise<WorkWithAuthorModel[] | null> {
     throw new Error("Not implemented");
   }
 
   async getWorksByAllFollowed(
-    _followerId: number,
-    _lastKeyset: number,
+    _followerId: string,
+    _lastKeyset: string,
     _pageSize: number
   ): Promise<WorkWithAuthorModel[] | null> {
     throw new Error("Not implemented");
   }
 
   async getWorksByAllFollowedTop(
-    _followerId: number,
+    _followerId: string,
     _pageSize: number
   ): Promise<WorkWithAuthorModel[] | null> {
     throw new Error("Not implemented");
   }
 
   async getWorksByOneFollowed(
-    _followedId: number,
-    _lastKeyset: number,
+    _followedId: string,
+    _lastKeyset: string,
     _pageSize: number
   ): Promise<WorkWithAuthorModel[] | null> {
     throw new Error("Not implemented");
   }
 
   async getWorksByOneFollowedTop(
-    _followedId: number,
+    _followedId: string,
     _pageSize: number
   ): Promise<WorkWithAuthorModel[] | null> {
     throw new Error("Not implemented");
   }
 
   async getAuthorWorks(
-    _authorId: number,
-    _lastKeyset: number,
+    _authorId: string,
+    _lastKeyset: string,
     _pageSize: number
   ): Promise<WorkWithAuthorModel[] | null> {
     throw new Error("Not implemented");
   }
 
   async getAuthorWorksTop(
-    _authorId: number,
+    _authorId: string,
     _pageSize: number
   ): Promise<WorkWithAuthorModel[] | null> {
     throw new Error("Not implemented");
   }
 
   async getWorksByTopic(
-    _topicId: number,
-    _lastKeyset: number,
+    _topicId: string,
+    _lastKeyset: string,
     _pageSize: number
   ): Promise<WorkWithAuthorModel[] | null> {
     throw new Error("Not implemented");
   }
 
   async getWorksByTopicTop(
-    _topicId: number,
+    _topicId: string,
     _pageSize: number
   ): Promise<WorkWithAuthorModel[] | null> {
     throw new Error("Not implemented");
@@ -360,11 +361,13 @@ export class IrysApi implements IApi {
     userName: string,
     fullName: string,
     description: string,
+    _priorProfileId: string,
     fund: boolean = false,
     socialLinkPrimary?: string,
     socialLinkSecondary?: string,
     avatar?: Avatar
   ): TxHashPromise {
+    // todo: find immediate prior profile and match tx id and owner address
     return await this.addProfile(
       userName,
       fullName,
@@ -392,20 +395,20 @@ export class IrysApi implements IApi {
   }
 
   async getFollowedProfiles(
-    _profileId: number
+    _profileId: string
   ): Promise<ProfileModel[] | null> {
     throw new Error("Not implemented");
   }
   async getFollowerProfiles(
-    _profileId: number
+    _profileId: string
   ): Promise<ProfileModel[] | null> {
     throw new Error("Not implemented");
   }
 
   async addWorkResponse(
     content: string,
-    workId: number,
-    responderId: number,
+    workId: string,
+    responderId: string,
     fund: boolean = false
   ): TxHashPromise {
     const tags = [
@@ -419,38 +422,38 @@ export class IrysApi implements IApi {
   }
 
   async getWorkResponses(
-    _workId: number,
-    _lastKeyset: number,
+    _workId: string,
+    _lastKeyset: string,
     _pageSize: number
   ): Promise<WorkResponseModel[] | null> {
     throw new Error("Not implemented");
   }
 
   async getWorkResponsesTop(
-    _workId: number,
+    _workId: string,
     _pageSize: number
   ): Promise<WorkResponseModel[] | null> {
     throw new Error("Not implemented");
   }
 
   async getWorkResponsesByProfile(
-    _profileId: number,
-    _lastKeyset: number,
+    _profileId: string,
+    _lastKeyset: string,
     _pageSize: number
   ): Promise<WorkResponseModel[] | null> {
     throw new Error("Not implemented");
   }
 
   async getWorkResponsesByProfileTop(
-    _profileId: number,
+    _profileId: string,
     _pageSize: number
   ): Promise<WorkResponseModel[] | null> {
     throw new Error("Not implemented");
   }
 
   async addFollow(
-    followerId: number,
-    followedId: number,
+    followerId: string,
+    followedId: string,
     fund: boolean = false
   ): TxHashPromise {
     const tags = [
@@ -461,7 +464,7 @@ export class IrysApi implements IApi {
 
     return await this.#uploadText("", tags, fund);
   }
-  async removeFollow(_followerId: number, _followedId: number): TxHashPromise {
+  async removeFollow(_followerId: string, _followedId: string): TxHashPromise {
     throw new Error("Not implemented");
   }
 
@@ -478,8 +481,8 @@ export class IrysApi implements IApi {
   }
 
   async addWorkTopic(
-    topicId: number,
-    workId: number,
+    topicId: string,
+    workId: string,
     fund: boolean = false
   ): TxHashPromise {
     const tags = [
@@ -490,13 +493,13 @@ export class IrysApi implements IApi {
 
     return await this.#uploadText("", tags, fund);
   }
-  async removeWorkTopic(_topicId: number, _workId: number): TxHashPromise {
+  async removeWorkTopic(_topicId: string, _workId: string): TxHashPromise {
     throw new Error("Not implemented");
   }
 
   async addWorkLike(
-    workId: number,
-    likerId: number,
+    workId: string,
+    likerId: string,
     fund: boolean = false
   ): TxHashPromise {
     const tags = [
@@ -507,38 +510,38 @@ export class IrysApi implements IApi {
 
     return await this.#uploadText("", tags, fund);
   }
-  async removeWorkLike(_workId: number, _likerId: number): TxHashPromise {
+  async removeWorkLike(_workId: string, _likerId: string): TxHashPromise {
     throw new Error("Not implemented");
   }
 
-  async getWorkLikeCount(_workId: number): Promise<number> {
+  async getWorkLikeCount(_workId: string): Promise<number> {
     throw new Error("Not implemented");
   }
 
-  async getWorkResponseCount(_workId: number): Promise<number> {
+  async getWorkResponseCount(_workId: string): Promise<number> {
     throw new Error("Not implemented");
   }
 
-  async getFollowedCount(_profileId: number): Promise<number> {
+  async getFollowedCount(_profileId: string): Promise<number> {
     throw new Error("Not implemented");
   }
-  async getFollowerCount(_profileId: number): Promise<number> {
+  async getFollowerCount(_profileId: string): Promise<number> {
     throw new Error("Not implemented");
   }
 
   async getAllTopics(): Promise<TopicModel[] | null> {
     throw new Error("Not implemented");
   }
-  async getWorkTopic(_workId: number): Promise<WorkTopicModel | null> {
+  async getWorkTopic(_workId: string): Promise<WorkTopicModel | null> {
     throw new Error("Not implemented");
   }
-  async getTopicByWork(_workId: number): Promise<TopicModel | null> {
+  async getTopicByWork(_workId: string): Promise<TopicModel | null> {
     throw new Error("Not implemented");
   }
 }
 
-function convertQueryToWork(response: QueryResponseWithData): Work {
-  return new Work(
+function convertQueryToWork(response: QueryResponseWithData): WorkModel {
+  return new WorkModel(
     response.id,
     response.timestamp,
     response.tags.find((tag) => tag.name == "title")?.value || "",
@@ -562,7 +565,7 @@ function convertQueryToProfile(response: QueryResponseWithData): ProfileModel {
 }
 
 function convertModelsToWorkWithAuthor(
-  work: Work,
+  work: WorkModel,
   profile: ProfileModel
 ): WorkWithAuthorModel {
   return new WorkWithAuthorModel(

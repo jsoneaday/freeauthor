@@ -1,12 +1,13 @@
 import { ChangeEvent, MouseEvent, useEffect, useRef, useState } from "react";
 import { useProfile } from "../../common/zustand/Store";
-import { api } from "../../common/ui-api/UiApiInstance";
+import { useApi } from "../../common/ui-api/UiApiInstance";
 import { PrimaryButton } from "../../common/components/Buttons";
 import { MDXEditorMethods } from "@mdxeditor/editor";
 import { MarkdownEditor } from "../../common/components/MarkdownEditor";
 import { ValidationAndProgressMsg } from "../../common/components/ValidationProgressMsg";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import DropDown, { OptionType } from "../../common/components/DropDown";
+import { useWallet } from "@solana/wallet-adapter-react";
 
 enum WriteValidation {
   TitleTooLong = "Title must be less than 100 characters",
@@ -40,8 +41,9 @@ export function WriteStory() {
     work_id: string;
     validation_msg: string | undefined;
   }>();
-  const [selectedTopicId, setSelectedTopicId] = useState(1);
+  const [selectedTopicId, setSelectedTopicId] = useState("1"); //todo: replace this with a real id
   const [topics, setTopics] = useState<OptionType[]>([]);
+  const api = useApi(useWallet());
 
   useEffect(() => {
     api
@@ -53,7 +55,7 @@ export function WriteStory() {
         }
         const topicOptions =
           topics?.map((topic) => ({ name: topic.name, value: topic.id })) || [];
-        topicOptions.splice(0, 0, { name: "Select Topic", value: 0 });
+        topicOptions.splice(0, 0, { name: "Select Topic", value: "" });
         setTopics(topicOptions);
       })
       .catch((e) => console.log(e));
@@ -66,7 +68,7 @@ export function WriteStory() {
       setDescription("");
       setValidationMsg("");
       mdRef.current?.setMarkdown(PLACEHOLDER_TEXT);
-      setSelectedTopicId(0);
+      setSelectedTopicId("");
     } else {
       setPageState(PageState.Edit);
       setIsSubmitBtnDisabled(false);
@@ -76,7 +78,7 @@ export function WriteStory() {
   useEffect(() => {
     if (work_id) {
       console.log("work_id", work_id);
-      api.getWork(Number(work_id)).then((work) => {
+      api.getWork(work_id).then((work) => {
         if (!work) throw new Error("Work item cannot be found trying to edit");
         console.log("getTopicByWork work", work);
         api
@@ -87,9 +89,9 @@ export function WriteStory() {
             setDescription(work.description);
             mdRef.current?.setMarkdown(work.content);
             setValidationMsg(validation_msg || "");
-            setSelectedTopicId(topic?.id || 0);
+            setSelectedTopicId(topic?.id || "");
           })
-          .catch((e) => console.log(e));
+          .catch((e: any) => console.log(e));
       });
     }
   }, [work_id]);
@@ -97,7 +99,7 @@ export function WriteStory() {
   const submitValue = async (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
 
-    if (!profile || profile?.id === 0)
+    if (!profile || profile?.id === "")
       throw new Error("First register a profile and connect");
 
     if (!validateAllFields()) return;
@@ -115,7 +117,7 @@ export function WriteStory() {
       );
       // todo: remove when ready for prod
       console.log("addWork tx", tx);
-      id = await api.waitAndGetId(tx, "works");
+      //id = await api.waitAndGetId(tx, "works");
       console.log("addWork id", id);
     } catch (e) {
       console.log(e);
@@ -133,7 +135,7 @@ export function WriteStory() {
   const editValue = async (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
 
-    if (!profile || profile?.id === 0)
+    if (!profile || profile?.id === "")
       throw new Error("First register a profile and connect");
 
     if (!validateAllFields()) return;
@@ -141,7 +143,7 @@ export function WriteStory() {
     try {
       setIsSubmitBtnDisabled(true);
       const tx = await api.updateWork(
-        Number(work_id),
+        work_id || "",
         title,
         description,
         mdRef.current?.getMarkdown() || "",
@@ -176,8 +178,8 @@ export function WriteStory() {
     return WriteValidation.FieldIsValid;
   };
 
-  const validateTopic = (topicId: number) => {
-    if (topicId === 0) return WriteValidation.TopicNotSelected;
+  const validateTopic = (topicId: string) => {
+    if (topicId === "") return WriteValidation.TopicNotSelected;
     return WriteValidation.FieldIsValid;
   };
 
@@ -226,7 +228,7 @@ export function WriteStory() {
   const onChangeTopic = (e: React.ChangeEvent<HTMLSelectElement>) => {
     e.preventDefault();
 
-    const currentSelectedId = e.target.value ? Number(e.target.value) : 0;
+    const currentSelectedId = e.target.value;
     const validationMsg = validateTopic(currentSelectedId);
     setIsSubmitBtnDisabled(
       validationMsg === WriteValidation.FieldIsValid ? false : true

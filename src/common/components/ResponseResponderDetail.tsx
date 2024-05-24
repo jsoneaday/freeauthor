@@ -3,7 +3,8 @@ import { RandomImg } from "./RandomImage";
 import { FollowTooltip, useFollowTooltip } from "./modals/FollowTooltip";
 import { Link } from "react-router-dom";
 import { ResponseWithResponder } from "../ui-api/UIModels";
-import { api } from "../ui-api/UiApiInstance";
+import { useApi } from "../ui-api/UiApiInstance";
+import { useWallet } from "@solana/wallet-adapter-react";
 
 interface ResponseResponderDetailProps {
   showAuthor: boolean;
@@ -26,6 +27,7 @@ export function ResponseResponderDetail({
     onMouseEnter,
     onMouseLeave,
   } = useFollowTooltip(spanRef);
+  const api = useApi(useWallet());
 
   useEffect(() => {
     api

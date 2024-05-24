@@ -1,7 +1,6 @@
 import { MouseEvent, ReactNode } from "react";
 import { useProfile } from "../zustand/Store";
 import profileIcon from "../../theme/assets/profiles/mrglasses.jpg"; // todo: replace with user avatar when ready
-import { api } from "../ui-api/UiApiInstance";
 import { NavAnchor } from "./NavAnchor";
 import { ConnectCreateProfile } from "./ConnectCreateProfile";
 import { useNotification } from "../zustand/Store";
@@ -40,20 +39,6 @@ export function Layout({ children }: LayoutProps) {
           <NavAnchor path="/explorer" label="EXPLORE" />
         </span>
         <span style={{ display: "flex", alignItems: "center" }}>
-          <button
-            style={{ marginRight: "1.5em" }}
-            onClick={async () => await api.cleanDb()}
-          >
-            (Clean DB)
-          </button>
-          <button
-            style={{ marginRight: "1.5em" }}
-            onClick={async () => {
-              api.setupData();
-            }}
-          >
-            (Add Test Data)
-          </button>
           {profile ? (
             <Link to={`/profile/${profile.id}`}>
               <img src={profileIcon} className="profile-avatar" />

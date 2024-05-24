@@ -41,7 +41,7 @@ export type Avatar = {
 };
 
 /// The content
-export class Work implements Entity {
+export class WorkModel implements Entity {
   constructor(
     public id: string,
     public updated_at: number,
@@ -81,12 +81,12 @@ export class ProfileModel implements Entity {
 }
 
 /// Profile follower and the Profile being followed
-export class Follow implements Entity {
+export class FollowModel implements Entity {
   constructor(
     public id: string,
     public updated_at: number,
-    public follower_id: number,
-    public followed_id: number
+    public follower_id: string,
+    public followed_id: string
   ) {}
 }
 
@@ -103,39 +103,39 @@ export class WorkTopicModel implements Entity {
   constructor(
     public id: string,
     public updated_at: number,
-    public topic_id: number,
-    public work_id: number
+    public topic_id: string,
+    public work_id: string
   ) {}
 }
 
-export class WorkLike implements Entity {
+export class WorkLikeModel implements Entity {
   constructor(
     public id: string,
     public updated_at: number,
-    public work_id: number,
-    public liker_id: number
+    public work_id: string,
+    public liker_id: string
   ) {}
 }
 
-export class WorkResponse implements Entity {
-  constructor(
-    public id: string,
-    public updated_at: number,
-    public content: string,
-    public work_id: number,
-    public responder_id: number
-  ) {}
-}
+// export class WorkResponse implements Entity {
+//   constructor(
+//     public id: string,
+//     public updated_at: number,
+//     public content: string,
+//     public work_id: number,
+//     public responder_id: number
+//   ) {}
+// }
 
 /// Response comment
 export class WorkResponseModel implements Entity {
   constructor(
     public id: string,
     public updated_at: number,
-    public work_id: number,
+    public work_id: string,
     public work_title: string,
     public response_content: string,
-    public responder_id: number,
+    public responder_id: string,
     public username: string,
     public fullname: string,
     public profileDesc: string

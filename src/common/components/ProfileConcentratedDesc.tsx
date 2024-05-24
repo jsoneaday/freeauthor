@@ -1,13 +1,14 @@
 import { CSSProperties, useEffect, useState, MouseEvent } from "react";
 import { RandomImg } from "./RandomImage";
 import { useProfile } from "../zustand/Store";
-import { api } from "../ui-api/UiApiInstance";
+import { useApi } from "../ui-api/UiApiInstance";
 import { PrimaryButton } from "./Buttons";
 import { Link } from "react-router-dom";
 import { TabHeaders } from "../../pages/Profile";
+import { useWallet } from "@solana/wallet-adapter-react";
 
 interface ProfileConcentractedDescProps {
-  profileId: number;
+  profileId: string;
   fullName: string;
   userName: string;
   profileDesc: string;
@@ -31,6 +32,7 @@ export function ProfileConcentractedDesc({
   const [followBtn, setFollowBtn] = useState<JSX.Element | null>(null);
   const [followingBtn, setFollowingBtn] = useState<JSX.Element | null>(null);
   const [followerBtn, setFollowerBtn] = useState<JSX.Element | null>(null);
+  const api = useApi(useWallet());
 
   useEffect(() => {
     if (profile) {
@@ -52,8 +54,8 @@ export function ProfileConcentractedDesc({
             e.preventDefault();
 
             if (profile) {
-              const tx = await api.addFollow(profile.id || 0, profileId);
-              await api.waitAndGetId(tx, "follows");
+              await api.addFollow(profile.id, profileId);
+              //await api.waitAndGetId(tx, "follows");
               await confirmFollowed();
             } else {
               console.log("Cannot follow not logged in!");
@@ -91,7 +93,7 @@ export function ProfileConcentractedDesc({
   const confirmFollowed = async () => {
     if (profile) {
       // todo: consider replacing with direct check call
-      const follows = await api.getFollowedProfiles(profile.id || 0);
+      const follows = await api.getFollowedProfiles(profile.id);
 
       if (follows) {
         if (follows.find((follow) => follow.id === profileId)) {

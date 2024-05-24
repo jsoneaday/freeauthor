@@ -33,7 +33,7 @@ export function ConnectCreateProfile({
     e.preventDefault();
 
     if (!profile) {
-      const api = await initOrGetUiApi(new IrysApi(), wallet);
+      const api = initOrGetUiApi(new IrysApi(), wallet);
       const ownersProfile = await api.getOwnersProfile();
       if (!ownersProfile) {
         setShowProfileForm(true);

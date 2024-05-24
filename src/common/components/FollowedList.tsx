@@ -1,15 +1,16 @@
 import { MouseEvent, useEffect, useState } from "react";
-import { api } from "../ui-api/UiApiInstance";
+import { useApi } from "../ui-api/UiApiInstance";
 import allFollow from "../../theme/assets/profiles/l-all.png";
 import { useProfile } from "../zustand/Store";
 /// @ts-ignore
 import { v4 as uuidv4 } from "uuid";
 import { RandomImg } from "./RandomImage";
+import { useWallet } from "@solana/wallet-adapter-react";
 
 const SELECTED_CLASS = "followed-list-selected";
 
 interface FollowedListProps {
-  getCurrentSelectedFollowedId: (id: number) => void;
+  getCurrentSelectedFollowedId: (id: string) => void;
 }
 
 export function FollowedList({
@@ -17,14 +18,15 @@ export function FollowedList({
 }: FollowedListProps) {
   const [followedProfiles, setFollowedProfiles] = useState<JSX.Element[]>([]);
   const profile = useProfile((state) => state.profile);
+  const api = useApi(useWallet());
 
   const onClickSelectProfile = (e: MouseEvent<HTMLDivElement>) => {
-    const currentElementProfileId = e.currentTarget.dataset.profileId || 0;
+    const currentElementProfileId = e.currentTarget.dataset.profileId || "";
     console.log(
       "FollowedList currentElementProfileId",
       Number(currentElementProfileId)
     );
-    getCurrentSelectedFollowedId(Number(currentElementProfileId));
+    getCurrentSelectedFollowedId(currentElementProfileId);
 
     let lastForwardSibling: Element | null = e.currentTarget.nextElementSibling;
     let lastPreviousSibling: Element | null =

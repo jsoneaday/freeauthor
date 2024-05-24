@@ -1,16 +1,16 @@
 export interface UiEntity {
-  id: number;
+  id: string;
   updatedAt: string;
 }
 
 export class WorkWithAuthor implements UiEntity {
   constructor(
-    public id: number,
+    public id: string,
     public updatedAt: string,
     public title: string,
     public content: string,
     public description: string | undefined,
-    public authorId: number,
+    public authorId: string,
     public fullName: string,
     public userName: string,
     public profileDesc: string
@@ -19,12 +19,12 @@ export class WorkWithAuthor implements UiEntity {
 
 export class ResponseWithResponder implements UiEntity {
   constructor(
-    public id: number,
+    public id: string,
     public updatedAt: string,
-    public workId: number,
+    public workId: string,
     public workTitle: string,
     public responseContent: string,
-    public responderId: number,
+    public responderId: string,
     public userName: string,
     public fullName: string,
     public profileDesc: string
@@ -33,7 +33,7 @@ export class ResponseWithResponder implements UiEntity {
 
 export class Profile implements UiEntity {
   constructor(
-    public id: number,
+    public id: string,
     public updatedAt: string,
     public userName: string,
     public fullName: string,
@@ -46,7 +46,7 @@ export class Profile implements UiEntity {
 
 export class Topic implements UiEntity {
   constructor(
-    public id: number,
+    public id: string,
     public updatedAt: string,
     public name: string
   ) {}
@@ -54,9 +54,9 @@ export class Topic implements UiEntity {
 
 export class WorkTopic implements UiEntity {
   constructor(
-    public id: number,
+    public id: string,
     public updatedAt: string,
-    public workId: number,
-    public topicId: number
+    public workId: string,
+    public topicId: string
   ) {}
 }

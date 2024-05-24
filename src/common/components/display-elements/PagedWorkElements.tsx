@@ -27,7 +27,7 @@ WorkElements params
 */
 
 interface PagedWorkElementsProps<T extends Object, E extends UiEntity> {
-  getNextData: (priorKeyset: number) => Promise<E[] | null>;
+  getNextData: (priorKeyset: string) => Promise<E[] | null>;
   refreshWorksData: boolean;
   setRefreshWorksData: React.Dispatch<React.SetStateAction<boolean>>;
   payload: T;
@@ -45,7 +45,7 @@ function PagedWorkElementsComponent<T extends Object, E extends UiEntity>({
 }: PagedWorkElementsProps<T, E>) {
   const targetRef = useRef<HTMLDivElement>(null);
   const readWorkListRef = useRef<HTMLDivElement>(null);
-  const [priorKeyset, setPriorKeyset] = useState(0);
+  const [priorKeyset, setPriorKeyset] = useState("");
   const [currentPagingState, setCurrentPagingState] = useState(
     PagingState.Start
   );
@@ -53,9 +53,9 @@ function PagedWorkElementsComponent<T extends Object, E extends UiEntity>({
 
   useEffect(() => {
     if (refreshWorksData) {
-      setPriorKeyset(0);
+      setPriorKeyset("");
       setCurrentPagingState(PagingState.Start);
-      setData(0, PagingState.Start);
+      setData("", PagingState.Start);
     }
   }, [refreshWorksData]);
 
@@ -92,7 +92,7 @@ function PagedWorkElementsComponent<T extends Object, E extends UiEntity>({
     }
   };
 
-  const setData = async (priorKeyset: number, pagingState: PagingState) => {
+  const setData = async (priorKeyset: string, pagingState: PagingState) => {
     const works = await getNextData(priorKeyset);
     // use current paging state to determine whether to append or start fresh
     if (pagingState === PagingState.Start) {

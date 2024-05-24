@@ -4,7 +4,7 @@ import { ProfileForm } from "../common/components/ProfileForm";
 import { Layout } from "../common/components/Layout";
 import { RandomImg } from "../common/components/RandomImage";
 import { useParams } from "react-router-dom";
-import { api } from "../common/ui-api/UiApiInstance";
+import { useApi } from "../common/ui-api/UiApiInstance";
 import { PAGE_SIZE } from "../common/utils/StandardValues";
 import { WorkElements } from "../common/components/display-elements/WorkElements";
 import { useProfile } from "../common/zustand/Store";
@@ -15,6 +15,7 @@ import {
   ResponseWithResponder,
   WorkWithAuthor,
 } from "../common/ui-api/UIModels";
+import { useWallet } from "@solana/wallet-adapter-react";
 
 /// Register by creating a profile with optional avatar/image
 export function Profile() {
@@ -25,6 +26,7 @@ export function Profile() {
     page_sec_id: string | undefined;
   }>();
   const profile = useProfile((state) => state.profile);
+  const api = useApi(useWallet());
 
   useEffect(() => {
     if (page_sec_id) {
@@ -36,7 +38,7 @@ export function Profile() {
 
   const profileCreatedCallback = () => {};
 
-  const getData = async (priorKeyset: number) => {
+  const getData = async (priorKeyset: string) => {
     if (selectedSection.name === PageSections.Stories) {
       return await getStories(priorKeyset);
     } else if (selectedSection.name === PageSections.Responses) {
@@ -49,13 +51,13 @@ export function Profile() {
     return null;
   };
 
-  const getStories = async (priorKeyset: number) => {
+  const getStories = async (priorKeyset: string) => {
     let works: WorkWithAuthor[] | null;
-    if (priorKeyset === 0) {
-      works = await api.getAuthorWorksTop(Number(profile_id || 0), PAGE_SIZE);
+    if (priorKeyset === "") {
+      works = await api.getAuthorWorksTop(profile_id || "", PAGE_SIZE);
     } else {
       works = await api.getAuthorWorks(
-        Number(profile_id || 0),
+        profile_id || "",
         priorKeyset,
         PAGE_SIZE
       );
@@ -66,16 +68,16 @@ export function Profile() {
     return works;
   };
 
-  const getResponses = async (priorKeyset: number) => {
+  const getResponses = async (priorKeyset: string) => {
     let workResponses: ResponseWithResponder[] | null;
-    if (priorKeyset === 0) {
+    if (priorKeyset === "") {
       workResponses = await api.getWorkResponsesByProfileTop(
-        Number(profile_id || 0),
+        profile_id || "",
         PAGE_SIZE
       );
     } else {
       workResponses = await api.getWorkResponsesByProfile(
-        Number(profile_id || 0),
+        profile_id || "",
         priorKeyset,
         PAGE_SIZE
       );
@@ -87,7 +89,7 @@ export function Profile() {
   };
 
   const getFollowing = async () => {
-    const following = await api.getFollowedProfiles(Number(profile_id || 0));
+    const following = await api.getFollowedProfiles(profile_id || "");
     if (!following || following.length === 0) return null;
 
     console.log("following", following);
@@ -95,7 +97,7 @@ export function Profile() {
   };
 
   const getFollower = async () => {
-    const follower = await api.getFollowerProfiles(Number(profile_id || 0));
+    const follower = await api.getFollowerProfiles(profile_id || "");
     if (!follower || follower.length === 0) return null;
 
     console.log("follower", follower);
@@ -137,10 +139,8 @@ export function Profile() {
           />
           <ProfileForm
             profileCreatedCallback={profileCreatedCallback}
-            profileId={profile_id ? Number(profile_id) : undefined}
-            readOnly={
-              profile && profile.id === Number(profile_id || 0) ? false : true
-            }
+            profileId={profile_id}
+            readOnly={profile && profile.id === profile_id ? false : true}
           />
         </div>
         <div className="profile-stories">

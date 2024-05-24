@@ -7,7 +7,7 @@ import {
   MouseEvent,
 } from "react";
 import { Layout } from "../../common/components/Layout";
-import { api } from "../../common/ui-api/UiApiInstance";
+import { useApi } from "../../common/ui-api/UiApiInstance";
 import { TopicElement } from "../../common/components/TopicElement";
 import searchIcon from "../../theme/assets/app-icons/search1.png";
 import { PAGE_SIZE } from "../../common/utils/StandardValues";
@@ -17,6 +17,7 @@ import { PagedWorkElements } from "../../common/components/display-elements/Page
 import { TabHeader } from "../../common/components/TabHeader";
 import { WorkElements } from "../../common/components/display-elements/WorkElements";
 import { Topic, WorkWithAuthor } from "../../common/ui-api/UIModels";
+import { useWallet } from "@solana/wallet-adapter-react";
 
 enum ValidationStates {
   SearchTxtTooShort = "Search string must be at least 3 characters",
@@ -32,6 +33,7 @@ export function Explorer() {
   const { topic_id } = useParams<{ topic_id: string | undefined }>();
   const [refreshWorksData, setRefreshWorksData] = useState(false);
   const [validationMsg, setValidationMsg] = useState("");
+  const api = useApi(useWallet());
 
   const onChangeSearch = (e: ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
@@ -67,14 +69,9 @@ export function Explorer() {
     console.log("topic_id", topic_id);
     if (!topics) return;
 
-    let topicId = 1;
-    if (topic_id) {
-      topicId = Number(topic_id);
-    }
-
     setTopicName(
       upperCaseFirstLetterOfWords(
-        topics.find((topic) => topic.id === topicId)?.name || ""
+        topics.find((topic) => topic.id === topic_id)?.name || ""
       )
     );
 
@@ -85,7 +82,7 @@ export function Explorer() {
           key={`explorer-topic-${topics[i].id}`}
           topic_id={topics[i].id}
           name={topics[i].name}
-          isSelected={topics[i].id === topicId ? true : false}
+          isSelected={topics[i].id === topic_id ? true : false}
           resetPagingState={resetPagingState}
         />
       );
@@ -95,7 +92,7 @@ export function Explorer() {
     setRefreshWorksData(true);
   }, [topic_id, topics]);
 
-  const getData = async (priorKeyset: number) => {
+  const getData = async (priorKeyset: string) => {
     if (searchTxt && searchTxt.length > 0) {
       if (validateSearchTxt(searchTxt) !== ValidationStates.FieldIsValid) {
         setValidationMsg(validateSearchTxt(searchTxt));
@@ -103,7 +100,7 @@ export function Explorer() {
       }
 
       let works: WorkWithAuthor[] | null;
-      if (priorKeyset === 0) {
+      if (priorKeyset === "") {
         works = await api.searchWorksTop(searchTxt, PAGE_SIZE);
       } else {
         works = await api.searchWorks(searchTxt, priorKeyset, PAGE_SIZE);
@@ -115,16 +112,15 @@ export function Explorer() {
 
       return works;
     } else {
-      let topicId = 1;
-      if (topic_id) {
-        topicId = Number(topic_id);
-      }
-
       let works: WorkWithAuthor[] | null;
-      if (priorKeyset === 0) {
-        works = await api.getWorksByTopicTop(topicId, PAGE_SIZE);
+      if (priorKeyset === "") {
+        works = await api.getWorksByTopicTop(topic_id || "", PAGE_SIZE);
       } else {
-        works = await api.getWorksByTopic(topicId, priorKeyset, PAGE_SIZE);
+        works = await api.getWorksByTopic(
+          topic_id || "",
+          priorKeyset,
+          PAGE_SIZE
+        );
       }
 
       if (!works || works.length === 0) {

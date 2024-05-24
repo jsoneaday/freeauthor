@@ -1,11 +1,11 @@
 import { IApi, TxHashPromise } from "./IApi";
 import {
   Entity,
-  Follow,
+  FollowModel,
   ProfileModel,
   TopicModel,
-  Work,
-  WorkLike,
+  WorkModel,
+  WorkLikeModel,
   WorkResponse,
   WorkResponseModel,
   WorkTopicModel,
@@ -16,11 +16,11 @@ import { formattedNow } from "../utils/DateTimeUtils";
 
 const profiles: ProfileModel[] = [];
 const worksLength = 600;
-const works: Work[] = [];
-const follows: Follow[] = [];
+const works: WorkModel[] = [];
+const follows: FollowModel[] = [];
 const topics: TopicModel[] = [];
 const workTopics: WorkTopicModel[] = [];
-const workLikes: WorkLike[] = [];
+const workLikes: WorkLikeModel[] = [];
 const workResponses: WorkResponse[] = [];
 
 export class FakeApi implements IApi {
@@ -238,7 +238,7 @@ export class FakeApi implements IApi {
     lastKeyset: number,
     pageSize: number
   ): Promise<WorkWithAuthorModel[] | null> {
-    let filteredWorks: Work[];
+    let filteredWorks: WorkModel[];
     if (lastKeyset === 0) {
       filteredWorks = works.filter((work) => work.author_id === authorId);
     } else {
@@ -274,7 +274,7 @@ export class FakeApi implements IApi {
       .filter((wt) => wt.topic_id === topicId)
       .map((work) => work.id);
 
-    let filteredWorks: Work[];
+    let filteredWorks: WorkModel[];
     if (lastKeyset === 0) {
       filteredWorks = works.filter((work) => workIds.includes(work.id));
     } else {
@@ -306,7 +306,7 @@ export class FakeApi implements IApi {
     lastKeyset: number,
     pageSize: number
   ): Promise<WorkWithAuthorModel[] | null> {
-    let filteredWorks: Work[];
+    let filteredWorks: WorkModel[];
     if (lastKeyset === 0) {
       filteredWorks = works.filter(
         (work) =>
@@ -349,7 +349,7 @@ export class FakeApi implements IApi {
       .filter((follow) => follow.follower_id === followerId)
       .map((follow) => follow.followed_id);
 
-    let filteredWorks: Work[];
+    let filteredWorks: WorkModel[];
     if (lastKeyset === 0) {
       filteredWorks = works.filter((work) =>
         followedIds.includes(work.author_id)
@@ -383,7 +383,7 @@ export class FakeApi implements IApi {
     lastKeyset: number,
     pageSize: number
   ): Promise<WorkWithAuthorModel[] | null> {
-    let filteredWorks: Work[];
+    let filteredWorks: WorkModel[];
     if (lastKeyset === 0) {
       filteredWorks = works.filter((work) => work.author_id === followedId);
     } else {
@@ -485,7 +485,7 @@ export class FakeApi implements IApi {
     return await this.getWorkResponsesByProfile(profileId, 0, pageSize);
   }
 
-  #convertWorkWithAuthorModel(work: Work) {
+  #convertWorkWithAuthorModel(work: WorkModel) {
     const profile = profiles.find((profile) => profile.id === work.author_id);
 
     return {

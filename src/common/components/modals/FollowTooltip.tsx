@@ -2,7 +2,7 @@ import { MouseEvent, useState } from "react";
 import { ProfileConcentractedDesc } from "../ProfileConcentratedDesc";
 
 interface FollowModalProps {
-  followedId: number;
+  followedId: string;
   followedUsername: string;
   followedFullname: string;
   followedDesc: string;

@@ -1,8 +1,9 @@
 import { ChangeEvent, useState, MouseEvent, useEffect } from "react";
-import { api } from "../ui-api/UiApiInstance";
+import { useApi } from "../ui-api/UiApiInstance";
 import { useProfile } from "../zustand/Store";
 import { PrimaryButton } from "./Buttons";
 import { ValidationAndProgressMsg } from "./ValidationProgressMsg";
+import { useWallet } from "@solana/wallet-adapter-react";
 
 enum ValidationStates {
   UsernameTooLong = "Username cannot be greater than 50 characters",
@@ -25,7 +26,7 @@ enum PageState {
 
 export interface ProfileFormProps {
   profileCreatedCallback: () => void;
-  profileId?: number;
+  profileId?: string;
   readOnly?: boolean;
 }
 
@@ -44,6 +45,7 @@ export function ProfileForm({
   const setProfile = useProfile((state) => state.setProfile);
   const [submitProfileBtnDisabled, setSubmitCreateProfileBtnDisabled] =
     useState(true);
+  const api = useApi(useWallet());
 
   useEffect(() => {
     if (profileId) {
@@ -211,15 +213,14 @@ export function ProfileForm({
         );
         return;
       }
-      const tx = await api.addProfile(
+      await api.addProfile(
         username,
         fullname,
         description,
-        api.Address,
         socialPrimary,
         socialSecondary
       );
-      await api.waitAndGetId(tx, "profiles");
+      //await api.waitAndGetId(tx, "profiles");
 
       const profile = await api.getOwnersProfile();
       if (!profile) throw new Error("Profile has not been created!");
@@ -263,7 +264,7 @@ export function ProfileForm({
         return;
       }
 
-      const tx = await api.updateProfile(
+      await api.updateProfile(
         profileId,
         username,
         fullname,
@@ -271,7 +272,7 @@ export function ProfileForm({
         socialPrimary,
         socialSecondary
       );
-      await api.waitAndGetId(tx, "profiles");
+      //await api.waitAndGetId(tx, "profiles");
 
       const profile = await api.getOwnersProfile();
       if (!profile) throw new Error("Error profile has not been updated!");

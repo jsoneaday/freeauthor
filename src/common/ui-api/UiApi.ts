@@ -43,8 +43,8 @@ export class UiApi {
     title: string,
     description: string | undefined,
     content: string,
-    authorId: number,
-    topicId: number
+    authorId: string,
+    topicId: string
   ): TxHashPromise {
     return await this.#Api.addWork(
       title,
@@ -55,90 +55,93 @@ export class UiApi {
     );
   }
 
+  // todo: add avatar
   async addProfile(
     userName: string,
     fullName: string,
     description: string,
-    ownerAddress: string,
     socialLinkPrimary: string,
-    socialLinkSecond: string
+    socialLinkSecond: string,
+    fund: boolean = false
   ): TxHashPromise {
     return await this.#Api.addProfile(
       userName,
       fullName,
       description,
-      ownerAddress,
+      fund,
       socialLinkPrimary,
       socialLinkSecond
     );
   }
-  async addFollow(followerId: number, followedId: number): TxHashPromise {
+  async addFollow(followerId: string, followedId: string): TxHashPromise {
     return await this.#Api.addFollow(followerId, followedId);
   }
   async addTopic(name: string): TxHashPromise {
     return await this.#Api.addTopic(name);
   }
-  async addWorkTopic(topicId: number, workId: number): TxHashPromise {
+  async addWorkTopic(topicId: string, workId: string): TxHashPromise {
     return await this.#Api.addWorkTopic(topicId, workId);
   }
-  async addWorkLikes(workId: number, likerId: number): TxHashPromise {
+  async addWorkLikes(workId: string, likerId: string): TxHashPromise {
     return await this.#Api.addWorkLike(workId, likerId);
   }
   async addWorkResponse(
     content: string,
-    workId: number,
-    responderId: number
+    workId: string,
+    responderId: string
   ): TxHashPromise {
     return await this.#Api.addWorkResponse(content, workId, responderId);
   }
 
-  async waitAndGetId(
-    tx: string | null | undefined,
-    entityType?: string
-  ): Promise<number> {
-    return await this.#Api.waitAndGetId(tx, entityType);
-  }
+  // async waitAndGetId(
+  //   tx: string | null | undefined,
+  //   entityType?: string
+  // ): Promise<number> {
+  //   return await this.#Api.waitAndGetId(tx, entityType);
+  // }
 
   async updateWork(
-    workId: number,
+    workId: string,
     title: string,
     description: string | undefined,
     content: string,
-    authorId: number,
-    topicId: number
+    authorId: string,
+    topicId: string
   ): TxHashPromise {
     return this.#Api.updateWork(
-      workId,
       title,
       description,
       content,
       authorId,
-      topicId
+      topicId,
+      workId
     );
   }
 
+  // todo: add avatar later
   async updateProfile(
-    profileId: number,
+    profileId: string,
     userName: string,
     fullName: string,
     description: string,
     socialLinkPrimary: string,
-    socialLinkSecond: string
+    socialLinkSecond: string,
+    fund: boolean = false
   ): TxHashPromise {
     return this.#Api.updateProfile(
-      profileId,
       userName,
       fullName,
       description,
+      profileId,
+      fund,
       socialLinkPrimary,
       socialLinkSecond
     );
   }
 
-  async getProfile(profileId: number): Promise<Profile | null> {
+  async getProfile(profileId: string): Promise<Profile | null> {
     const profile = await this.#Api.getProfile(profileId);
-    if (profile) return this.#getProfile(profile);
-    return null;
+    return this.#getProfile(profile);
   }
 
   async getOwnersProfile(): Promise<Profile | null> {
@@ -147,22 +150,21 @@ export class UiApi {
     return null;
   }
 
-  async getFollowedProfiles(profileId: number): Promise<Profile[] | null> {
+  async getFollowedProfiles(profileId: string): Promise<Profile[] | null> {
     const profiles = await this.#Api.getFollowedProfiles(profileId);
     if (profiles) return this.#getProfiles(profiles);
     return null;
   }
 
-  async getFollowerProfiles(profileId: number): Promise<Profile[] | null> {
+  async getFollowerProfiles(profileId: string): Promise<Profile[] | null> {
     const profiles = await this.#Api.getFollowerProfiles(profileId);
     if (profiles) return this.#getProfiles(profiles);
     return null;
   }
 
-  async getWork(workId: number): Promise<WorkWithAuthor | null> {
+  async getWork(workId: string): Promise<WorkWithAuthor | null> {
     const work = await this.#Api.getWork(workId);
-    if (work) return this.#getWorkWithAuthor(work);
-    return null;
+    return this.#getWorkWithAuthor(work);
   }
 
   async searchWorksTop(
@@ -176,7 +178,7 @@ export class UiApi {
 
   async searchWorks(
     searchTxt: string,
-    lastKeyset: number,
+    lastKeyset: string,
     pageSize: number
   ): Promise<WorkWithAuthor[] | null> {
     const works = await this.#Api.searchWorks(searchTxt, lastKeyset, pageSize);
@@ -185,8 +187,8 @@ export class UiApi {
   }
 
   async getWorksByAllFollowed(
-    followerId: number,
-    lastKeyset: number,
+    followerId: string,
+    lastKeyset: string,
     pageSize: number
   ): Promise<WorkWithAuthor[] | null> {
     const works = await this.#Api.getWorksByAllFollowed(
@@ -199,7 +201,7 @@ export class UiApi {
   }
 
   async getWorksByAllFollowedTop(
-    followerId: number,
+    followerId: string,
     pageSize: number
   ): Promise<WorkWithAuthor[] | null> {
     const works = await this.#Api.getWorksByAllFollowedTop(
@@ -211,8 +213,8 @@ export class UiApi {
   }
 
   async getWorksByOneFollowed(
-    followedId: number,
-    lastKeyset: number,
+    followedId: string,
+    lastKeyset: string,
     pageSize: number
   ): Promise<WorkWithAuthor[] | null> {
     const works = await this.#Api.getWorksByOneFollowed(
@@ -225,7 +227,7 @@ export class UiApi {
   }
 
   async getWorksByOneFollowedTop(
-    followedId: number,
+    followedId: string,
     pageSize: number
   ): Promise<WorkWithAuthor[] | null> {
     const works = await this.#Api.getWorksByOneFollowedTop(
@@ -237,8 +239,8 @@ export class UiApi {
   }
 
   async getAuthorWorks(
-    authorId: number,
-    lastKeyset: number,
+    authorId: string,
+    lastKeyset: string,
     pageSize: number
   ): Promise<WorkWithAuthor[] | null> {
     const works = await this.#Api.getAuthorWorks(
@@ -251,7 +253,7 @@ export class UiApi {
   }
 
   async getAuthorWorksTop(
-    authorId: number,
+    authorId: string,
     pageSize: number
   ): Promise<WorkWithAuthor[] | null> {
     const works = await this.#Api.getAuthorWorksTop(authorId, pageSize);
@@ -260,8 +262,8 @@ export class UiApi {
   }
 
   async getWorksByTopic(
-    topicId: number,
-    lastKeyset: number,
+    topicId: string,
+    lastKeyset: string,
     pageSize: number
   ): Promise<WorkWithAuthor[] | null> {
     const works = await this.#Api.getWorksByTopic(
@@ -274,7 +276,7 @@ export class UiApi {
   }
 
   async getWorksByTopicTop(
-    topicId: number,
+    topicId: string,
     pageSize: number
   ): Promise<WorkWithAuthor[] | null> {
     const works = await this.#Api.getWorksByTopicTop(topicId, pageSize);
@@ -282,13 +284,13 @@ export class UiApi {
     return null;
   }
 
-  async getWorkLikeCount(workId: number): Promise<number> {
+  async getWorkLikeCount(workId: string): Promise<number> {
     return await this.#Api.getWorkLikeCount(workId);
   }
 
   async getWorkResponses(
-    workId: number,
-    lastKeyset: number,
+    workId: string,
+    lastKeyset: string,
     pageSize: number
   ): Promise<ResponseWithResponder[] | null> {
     const responses = await this.#Api.getWorkResponses(
@@ -301,7 +303,7 @@ export class UiApi {
   }
 
   async getWorkResponsesTop(
-    workId: number,
+    workId: string,
     pageSize: number
   ): Promise<ResponseWithResponder[] | null> {
     const responses = await this.#Api.getWorkResponsesTop(workId, pageSize);
@@ -310,8 +312,8 @@ export class UiApi {
   }
 
   async getWorkResponsesByProfile(
-    profileId: number,
-    lastKeyset: number,
+    profileId: string,
+    lastKeyset: string,
     pageSize: number
   ): Promise<ResponseWithResponder[] | null> {
     const responses = await this.#Api.getWorkResponsesByProfile(
@@ -324,7 +326,7 @@ export class UiApi {
   }
 
   async getWorkResponsesByProfileTop(
-    profileId: number,
+    profileId: string,
     pageSize: number
   ): Promise<ResponseWithResponder[] | null> {
     const responses = await this.#Api.getWorkResponsesByProfileTop(
@@ -335,14 +337,14 @@ export class UiApi {
     return null;
   }
 
-  async getWorkResponseCount(workId: number): Promise<number> {
+  async getWorkResponseCount(workId: string): Promise<number> {
     return await this.#Api.getWorkResponseCount(workId);
   }
 
-  async getFollowedCount(profileId: number): Promise<number> {
+  async getFollowedCount(profileId: string): Promise<number> {
     return this.#Api.getFollowedCount(profileId);
   }
-  async getFollowerCount(profileId: number): Promise<number> {
+  async getFollowerCount(profileId: string): Promise<number> {
     return this.#Api.getFollowerCount(profileId);
   }
 
@@ -351,30 +353,30 @@ export class UiApi {
     return (
       topics?.map((topic) => ({
         id: topic.id,
-        updatedAt: topic.updated_at,
+        updatedAt: topic.updated_at.toString(),
         name: topic.name,
       })) || null
     );
   }
 
-  async getTopicByWork(workId: number): Promise<Topic | null> {
+  async getTopicByWork(workId: string): Promise<Topic | null> {
     const topic = await this.#Api.getTopicByWork(workId);
     if (topic) {
       return {
         id: topic.id,
-        updatedAt: topic.updated_at,
+        updatedAt: topic.updated_at.toString(),
         name: topic.name,
       };
     }
     return null;
   }
 
-  async getWorkTopic(workId: number): Promise<WorkTopic | null> {
+  async getWorkTopic(workId: string): Promise<WorkTopic | null> {
     const workTopic = await this.#Api.getWorkTopic(workId);
     if (workTopic) {
       return {
         id: workTopic.id,
-        updatedAt: workTopic.updated_at,
+        updatedAt: workTopic.updated_at.toString(),
         workId: workTopic.work_id,
         topicId: workTopic.topic_id,
       };
@@ -382,13 +384,13 @@ export class UiApi {
     return null;
   }
 
-  async cleanDb(): TxHashPromise {
-    return await this.#Api.cleanDb();
-  }
+  // async cleanDb(): TxHashPromise {
+  //   return await this.#Api.cleanDb();
+  // }
 
-  async setupData(): TxHashPromise {
-    return await this.#Api.setupData();
-  }
+  // async setupData(): TxHashPromise {
+  //   return await this.#Api.setupData();
+  // }
 
   #getResponseWithResponders(responses: WorkResponseModel[]) {
     const responsesWithResponder: ResponseWithResponder[] = [];
@@ -402,10 +404,12 @@ export class UiApi {
     return responsesWithResponder;
   }
 
-  #getResponseWithResponder(response: WorkResponseModel) {
+  #getResponseWithResponder(
+    response: WorkResponseModel
+  ): ResponseWithResponder {
     return {
       id: response.id,
-      updatedAt: response.updated_at,
+      updatedAt: response.updated_at.toString(),
       workId: response.work_id,
       workTitle: response.work_title,
       responseContent: response.response_content,
@@ -420,16 +424,19 @@ export class UiApi {
     const worksWithAuthor: WorkWithAuthor[] = [];
     for (let i = 0; i < works.length; i++) {
       if (works[i]) {
-        worksWithAuthor.push(this.#getWorkWithAuthor(works[i]));
+        const work = this.#getWorkWithAuthor(works[i]);
+        work && worksWithAuthor.push(work);
       }
     }
     return worksWithAuthor;
   }
 
-  #getWorkWithAuthor(work: WorkWithAuthorModel) {
+  #getWorkWithAuthor(work: WorkWithAuthorModel | null): WorkWithAuthor | null {
+    if (!work) return null;
+
     return {
       id: work.id,
-      updatedAt: work.updated_at,
+      updatedAt: work.updated_at.toString(),
       title: work.title,
       description: work.description,
       content: work.content,
@@ -446,17 +453,19 @@ export class UiApi {
     const profiles: Profile[] = [];
     for (let i = 0; i < profileModels.length; i++) {
       if (profileModels[i]) {
-        const profileModel = this.#getProfile(profileModels[i]);
-        profiles.push(profileModel);
+        const profile = this.#getProfile(profileModels[i]);
+        profile && profiles.push(profile);
       }
     }
     return profiles;
   }
 
-  #getProfile(profileModel: ProfileModel) {
+  #getProfile(profileModel: ProfileModel | null): Profile | null {
+    if (!profileModel) return null;
+
     return {
       id: profileModel.id,
-      updatedAt: profileModel.updated_at,
+      updatedAt: profileModel.updated_at.toString(),
       fullName: profileModel.fullname,
       userName: profileModel.username,
       description: profileModel.description,

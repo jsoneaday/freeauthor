@@ -5,7 +5,7 @@ import {
   WorkWithAuthor,
 } from "../../common/ui-api/UIModels";
 import { useParams } from "react-router-dom";
-import { api } from "../../common/ui-api/UiApiInstance";
+import { useApi } from "../../common/ui-api/UiApiInstance";
 import { AuthorWorkDetail } from "../../common/components/AuthorWorkDetail";
 import { Layout } from "../../common/components/Layout";
 import { ResponseElements } from "../../common/components/display-elements/ResponseElements";
@@ -14,6 +14,7 @@ import { PAGE_SIZE } from "../../common/utils/StandardValues";
 import { TabHeader } from "../../common/components/TabHeader";
 import { ReturnEnabledInput } from "../../common/components/ReturnEnabledInput";
 import { useProfile } from "../../common/zustand/Store";
+import { useWallet } from "@solana/wallet-adapter-react";
 
 enum ValidationStates {
   ResponseValueIsEmpty = "Response must have a value",
@@ -34,6 +35,7 @@ export function ReadStory() {
     ValidationStates.FieldIsValid
   );
   const profile = useProfile((state) => state.profile);
+  const api = useApi(useWallet());
 
   useEffect(() => {
     if (work) setRefreshWorksData(true);
@@ -42,7 +44,7 @@ export function ReadStory() {
   useEffect(() => {
     console.log("work_id", work_id);
     api
-      .getWork(Number(work_id))
+      .getWork(work_id || "")
       .then((work) => {
         if (!work) {
           setWork(null);
@@ -60,13 +62,13 @@ export function ReadStory() {
     setResponseValue(e.target.value);
   };
 
-  const getData = async (priorKeyset: number) => {
+  const getData = async (priorKeyset: string) => {
     let responses: ResponseWithResponder[] | null;
-    if (priorKeyset === 0) {
-      responses = await api.getWorkResponsesTop(Number(work_id), PAGE_SIZE);
+    if (priorKeyset === "") {
+      responses = await api.getWorkResponsesTop(work_id || "", PAGE_SIZE);
     } else {
       responses = await api.getWorkResponses(
-        Number(work_id),
+        work_id || "",
         priorKeyset,
         PAGE_SIZE
       );
@@ -102,12 +104,8 @@ export function ReadStory() {
       return;
     }
 
-    const tx = await api.addWorkResponse(
-      value,
-      Number(work_id),
-      profile.id || 0
-    );
-    await api.waitAndGetId(tx);
+    await api.addWorkResponse(value, work_id || "", profile.id || "");
+    //await api.waitAndGetId(tx);
     setRefreshWorksData(true);
   };
 

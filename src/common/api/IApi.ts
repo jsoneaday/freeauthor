@@ -54,51 +54,51 @@ export interface IApi {
 
   searchWorks(
     searchTxt: string,
-    lastKeyset: number,
+    lastKeyset: string,
     pageSize: number
   ): Promise<WorkWithAuthorModel[] | null>;
 
   getWorksByAllFollowed(
-    followerId: number,
-    lastKeyset: number,
+    followerId: string,
+    lastKeyset: string,
     pageSize: number
   ): Promise<WorkWithAuthorModel[] | null>;
 
   getWorksByAllFollowedTop(
-    followerId: number,
+    followerId: string,
     pageSize: number
   ): Promise<WorkWithAuthorModel[] | null>;
 
   getWorksByOneFollowed(
-    followedId: number,
-    lastKeyset: number,
+    followedId: string,
+    lastKeyset: string,
     pageSize: number
   ): Promise<WorkWithAuthorModel[] | null>;
 
   getWorksByOneFollowedTop(
-    followedId: number,
+    followedId: string,
     pageSize: number
   ): Promise<WorkWithAuthorModel[] | null>;
 
   getAuthorWorks(
-    authorId: number,
-    lastKeyset: number,
+    authorId: string,
+    lastKeyset: string,
     pageSize: number
   ): Promise<WorkWithAuthorModel[] | null>;
 
   getAuthorWorksTop(
-    authorId: number,
+    authorId: string,
     pageSize: number
   ): Promise<WorkWithAuthorModel[] | null>;
 
   getWorksByTopic(
-    topicId: number,
-    lastKeyset: number,
+    topicId: string,
+    lastKeyset: string,
     pageSize: number
   ): Promise<WorkWithAuthorModel[] | null>;
 
   getWorksByTopicTop(
-    topicId: number,
+    topicId: string,
     pageSize: number
   ): Promise<WorkWithAuthorModel[] | null>;
 
@@ -116,6 +116,7 @@ export interface IApi {
     userName: string,
     fullName: string,
     description: string,
+    priorProfileId: string,
     fund?: boolean,
     socialLinkPrimary?: string,
     socialLinkSecondary?: string,
@@ -124,35 +125,35 @@ export interface IApi {
 
   getProfile(profileId: string): Promise<ProfileModel | null>;
   getOwnersProfile(): Promise<ProfileModel | null>;
-  getFollowedProfiles(profileId: number): Promise<ProfileModel[] | null>;
-  getFollowerProfiles(profileId: number): Promise<ProfileModel[] | null>;
+  getFollowedProfiles(profileId: string): Promise<ProfileModel[] | null>;
+  getFollowerProfiles(profileId: string): Promise<ProfileModel[] | null>;
 
   addWorkResponse(
     content: string,
-    workId: number,
-    responderId: number,
+    workId: string,
+    responderId: string,
     fund?: boolean
   ): TxHashPromise;
 
   getWorkResponses(
-    workId: number,
-    lastKeyset: number,
+    workId: string,
+    lastKeyset: string,
     pageSize: number
   ): Promise<WorkResponseModel[] | null>;
 
   getWorkResponsesTop(
-    workId: number,
+    workId: string,
     pageSize: number
   ): Promise<WorkResponseModel[] | null>;
 
   getWorkResponsesByProfile(
-    profileId: number,
-    lastKeyset: number,
+    profileId: string,
+    lastKeyset: string,
     pageSize: number
   ): Promise<WorkResponseModel[] | null>;
 
   getWorkResponsesByProfileTop(
-    profileId: number,
+    profileId: string,
     pageSize: number
   ): Promise<WorkResponseModel[] | null>;
 
@@ -160,20 +161,20 @@ export interface IApi {
   connect(walletProvider?: object): Promise<void>;
 
   addFollow(
-    followerId: number,
-    followedId: number,
+    followerId: string,
+    followedId: string,
     fund?: boolean
   ): TxHashPromise;
-  removeFollow(followerId: number, followedId: number): TxHashPromise;
+  removeFollow(followerId: string, followedId: string): TxHashPromise;
 
   addTopic(name: string, fund?: boolean): TxHashPromise;
   removeTopic(name: string): TxHashPromise;
 
-  addWorkTopic(topicId: number, workId: number, fund?: boolean): TxHashPromise;
-  removeWorkTopic(topicId: number, workId: number): TxHashPromise;
+  addWorkTopic(topicId: string, workId: string, fund?: boolean): TxHashPromise;
+  removeWorkTopic(topicId: string, workId: string): TxHashPromise;
 
-  addWorkLike(workId: number, likerId: number, fund?: boolean): TxHashPromise;
-  removeWorkLike(workId: number, likerId: number): TxHashPromise;
+  addWorkLike(workId: string, likerId: string, fund?: boolean): TxHashPromise;
+  removeWorkLike(workId: string, likerId: string): TxHashPromise;
 
   /// Used to wait for tx completion and then get entity id
   // waitAndGetId(
@@ -181,16 +182,16 @@ export interface IApi {
   //   entityType?: string
   // ): Promise<number>;
 
-  getWorkLikeCount(workId: number): Promise<number>;
+  getWorkLikeCount(workId: string): Promise<number>;
 
-  getWorkResponseCount(workId: number): Promise<number>;
+  getWorkResponseCount(workId: string): Promise<number>;
 
-  getFollowedCount(profileId: number): Promise<number>;
-  getFollowerCount(profileId: number): Promise<number>;
+  getFollowedCount(profileId: string): Promise<number>;
+  getFollowerCount(profileId: string): Promise<number>;
 
   getAllTopics(): Promise<TopicModel[] | null>;
-  getWorkTopic(workId: number): Promise<WorkTopicModel | null>;
-  getTopicByWork(workId: number): Promise<TopicModel | null>;
+  getWorkTopic(workId: string): Promise<WorkTopicModel | null>;
+  getTopicByWork(workId: string): Promise<TopicModel | null>;
 
   // cleanDb(): TxHashPromise;
   // setupData(): TxHashPromise;

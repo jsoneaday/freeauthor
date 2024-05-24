@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
 interface Topic {
-  topic_id: number;
+  topic_id: string;
   name: string;
   isSelected: boolean;
   resetPagingState: () => void;

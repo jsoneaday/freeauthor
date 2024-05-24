@@ -3,7 +3,8 @@ import { RandomImg } from "./RandomImage";
 import { TipsResponses } from "./TipsResponses";
 import { FollowTooltip, useFollowTooltip } from "./modals/FollowTooltip";
 import { WorkWithAuthor } from "../ui-api/UIModels";
-import { api } from "../ui-api/UiApiInstance";
+import { useApi } from "../ui-api/UiApiInstance";
+import { useWallet } from "@solana/wallet-adapter-react";
 
 interface AuthorWorkDetailProps {
   showAuthor: boolean;
@@ -21,6 +22,7 @@ export function AuthorWorkDetail({ showAuthor, work }: AuthorWorkDetailProps) {
     onMouseEnter,
     onMouseLeave,
   } = useFollowTooltip(spanRef);
+  const api = useApi(useWallet());
 
   useEffect(() => {
     api
@@ -84,7 +86,7 @@ export function AuthorWorkDetail({ showAuthor, work }: AuthorWorkDetailProps) {
           {work.updatedAt}
         </span>
       </div>
-      <TipsResponses workId={work.id || 0} />
+      <TipsResponses workId={work.id} />
     </>
   );
 }
